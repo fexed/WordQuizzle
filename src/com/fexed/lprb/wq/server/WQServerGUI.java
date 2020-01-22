@@ -15,6 +15,8 @@ public class WQServerGUI {
     private Color primaryDark = Color.decode("#07243C");
     private Color accent = Color.decode("#C61774");
     private Color txtColor = Color.decode("#F4F5F0");
+    private Color green = Color.decode("#6F9A3E");
+    private Color red = Color.decode("#9A3E42");
     private Font stdFontBig = new Font("Sans-Serif", Font.BOLD, 20);
     private Font stdFont = new Font("Sans-Serif", Font.PLAIN, 12);
     private Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
@@ -37,9 +39,21 @@ public class WQServerGUI {
     }
 
     //COMPONENTS
-    private static JTextArea statsTxt;
+    private JTextArea statsTxt;
     public void updateStatsText(String txt){
         statsTxt.setText(statsTxt.getText() + "\n" + txt);
+    }
+    private JLabel titleLabel;
+    private JButton startBtn;
+    public void serverIsOnline() {
+        titleLabel.setForeground(green);
+        startBtn.setEnabled(false);
+        startBtn.setText("    Server online    ");
+    }
+    public void serverIsOffline() {
+        titleLabel.setForeground(red);
+        startBtn.setEnabled(true);
+        startBtn.setText("    Avvia server    ");
     }
 
     public WQServerGUI() {
@@ -67,7 +81,7 @@ public class WQServerGUI {
         southPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
         //NORTH PANE
-        JLabel titleLabel = new JLabel("WordQuizzle!", JLabel.CENTER);
+        titleLabel = new JLabel("WordQuizzle!", JLabel.CENTER);
         titleLabel.setForeground(txtColor);
         titleLabel.setFont(stdFontBig);
         JLabel titleBLabel = new JLabel("Server", JLabel.CENTER);
@@ -80,7 +94,7 @@ public class WQServerGUI {
         northPane.add(Box.createHorizontalGlue());
 
         //CENTER PANE
-        WQServerGUI.statsTxt = new JTextArea("Server avviato");
+        statsTxt = new JTextArea("Server avviato");
         statsTxt.setForeground(txtColor);
         statsTxt.setBackground(primaryDark);
         statsTxt.setFont(stdFontMsg);
@@ -90,7 +104,7 @@ public class WQServerGUI {
         controlPane.setLayout(new BoxLayout(controlPane, BoxLayout.PAGE_AXIS));
         controlPane.setBackground(primary);
         controlPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        JButton startBtn = initThemedButton("Avvia Server");
+        startBtn = initThemedButton("Avvia Server");
         JButton dumpBtn = initThemedButton("Dump infos");
         JButton otherBtn = initThemedButton("Altro...");
         otherBtn.setEnabled(false);

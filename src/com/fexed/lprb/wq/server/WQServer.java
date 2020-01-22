@@ -1,5 +1,7 @@
 package com.fexed.lprb.wq.server;
 
+import com.fexed.lprb.wq.client.WQClient;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -12,6 +14,8 @@ import java.rmi.server.UnicastRemoteObject;
 public class WQServer extends RemoteServer implements WQInterface {
     @Override
     public int registraUtente(String nickUtente, String password) throws RemoteException {
+        //TODO controlli vari
+        WQServerController.gui.updateStatsText("Utente " + nickUtente + " registrato!");
         return -1;
     }
 
@@ -51,7 +55,8 @@ public class WQServer extends RemoteServer implements WQInterface {
             Registry r = LocateRegistry.getRegistry(porta);
             r.rebind("WordQuizzle_530527", stub);
             WQServerController.gui.updateStatsText("Online!");
-        } catch (RemoteException e) {e.printStackTrace();}
+            WQServerController.gui.serverIsOnline();
+        } catch (RemoteException e) {WQServerController.gui.updateStatsText(e.getMessage()); WQServerController.gui.serverIsOffline();}
     }
 
 }
