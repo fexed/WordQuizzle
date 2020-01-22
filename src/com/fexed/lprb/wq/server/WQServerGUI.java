@@ -9,17 +9,17 @@ import java.util.concurrent.Flow;
  * @author Federico Matteoni
  */
 public class WQServerGUI {
-    private static Color primary = Color.decode("#0F4C81");
-    private static Color primaryLight = Color.decode("#1774C6");
-    private static Color primaryDark = Color.decode("#07243C");
-    private static Color accent = Color.decode("#C61774");
-    private static Color txtColor = Color.decode("#F4F5F0");
-    private static Font stdFontBig = new Font("Sans-Serif", Font.BOLD, 20);
-    private static Font stdFont = new Font("Sans-Serif", Font.PLAIN, 12);
-    private static Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
-    private static Font stdFontSmall = new Font("Sans-Serif", Font.BOLD, 8);
+    private Color primary = Color.decode("#0F4C81");
+    private Color primaryLight = Color.decode("#1774C6");
+    private Color primaryDark = Color.decode("#07243C");
+    private Color accent = Color.decode("#C61774");
+    private Color txtColor = Color.decode("#F4F5F0");
+    private Font stdFontBig = new Font("Sans-Serif", Font.BOLD, 20);
+    private Font stdFont = new Font("Sans-Serif", Font.PLAIN, 12);
+    private Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
+    private Font stdFontSmall = new Font("Sans-Serif", Font.BOLD, 8);
 
-    public static void main(String args[]) {
+    public WQServerGUI() {
         //FRAME INIT
         JFrame w = new JFrame("WordQuizzle Server");
         w.setSize(800, 600);
@@ -105,5 +105,9 @@ public class WQServerGUI {
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         w.pack();
         w.setVisible(true);
+    }
+
+    public static void main(String args[]) {
+        WQServerGUI gui = new WQServerGUI();
     }
 }
