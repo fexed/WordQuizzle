@@ -9,6 +9,7 @@ import java.util.concurrent.Flow;
  * @author Federico Matteoni
  */
 public class WQServerGUI {
+    //THEME
     private Color primary = Color.decode("#0F4C81");
     private Color primaryLight = Color.decode("#1774C6");
     private Color primaryDark = Color.decode("#07243C");
@@ -27,7 +28,6 @@ public class WQServerGUI {
         btn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
         return btn;
     }
-
     private JTextField initThemedTextField(int columns) {
         JTextField fld = new JTextField(columns);
         fld.setBackground(txtColor);
@@ -36,8 +36,15 @@ public class WQServerGUI {
         return fld;
     }
 
-    public WQServerGUI(WQServer server) {
+    //COMPONENTS
+    private static JTextArea statsTxt;
+    public void updateStatsText(String txt){
+        statsTxt.setText(statsTxt.getText() + "\n" + txt);
+    }
+
+    public WQServerGUI() {
         //FRAME INIT
+        WQServerController.gui = this;
         JFrame w = new JFrame("WordQuizzle Server");
         w.setSize(800, 600);
         w.setLocation(150, 150);
@@ -72,7 +79,7 @@ public class WQServerGUI {
         northPane.add(Box.createHorizontalGlue());
 
         //CENTER PANE
-        JTextArea statsTxt = new JTextArea("Stringa di\ninformazioni attualmente\ncompletamente inutili ma\nche\nin\nfuturo\n\n\nsaranno abbastanza utili\nad esempio per:\ndebug\nstatistiche\naltro");
+        WQServerGUI.statsTxt = new JTextArea("Server avviato");
         statsTxt.setForeground(txtColor);
         statsTxt.setBackground(primaryDark);
         statsTxt.setFont(stdFontMsg);
@@ -113,7 +120,14 @@ public class WQServerGUI {
     }
 
     public static void main(String args[]) {
-        WQServer server = new WQServer();
-        WQServerGUI gui = new WQServerGUI(server);
+        if (args.length != 1) System.err.println("Usage: server <porta>");
+        else {
+            try {
+                int port = Integer.parseInt(args[0]);
+                if (port < 1024) throw new NumberFormatException();
+                WQServerGUI gui = new WQServerGUI();
+                WQServer server = new WQServer(port);
+            } catch (NumberFormatException ex) { System.err.println("Il parametro inserito non è una porta valida"); }
+        }
     }
 }
