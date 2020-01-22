@@ -19,7 +19,24 @@ public class WQServerGUI {
     private Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
     private Font stdFontSmall = new Font("Sans-Serif", Font.BOLD, 8);
 
-    public WQServerGUI() {
+    private JButton initThemedButton(String text) {
+        JButton btn = new JButton("    " + text + "    ");
+        btn.setBackground(primaryDark);
+        btn.setForeground(txtColor);
+        btn.setFont(stdFont);
+        btn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
+        return btn;
+    }
+
+    private JTextField initThemedTextField(int columns) {
+        JTextField fld = new JTextField(columns);
+        fld.setBackground(txtColor);
+        fld.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryDark));
+        fld.setFont(stdFont);
+        return fld;
+    }
+
+    public WQServerGUI(WQServer server) {
         //FRAME INIT
         JFrame w = new JFrame("WordQuizzle Server");
         w.setSize(800, 600);
@@ -65,21 +82,9 @@ public class WQServerGUI {
         controlPane.setLayout(new BoxLayout(controlPane, BoxLayout.PAGE_AXIS));
         controlPane.setBackground(primary);
         controlPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        JButton startBtn = new JButton("    Avvia server    ");
-        startBtn.setBackground(primaryDark);
-        startBtn.setForeground(txtColor);
-        startBtn.setFont(stdFont);
-        startBtn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
-        JButton dumpBtn = new JButton("    Dump infos    ");
-        dumpBtn.setBackground(primaryDark);
-        dumpBtn.setForeground(txtColor);
-        dumpBtn.setFont(stdFont);
-        dumpBtn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
-        JButton otherBtn = new JButton("    Altro...    ");
-        otherBtn.setBackground(primaryDark);
-        otherBtn.setForeground(txtColor);
-        otherBtn.setFont(stdFont);
-        otherBtn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
+        JButton startBtn = initThemedButton("Avvia Server");
+        JButton dumpBtn = initThemedButton("Dump infos");
+        JButton otherBtn = initThemedButton("Altro...");
         otherBtn.setEnabled(false);
         controlPane.add(startBtn);
         controlPane.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -108,6 +113,7 @@ public class WQServerGUI {
     }
 
     public static void main(String args[]) {
-        WQServerGUI gui = new WQServerGUI();
+        WQServer server = new WQServer();
+        WQServerGUI gui = new WQServerGUI(server);
     }
 }

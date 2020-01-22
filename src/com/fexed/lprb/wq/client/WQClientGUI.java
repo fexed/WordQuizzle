@@ -17,7 +17,24 @@ public class WQClientGUI {
     private Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
     private Font stdFontSmall = new Font("Sans-Serif", Font.BOLD, 8);
 
-    public WQClientGUI() {
+    private JButton initThemedButton(String text) {
+        JButton btn = new JButton("    " + text + "    ");
+        btn.setBackground(primaryDark);
+        btn.setForeground(txtColor);
+        btn.setFont(stdFont);
+        btn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
+        return btn;
+    }
+
+    private JTextField initThemedTextField(int columns) {
+        JTextField fld = new JTextField(columns);
+        fld.setBackground(txtColor);
+        fld.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryDark));
+        fld.setFont(stdFont);
+        return fld;
+    }
+
+    public WQClientGUI(WQClient client) {
         //FRAME INIT
         JFrame w = new JFrame("WordQuizzle!");
         w.setSize(800, 600);
@@ -49,15 +66,8 @@ public class WQClientGUI {
         loginPane.setBackground(primary);
         loginPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         loginPane.setLayout(new FlowLayout());
-        JButton loginBtn = new JButton("    Login    ");
-        loginBtn.setBackground(primaryDark);
-        loginBtn.setForeground(txtColor);
-        loginBtn.setFont(stdFont);
-        loginBtn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
-        JTextField loginNameFld = new JTextField(15);
-        loginNameFld.setBackground(txtColor);
-        loginNameFld.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryDark));
-        loginNameFld.setFont(stdFont);
+        JButton loginBtn = initThemedButton("Login");
+        JTextField loginNameFld = initThemedTextField(15);
         loginPane.add(loginNameFld);
         loginPane.add(loginBtn);
 
@@ -73,15 +83,8 @@ public class WQClientGUI {
         JPanel commMsgPane = new JPanel();
         commMsgPane.setBackground(primary);
         commMsgPane.setLayout(new FlowLayout());
-        JTextField inputFld = new JTextField(15);
-        inputFld.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryDark));
-        inputFld.setBackground(txtColor);
-        inputFld.setFont(stdFontMsg);
-        JButton sendBtn = new JButton("    Invia    ");
-        sendBtn.setBackground(primaryDark);
-        sendBtn.setForeground(txtColor);
-        sendBtn.setFont(stdFont);
-        sendBtn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
+        JTextField inputFld = initThemedTextField(15);
+        JButton sendBtn = initThemedButton("Invia");
         commMsgPane.add(inputFld);
         commMsgPane.add(sendBtn);
         commPane.add(commText);
@@ -107,6 +110,7 @@ public class WQClientGUI {
     }
 
     public static void main(String[] args) {
-        WQClientGUI gui = new WQClientGUI();
+        WQClient client = new WQClient();
+        WQClientGUI gui = new WQClientGUI(client);
     }
 }
