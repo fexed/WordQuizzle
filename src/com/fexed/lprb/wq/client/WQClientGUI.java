@@ -7,6 +7,7 @@ import java.awt.*;
  * @author Federico Matteoni
  */
 public class WQClientGUI {
+    //THEME
     private Color primary = Color.decode("#0F4C81");
     private Color primaryLight = Color.decode("#1774C6");
     private Color primaryDark = Color.decode("#07243C");
@@ -34,7 +35,9 @@ public class WQClientGUI {
         return fld;
     }
 
-    public WQClientGUI(WQClient client) {
+    public WQClientGUI() {
+        WQClientController.gui = this;
+
         //FRAME INIT
         JFrame w = new JFrame("WordQuizzle!");
         w.setSize(800, 600);
@@ -110,7 +113,14 @@ public class WQClientGUI {
     }
 
     public static void main(String[] args) {
-        WQClient client = new WQClient();
-        WQClientGUI gui = new WQClientGUI(client);
+        if (args.length != 1) System.err.println("Usage: server <porta>");
+        else {
+            try {
+                int port = Integer.parseInt(args[0]);
+                if (port < 1024) throw new NumberFormatException();
+                WQClientGUI gui = new WQClientGUI();
+                WQClient client = new WQClient(port);
+            } catch (NumberFormatException ex) { System.err.println("Il parametro inserito non è una porta valida"); }
+        }
     }
 }
