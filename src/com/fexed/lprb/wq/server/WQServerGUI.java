@@ -43,8 +43,9 @@ public class WQServerGUI {
     }
 
     public WQServerGUI() {
-        //FRAME INIT
         WQServerController.gui = this;
+
+        //FRAME INIT
         JFrame w = new JFrame("WordQuizzle Server");
         w.setSize(800, 600);
         w.setLocation(150, 150);
