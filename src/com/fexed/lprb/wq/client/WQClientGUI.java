@@ -17,7 +17,6 @@ public class WQClientGUI {
     private Font stdFont = new Font("Sans-Serif", Font.PLAIN, 12);
     private Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
     private Font stdFontSmall = new Font("Sans-Serif", Font.BOLD, 8);
-
     private JButton initThemedButton(String text) {
         JButton btn = new JButton("    " + text + "    ");
         btn.setBackground(primaryDark);
@@ -26,7 +25,6 @@ public class WQClientGUI {
         btn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
         return btn;
     }
-
     private JTextField initThemedTextField(int columns) {
         JTextField fld = new JTextField(columns);
         fld.setBackground(txtColor);
@@ -34,6 +32,10 @@ public class WQClientGUI {
         fld.setFont(stdFont);
         return fld;
     }
+
+    //COMPONENTS
+    private JTextArea commText;
+    public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
 
     public WQClientGUI() {
         WQClientController.gui = this;
@@ -78,7 +80,7 @@ public class WQClientGUI {
         commPane.setBackground(primary);
         commPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10 ,10));
         commPane.setLayout(new BoxLayout(commPane, BoxLayout.PAGE_AXIS));
-        JTextArea commText = new JTextArea("Server: online\nIo: GIOCA CON ASD (ho cliccato pulsante)\n...\ngioco\nin\ncorso\n...\nServer: fine! brv gg wp");
+        commText = new JTextArea("Client online");
         commText.setForeground(txtColor);
         commText.setBackground(primaryDark);
         commText.setFont(stdFontMsg);
@@ -108,7 +110,6 @@ public class WQClientGUI {
         p.add(southPane, BorderLayout.PAGE_END);
         w.setContentPane(p);
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        w.pack();
         w.setVisible(true);
     }
 

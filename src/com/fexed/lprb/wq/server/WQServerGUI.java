@@ -1,8 +1,12 @@
 package com.fexed.lprb.wq.server;
 
+import com.fexed.lprb.wq.client.WQClientController;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.concurrent.Flow;
 
 /**
@@ -40,9 +44,7 @@ public class WQServerGUI {
 
     //COMPONENTS
     private JTextArea statsTxt;
-    public void updateStatsText(String txt){
-        statsTxt.setText(statsTxt.getText() + "\n" + txt);
-    }
+    public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
     private JLabel titleLabel;
     private JButton startBtn;
     public void serverIsOnline() {
@@ -61,7 +63,7 @@ public class WQServerGUI {
 
         //FRAME INIT
         JFrame w = new JFrame("WordQuizzle Server");
-        w.setSize(800, 600);
+        w.setSize(400, 600);
         w.setLocation(150, 150);
 
         //PANELS AND CONTAINER INIT
@@ -106,6 +108,12 @@ public class WQServerGUI {
         controlPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         startBtn = initThemedButton("Avvia Server");
         JButton dumpBtn = initThemedButton("Dump infos");
+        dumpBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateStatsText(WQServerController.server.getInfos());
+            }
+        });
         JButton otherBtn = initThemedButton("Altro...");
         otherBtn.setEnabled(false);
         controlPane.add(startBtn);
@@ -130,7 +138,6 @@ public class WQServerGUI {
         p.add(southPane, BorderLayout.PAGE_END);
         w.setContentPane(p);
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        w.pack();
         w.setVisible(true);
     }
 

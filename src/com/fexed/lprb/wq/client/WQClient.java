@@ -12,12 +12,15 @@ import java.rmi.registry.Registry;
  */
 public class WQClient {
     public WQClient(int port) {
+        int n;
         WQClientController.client = this;
         WQInterface wq;
         try {
             Registry r = LocateRegistry.getRegistry(port);
             wq = (WQInterface) r.lookup("WordQuizzle_530527");
-            wq.registraUtente("Fexed", "1324");
+            n = wq.registraUtente("Fexed", "1324");
+            if (n == 0) WQClientController.gui.updateCommText("Utente \"" + "Fexed" + "\" registrato con successo.");
+            else WQClientController.gui.updateCommText("Utente \"" + "Fexed" + "\" già registrato.");
         } catch (RemoteException | NotBoundException e) {}
     }
 }
