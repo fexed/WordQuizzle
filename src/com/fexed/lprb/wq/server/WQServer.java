@@ -2,6 +2,7 @@ package com.fexed.lprb.wq.server;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -114,8 +115,10 @@ public class WQServer extends RemoteServer implements WQInterface {
                 userBaseJson = userBaseJson.concat(StandardCharsets.UTF_8.decode(bBuff).toString());
             } while (n > -1);
             Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new StringReader(userBaseJson));
+            reader.setLenient(true);
             Type type = new TypeToken<HashMap<String, String>>(){}.getType();
-            userBase = gson.fromJson(userBaseJson, type);
+            userBase = gson.fromJson(reader, type);
         } catch (IOException e) {
             userBase = new HashMap<>();
         }
