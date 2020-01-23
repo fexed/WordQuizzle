@@ -96,7 +96,7 @@ public class WQServerGUI {
         northPane.add(Box.createHorizontalGlue());
 
         //CENTER PANE
-        statsTxt = new JTextArea("Server avviato");
+        statsTxt = new JTextArea("");
         statsTxt.setForeground(txtColor);
         statsTxt.setBackground(primaryDark);
         statsTxt.setFont(stdFontMsg);
