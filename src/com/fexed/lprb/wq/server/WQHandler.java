@@ -3,6 +3,8 @@ package com.fexed.lprb.wq.server;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
@@ -20,18 +22,24 @@ public class WQHandler implements Runnable {
         ByteBuffer bBuff = ByteBuffer.allocate(128);
         StringBuilder sBuff = new StringBuilder();
         String str;
+        SelectionKey keyR, keyW;
         WQServerController.gui.updateStatsText("Connessione accettata.");
 
         try {
+            skt.configureBlocking(false);
+            Selector selector = Selector.open();
+            keyR = skt.register(selector, SelectionKey.OP_READ);
+            keyW = skt.register(selector, SelectionKey.OP_WRITE);
             int n;
             do {
                 bBuff.clear();
-                n = skt.read(bBuff);
+                n = ((SocketChannel) keyR.channel()).read(bBuff);
             } while (n == 0);
             do {
-                n = skt.read(bBuff);
+                n = ((SocketChannel) keyR.channel()).read(bBuff);
             } while (n > 0);
-            WQServerController.gui.updateStatsText(StandardCharsets.UTF_8.decode(bBuff).toString());
+            bBuff.flip();
+            WQServerController.gui.updateStatsText("Ricevuto: " + StandardCharsets.UTF_8.decode(bBuff).toString());
         } catch (IOException ex) { WQServerController.gui.updateStatsText(ex.getMessage()); ex.printStackTrace(); }
 
     }

@@ -5,6 +5,8 @@ import com.fexed.lprb.wq.server.WQInterface;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.rmi.NotBoundException;
@@ -30,10 +32,15 @@ public class WQClient {
                 WQClientController.gui.updateCommText("Connessione in corso su porta " + port);
                 skt.connect(new InetSocketAddress("127.0.0.1", port));
                 skt.configureBlocking(false);
+                Selector selector = Selector.open();
+                SelectionKey keyW = skt.register(selector, SelectionKey.OP_WRITE);
+                SelectionKey keyR = skt.register(selector, SelectionKey.OP_READ);
 
-                ByteBuffer buff = ByteBuffer.wrap(("login:" + name + " " + password).getBytes(StandardCharsets.UTF_8));
+                String str = "login:" + name + " " + password;
+                ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                 int n;
-                do { n = skt.write(buff); } while (n > 0);
+                do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
+                System.out.println(n);
                 WQClientController.gui.loggedIn(name);
                 return 0;
             } else return -1;
