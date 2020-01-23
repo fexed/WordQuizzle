@@ -81,7 +81,7 @@ public class WQServer extends RemoteServer implements WQInterface {
     public String getInfos() {
         String str = "Utenti registrati:\n";
         for(String key : userBase.keySet()) {
-            str = str.concat("-  " + key + ", " + userBase.get(key));
+            str = str.concat("-  " + key + ", " + userBase.get(key) + "\n");
         }
 
         return str;

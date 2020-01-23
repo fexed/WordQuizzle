@@ -104,6 +104,8 @@ public class WQServerGUI {
         statsTxt.setLineWrap(true);
         statsTxt.setWrapStyleWord(true);
         statsTxt.setBorder(BorderFactory.createEmptyBorder(5, 7, 5, 5));
+        JScrollPane scrollTextArea = new JScrollPane(statsTxt, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollTextArea.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         JPanel controlPane = new JPanel();
         controlPane.setLayout(new BoxLayout(controlPane, BoxLayout.PAGE_AXIS));
         controlPane.setBackground(primary);
@@ -124,7 +126,7 @@ public class WQServerGUI {
         controlPane.add(Box.createRigidArea(new Dimension(0, 10)));
         controlPane.add(otherBtn);
         controlPane.add(Box.createVerticalGlue());
-        centerPane.add(statsTxt);
+        centerPane.add(scrollTextArea);
         centerPane.add(Box.createRigidArea(new Dimension(5, 0)));
         centerPane.add(controlPane);
 

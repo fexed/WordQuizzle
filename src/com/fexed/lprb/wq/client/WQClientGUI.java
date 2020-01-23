@@ -52,6 +52,8 @@ public class WQClientGUI {
     private JTextArea commText;
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
     private JLabel loginNameLbl;
+    private JButton loginBtn;
+    public void loggedIn(String username) { loginNameLbl.setText("Username: " + username); loginBtn.setEnabled(false); }
 
     public WQClientGUI() {
         WQClientController.gui = this;
@@ -85,7 +87,7 @@ public class WQClientGUI {
         loginPane.setBackground(primary);
         loginPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         loginPane.setLayout(new FlowLayout());
-        JButton loginBtn = initThemedButton("Login");
+        loginBtn = initThemedButton("Login");
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,11 +133,34 @@ public class WQClientGUI {
         w.setContentPane(p);
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         w.setVisible(true);
+        showLoginDialog();
+    }
+
+    private void showTextDialog(String text) {
+        JFrame f = new JFrame();
+        JDialog d = new JDialog(f, "Word Quizzle! Info", true);
+        d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
+        d.getContentPane().setBackground(primaryLight);
+        JLabel textLbl = initThemedLabel(text, JLabel.CENTER);
+        JButton okBtn = initThemedButton("Ok");
+        okBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                d.setVisible(false);
+            }
+        });
+        d.getContentPane().add(textLbl);
+        d.getContentPane().add(Box.createHorizontalGlue());
+        d.getContentPane().add(okBtn);
+        d.getContentPane().add(Box.createHorizontalGlue());
+        d.pack();
+        d.setResizable(false);
+        d.setVisible(true);
     }
 
     private void showLoginDialog() {
         JFrame f = new JFrame();
-        JDialog d = new JDialog(f, "Word Quizzle! login", true);
+        JDialog d = new JDialog(f, "Word Quizzle! Login", true);
         d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
         d.getContentPane().setBackground(primaryLight);
         JTextField dUserFld = initThemedTextField(15);
@@ -144,13 +169,7 @@ public class WQClientGUI {
         dPwdFld.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryDark));
         dPwdFld.setFont(stdFont);
         JButton dLoginBtn = initThemedButton("Login");
-        dLoginBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                WQClientController.client.login(dUserFld.getText(), String.copyValueOf(dPwdFld.getPassword()));
-                d.setVisible(false);
-            }
-        });
+
         JPanel username = new JPanel();
         username.setBackground(primaryLight);
         username.setBorder(BorderFactory.createEmptyBorder(10, 5, 0, 5));
@@ -166,6 +185,19 @@ public class WQClientGUI {
         d.getContentPane().add(username);
         d.getContentPane().add(Box.createRigidArea(new Dimension(10, 10)));
         d.getContentPane().add(password);
+        dLoginBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = dUserFld.getText();
+                String pwd = String.copyValueOf(dPwdFld.getPassword());
+                d.setVisible(false);
+                int n = WQClientController.client.login(name, pwd);
+                if (n == -1) {
+                    showLoginDialog();
+                    showTextDialog("Errore nella procedura di login: password vuota.");
+                }
+            }
+        });
         d.getContentPane().add(dLoginBtn);
         d.setSize(200, 200);
         d.setResizable(false);
@@ -178,8 +210,8 @@ public class WQClientGUI {
             try {
                 int port = Integer.parseInt(args[0]);
                 if (port < 1024) throw new NumberFormatException();
-                WQClientGUI gui = new WQClientGUI();
                 WQClient client = new WQClient(port);
+                WQClientGUI gui = new WQClientGUI();
             } catch (NumberFormatException ex) { System.err.println("Il parametro inserito non è una porta valida"); }
         }
     }
