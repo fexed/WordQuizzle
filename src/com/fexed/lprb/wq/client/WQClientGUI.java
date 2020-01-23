@@ -2,6 +2,9 @@ package com.fexed.lprb.wq.client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.Flow;
 
 /**
  * @author Federico Matteoni
@@ -32,10 +35,23 @@ public class WQClientGUI {
         fld.setFont(stdFont);
         return fld;
     }
+    private JLabel initThemedLabel(String text, int align) {
+        JLabel label = new JLabel(text, align);
+        label.setForeground(txtColor);
+        label.setFont(stdFont);
+        return label;
+    }
+    private JLabel initThemedLabelBig(String text, int align) {
+        JLabel label = new JLabel(text, align);
+        label.setForeground(txtColor);
+        label.setFont(stdFontBig);
+        return label;
+    }
 
     //COMPONENTS
     private JTextArea commText;
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
+    private JLabel loginNameLbl;
 
     public WQClientGUI() {
         WQClientController.gui = this;
@@ -43,7 +59,7 @@ public class WQClientGUI {
         //FRAME INIT
         JFrame w = new JFrame("WordQuizzle!");
         w.setSize(800, 600);
-        w.setLocation(150, 150);
+        w.setLocation(550, 150);
 
         //PANELS AND CONTAINER INIT
         Container p = new JPanel();
@@ -61,9 +77,7 @@ public class WQClientGUI {
         southPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
         //NORTH PANE
-        JLabel titleLabel = new JLabel("WordQuizzle!", JLabel.CENTER);
-        titleLabel.setForeground(txtColor);
-        titleLabel.setFont(stdFontBig);
+        JLabel titleLabel = initThemedLabelBig("WordQuizzle!", JLabel.CENTER);
         northPane.add(titleLabel);
 
         //CENTER PANE
@@ -72,8 +86,14 @@ public class WQClientGUI {
         loginPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         loginPane.setLayout(new FlowLayout());
         JButton loginBtn = initThemedButton("Login");
-        JTextField loginNameFld = initThemedTextField(15);
-        loginPane.add(loginNameFld);
+        loginBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showLoginDialog();
+            }
+        });
+        loginNameLbl = initThemedLabel("<login non eseguito>", JLabel.LEFT);
+        loginPane.add(loginNameLbl);
         loginPane.add(loginBtn);
 
         JPanel commPane = new JPanel();
@@ -111,6 +131,45 @@ public class WQClientGUI {
         w.setContentPane(p);
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         w.setVisible(true);
+    }
+
+    private void showLoginDialog() {
+        JFrame f = new JFrame();
+        JDialog d = new JDialog(f, "Word Quizzle! login", true);
+        d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
+        d.getContentPane().setBackground(primaryLight);
+        JTextField dUserFld = initThemedTextField(15);
+        JPasswordField dPwdFld = new JPasswordField(15);
+        dPwdFld.setBackground(txtColor);
+        dPwdFld.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryDark));
+        dPwdFld.setFont(stdFont);
+        JButton dLoginBtn = initThemedButton("Login");
+        dLoginBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WQClientController.client.login(dUserFld.getText(), String.copyValueOf(dPwdFld.getPassword()));
+                d.setVisible(false);
+            }
+        });
+        JPanel username = new JPanel();
+        username.setBackground(primaryLight);
+        username.setBorder(BorderFactory.createEmptyBorder(10, 5, 0, 5));
+        username.setLayout(new FlowLayout());
+        username.add(initThemedLabel("Nome utente", JLabel.CENTER));
+        username.add(dUserFld);
+        JPanel password = new JPanel();
+        password.setBackground(primaryLight);
+        password.setBorder(BorderFactory.createEmptyBorder(10, 5, 0, 5));
+        password.setLayout(new FlowLayout());
+        password.add(initThemedLabel("Password", JLabel.CENTER));
+        password.add(dPwdFld);
+        d.getContentPane().add(username);
+        d.getContentPane().add(Box.createRigidArea(new Dimension(10, 10)));
+        d.getContentPane().add(password);
+        d.getContentPane().add(dLoginBtn);
+        d.setSize(200, 200);
+        d.setResizable(false);
+        d.setVisible(true);
     }
 
     public static void main(String[] args) {

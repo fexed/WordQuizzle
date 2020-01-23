@@ -101,6 +101,8 @@ public class WQServerGUI {
         statsTxt.setBackground(primaryDark);
         statsTxt.setFont(stdFontMsg);
         statsTxt.setEditable(false);
+        statsTxt.setLineWrap(true);
+        statsTxt.setWrapStyleWord(true);
         statsTxt.setBorder(BorderFactory.createEmptyBorder(5, 7, 5, 5));
         JPanel controlPane = new JPanel();
         controlPane.setLayout(new BoxLayout(controlPane, BoxLayout.PAGE_AXIS));

@@ -1,7 +1,5 @@
 package com.fexed.lprb.wq.server;
 
-import com.fexed.lprb.wq.client.WQClient;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -19,11 +17,14 @@ public class WQServer extends RemoteServer implements WQInterface {
     public int registraUtente(String nickUtente, String password) throws RemoteException {
         //TODO controlli vari
         if (userBase.containsKey(nickUtente)) {
-            WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" già registrato.");
+            WQServerController.gui.updateStatsText("Tentativo di registrare l'utente \"" + nickUtente + "\" già registrato.");
             return -1;
+        } else if (password.equals("")) {
+            WQServerController.gui.updateStatsText("Tentativo di registrare l'utente \"" + nickUtente + "\" con password vuota.");
+            return -2;
         } else {
             userBase.put(nickUtente, password);
-            WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato!");
+            WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato con successo!");
             return 0;
         }
     }
