@@ -112,6 +112,12 @@ public class WQClientGUI {
         commMsgPane.setLayout(new FlowLayout());
         JTextField inputFld = initThemedTextField(15);
         JButton sendBtn = initThemedButton("Invia");
+        sendBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WQClientController.client.send(inputFld.getText());
+            }
+        });
         commMsgPane.add(inputFld);
         commMsgPane.add(sendBtn);
         commPane.add(commText);

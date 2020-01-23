@@ -11,10 +11,13 @@ import java.nio.charset.StandardCharsets;
 public class WQHandler implements Runnable {
     private WQServer server;
     private SocketChannel skt;
+    private String username;
+    private boolean online;
 
     public WQHandler(WQServer server, SocketChannel skt) {
         this.server = server;
         this.skt = skt;
+        this.online = true;
     }
 
     @Override
@@ -23,24 +26,44 @@ public class WQHandler implements Runnable {
         StringBuilder sBuff = new StringBuilder();
         String str;
         SelectionKey keyR, keyW;
-        WQServerController.gui.updateStatsText("Connessione accettata.");
 
         try {
             skt.configureBlocking(false);
             Selector selector = Selector.open();
             keyR = skt.register(selector, SelectionKey.OP_READ);
             keyW = skt.register(selector, SelectionKey.OP_WRITE);
-            int n;
             do {
-                bBuff.clear();
-                n = ((SocketChannel) keyR.channel()).read(bBuff);
-            } while (n == 0);
-            do {
-                n = ((SocketChannel) keyR.channel()).read(bBuff);
-            } while (n > 0);
-            bBuff.flip();
-            WQServerController.gui.updateStatsText("Ricevuto: " + StandardCharsets.UTF_8.decode(bBuff).toString());
+                int n;
+                do {
+                    bBuff.clear();
+                    n = ((SocketChannel) keyR.channel()).read(bBuff);
+                } while (n == 0);
+                if (n == -1) online = false;
+                else {
+                    do {
+                        n = ((SocketChannel) keyR.channel()).read(bBuff);
+                    } while (n > 0);
+                    bBuff.flip();
+                    String received = StandardCharsets.UTF_8.decode(bBuff).toString();
+                    String command = received.split(":")[0];
+                    if (command.equals("login")) {
+                        String name = received.split(":")[1].split(" ")[0];
+                        this.username = name;
+                        String pwd = received.split(":")[1].split(" ")[1];
+                        n = WQServerController.server.login(name, pwd);
+                        if (n == 0) {
+                            str = "answer:OK";
+                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
+                            WQServerController.gui.updateStatsText(name + " si è connesso.");
+                        }
+                        else online = false;
+                    } else {
+                        WQServerController.gui.updateStatsText("(" + username + "): " + received);
+                    }
+                }
+            } while (online);
         } catch (IOException ex) { WQServerController.gui.updateStatsText(ex.getMessage()); ex.printStackTrace(); }
-
+        WQServerController.server.logout(username);
     }
 }

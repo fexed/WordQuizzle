@@ -1,14 +1,21 @@
 package com.fexed.lprb.wq.server;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.*;
+import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
-import java.nio.channels.Selector;
+import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -20,50 +27,71 @@ import java.util.concurrent.TimeUnit;
 public class WQServer extends RemoteServer implements WQInterface {
     private boolean running;
     private HashMap<String, String> userBase;
+    private ArrayList<String> loggedIn;
     private int port;
 
     @Override
     public int registraUtente(String nickUtente, String password) throws RemoteException {
         //TODO controlli vari
         if (userBase.containsKey(nickUtente)) {
-            WQServerController.gui.updateStatsText("Tentativo di registrare l'utente \"" + nickUtente + "\" già registrato.");
             return -1;
         } else if (password.equals("")) {
             WQServerController.gui.updateStatsText("Tentativo di registrare l'utente \"" + nickUtente + "\" con password vuota.");
             return -2;
         } else {
             userBase.put(nickUtente, password);
+            Gson gson = new Gson();
+            int n = saveToFile("userBase", gson.toJson(userBase));
             WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato con successo!");
             return 0;
         }
     }
 
-    private int login(String nickUtente, String password){
+    public int login(String nickUtente, String password){
+        if (userBase.containsKey(nickUtente)) {
+            if (userBase.get(nickUtente).equals(password)) {
+                loggedIn.add(nickUtente);
+                return 0;
+            }
+            else return -1;
+        } else return -1;
+    }
+
+    public void logout(String nickUtente){
+        loggedIn.remove(nickUtente);
+    }
+
+    public int aggiungiAmico(String nickUtente, String nickAmico){
         return -1;
     }
 
-    private void logout(String nickUtente){
-
-    }
-
-    private int aggiungiAmico(String nickUtente, String nickAmico){
-        return -1;
-    }
-
-    private String listaAmici(String nickUtente) {
+    public String listaAmici(String nickUtente) {
         return "";
     }
 
-    private void sfida(String nickUtente, String nickAmico){
+    public void sfida(String nickUtente, String nickAmico){
 
     }
 
-    private int mostraPunteggio(String nickUtente) {
+    public int mostraPunteggio(String nickUtente) {
         return -1;
     }
 
-    private String mostraClassifica(String nickUtente) {
+    public String mostraClassifica(String nickUtente) {
         return "";
+    }
+
+    private int saveToFile(String filename, String fileData) {
+        System.out.println("Saving " + fileData + " to " + filename);
+        try {
+            FileOutputStream fileout = new FileOutputStream(new File(filename));
+            fileout.write(fileData.getBytes(StandardCharsets.UTF_8));
+            return 0;
+        } catch (FileNotFoundException ex) {
+            return -1;
+        } catch (IOException ex) {
+            return -2;
+        }
     }
 
     private void loadServer() throws RemoteException {
@@ -74,14 +102,35 @@ public class WQServer extends RemoteServer implements WQInterface {
         r.rebind("WordQuizzle_530527", stub);
         WQServerController.gui.updateStatsText("Registrazioni aperte su porta " + (port+1));
 
-        //TODO load from file
-        userBase = new HashMap<>();
+        try {
+            FileInputStream userBaseFile = new FileInputStream(new File("userBase"));
+            String userBaseJson = "";
+            byte[] buff = new byte[512];
+            ByteBuffer bBuff;
+            int n;
+            do {
+                n = userBaseFile.read(buff);
+                bBuff = ByteBuffer.wrap(buff);
+                userBaseJson = userBaseJson.concat(StandardCharsets.UTF_8.decode(bBuff).toString());
+            } while (n > -1);
+            Gson gson = new Gson();
+            Type type = new TypeToken<HashMap<String, String>>(){}.getType();
+            userBase = gson.fromJson(userBaseJson, type);
+        } catch (IOException e) {
+            userBase = new HashMap<>();
+        }
+        loggedIn = new ArrayList<>();
     }
 
     public String getInfos() {
-        String str = "Utenti registrati:\n";
+        String str = "*Utenti registrati:\n";
         for(String key : userBase.keySet()) {
-            str = str.concat("-  " + key + ", " + userBase.get(key) + "\n");
+            str = str.concat("*-  " + key + ", " + userBase.get(key) + "\n");
+        }
+
+        str = str.concat("*\n*Utenti online:\n");
+        for(String key : loggedIn) {
+            str = str = str.concat("*-  " + key + "\n");
         }
 
         return str;
