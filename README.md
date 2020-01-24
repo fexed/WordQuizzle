@@ -57,11 +57,11 @@ assegnano 0 punti. Il punteggio ottenuto da ciascun partecipante alla fine della
 chiamato punteggio partita.
 I valori espressi come **K, N, T1, T2, X, Y e Z** sono a discrezione dello studente.
 
-- [ ] `mostra_punteggio(nickUtente)`: il **server restituisce il punteggio di `nickUtente`** (chiamato
+- [x] `mostra_punteggio(nickUtente)`: il **server restituisce il punteggio di `nickUtente`** (chiamato
 *punteggio utente*) totalizzato in base ai punteggi partita ottenuti in tutte le sfide che ha
 effettuato.
 
-- [ ] `mostra_classifica(nickUtente)`: Il **server restituisce in formato JSON la classifica** calcolata in
+- [x] `mostra_classifica(nickUtente)`: Il **server restituisce in formato JSON la classifica** calcolata in
 base ai punteggi utente ottenuti da nickUtente e dai suoi amici
 
 ***Esempio di svolgimento della partita:**
@@ -77,15 +77,15 @@ punteggio di 3 punti (-1 +2 +2). Il server dichiara U2 vincitore ed assegna ad U
 
 #### 3. Specifiche per l'implementazione
 Nella realizzazione del progetto devono essere utilizzate molte delle tecnologie illustrate durante il corso. In particolare:
-* La **fase di registrazione** viene implementata mediante **RMI**.
-* La **fase di login** deve essere **effettuata come prima operazione dopo aver instaurato una
+- [x] La **fase di registrazione** viene implementata mediante **RMI**.
+- [x] La **fase di login** deve essere **effettuata come prima operazione dopo aver instaurato una
 connessione TCP con il server**. Su questa connessione TCP, dopo previa login
 effettuata con successo, avvengono le interazioni client- server (richieste/risposte).
-* Il server **inoltra la richiesta di sfida** originata da `nickUtente` all'utente `nickAmico` **usando la
+- [ ] Il server **inoltra la richiesta di sfida** originata da `nickUtente` all'utente `nickAmico` **usando la
 comunicazione UDP**.
-* Il server può essere realizzato **multithreaded** oppure può effettuare il **multiplexing dei
+- [ ] Il server può essere realizzato **multithreaded** oppure può effettuare il **multiplexing dei
 canali** mediante NIO.
-* Il server **gestisce un dizionario** di N parole italiane, **memorizzato in un file**. Durante la
+- [ ] Il server **gestisce un dizionario** di N parole italiane, **memorizzato in un file**. Durante la
 fase di setup di una sfida fra due utenti il server seleziona K parole a caso su N parole
 presenti nel dizionario. Prima dell’inizio della partita, ma dopo che ha ricevuto
 l’accettazione della sfida da parte dell’amico, il server chiede, tramite una **chiamata
@@ -93,29 +93,29 @@ HTTP GET**, la traduzione delle parole selezionate al **servizio esterno accessi
 URL** `https://mymemory.translated.net/doc/spec.php`. Le traduzioni vengono
 memorizzate per tutta la durata della partita per verificare la correttezza delle risposte
 inviate dal client.
-* L'**utente interagisce con WQ mediante un client** che può utilizzare **una semplice
+- [x] L'**utente interagisce con WQ mediante un client** che può utilizzare **una semplice
 interfaccia grafica, oppure una interfaccia a linea di comando**, definendo un insieme di
 comandi, presentati in un menu.
-* Il server **persiste le informazioni di registrazione, relazioni di amicizia e punteggio degli
+- [x] Il server **persiste le informazioni di registrazione, relazioni di amicizia e punteggio degli
 utenti su file JSON**.
 
 #### 4. Modalità di svolgimento e consegna
 Il materiale consegnato deve comprendere:
-* il **codice** dell'applicazione e di eventuali programmi utilizzati per il test delle sue
+- [ ] il **codice** dell'applicazione e di eventuali programmi utilizzati per il test delle sue
 funzionalità. È importante che il codice segua le convenzioni JAVA e le linee guida date
 per gli assegnamenti;
-* la **relazione** in formato PDF che deve contenere:
-  * una descrizione generale dell'architettura complessiva del sistema, in cui sono
+- [ ] la **relazione** in formato PDF che deve contenere:
+  * una **descrizione generale dell'architettura complessiva del sistema**, in cui sono
 motivate le scelte di progetto;
-  * uno schema generale dei threads attivati da ogni componente e delle strutture
-dati utilizzate, con particolare riferimento al controllo della concorrenza;
-  * una descrizione sintetica delle classi definite ed indicazioni precise sulle modalità
+  * uno **schema generale dei threads attivati da ogni componente** e delle **strutture
+dati utilizzate**, con particolare riferimento al controllo della concorrenza;
+  * una **descrizione sintetica delle classi definite** ed indicazioni precise sulle modalità
 di esecuzione;
   * una sezione di istruzioni su come compilare ed eseguire il progetto (librerie
 esterne usate, argomenti da passare al codice, sintassi dei comandi per eseguire
-le varie operazioni...). Questa sezione deve essere un manuale di istruzioni
-semplice e chiaro per gli utilizzatori del sistema;
-  * l'organizzazione e la chiarezza della relazione influiranno sul voto finale
+le varie operazioni...). Questa sezione deve essere **un manuale di istruzioni
+semplice e chiaro per gli utilizzatori del sistema**;
+  * **l'organizzazione e la chiarezza della relazione influiranno sul voto finale**
 
 Il codice che non compila non verrà considerato. Per essere considerato sufficiente e quindi
 ammissibile per la discussione, il progetto deve implementare tutte le funzioni precedentemente
