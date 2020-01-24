@@ -52,6 +52,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         if (userBase.containsKey(nickUtente)) {
             if (userBase.get(nickUtente).equals(password)) {
                 loggedIn.add(nickUtente);
+                WQServerController.gui.addOnline(nickUtente);
                 return 0;
             }
             else return -1;
@@ -60,6 +61,7 @@ public class WQServer extends RemoteServer implements WQInterface {
 
     public void logout(String nickUtente){
         loggedIn.remove(nickUtente);
+        WQServerController.gui.removeOnline(nickUtente);
     }
 
     public int aggiungiAmico(String nickUtente, String nickAmico){

@@ -47,6 +47,8 @@ public class WQServerGUI {
     public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
     private JLabel titleLabel;
     private JButton startBtn;
+    private JList<String> onlineList;
+    private DefaultListModel<String> onlineListModel;
     public void serverIsOnline() {
         titleLabel.setForeground(green);
         startBtn.setEnabled(false);
@@ -56,6 +58,12 @@ public class WQServerGUI {
         titleLabel.setForeground(red);
         startBtn.setEnabled(true);
         startBtn.setText("    Avvia server    ");
+    }
+    public void addOnline(String user) {
+        onlineListModel.addElement(user);
+    }
+    public void removeOnline(String user) {
+        onlineListModel.removeElement(user);
     }
 
     public WQServerGUI() {
@@ -120,12 +128,20 @@ public class WQServerGUI {
         });
         JButton otherBtn = initThemedButton("Altro...");
         otherBtn.setEnabled(false);
+        onlineListModel = new DefaultListModel<>();
+        onlineListModel.addElement("Utenti online");
+        onlineList = new JList<>(onlineListModel);
+        onlineList.setBackground(primaryLight);
+        onlineList.setForeground(txtColor);
+        onlineList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        onlineList.setBounds(0, 0, 150, 400);
+        controlPane.add(onlineList);
+        controlPane.add(Box.createVerticalGlue());
         controlPane.add(startBtn);
         controlPane.add(Box.createRigidArea(new Dimension(0, 10)));
         controlPane.add(dumpBtn);
         controlPane.add(Box.createRigidArea(new Dimension(0, 10)));
         controlPane.add(otherBtn);
-        controlPane.add(Box.createVerticalGlue());
         centerPane.add(scrollTextArea);
         centerPane.add(Box.createRigidArea(new Dimension(5, 0)));
         centerPane.add(controlPane);
