@@ -12,17 +12,17 @@ una **architettura client server**.
 #### 2. Specifica delle operazioni
 Di seguito sono specificate le operazioni offerte dal servizio WordQuizzle. In sede di implementazione è possibile aggiungere ulteriori parametri se necessario.
 
-- [ ] `registra_utente(nickUtente, password)`: per **inserire un nuovo utente**, il server mette a disposizione una
+- [x] `registra_utente(nickUtente, password)`: per **inserire un nuovo utente**, il server mette a disposizione una
 operazione. Il **server risponde con un codice** che può
 indicare l’avvenuta registrazione, oppure, se il nickname è già presente, o se la password è
 vuota, restituisce un messaggio d’errore. Come specificato in seguito, le registrazioni sono tra
 le informazioni da persistere.
 
-- [ ] `login(nickUtente, password)`: login di un utente già registrato per accedere al servizio. Il **server
+- [x] `login(nickUtente, password)`: login di un utente già registrato per accedere al servizio. Il **server
 risponde con un codice** che può indicare l’avvenuto login, oppure, se l’utente ha già effettuato la
 login o la password è errata, restituisce un messaggio d’errore.
 
-- [ ] `logout(nickUtente)`: effettua il logout dell'utente dal servizio.
+- [x] `logout(nickUtente)`: effettua il logout dell'utente dal servizio.
 
 - [ ] `aggiungi_amico(nickUtente, nickAmico)`: **registrazione di un’amicizia**, cioè aggiungere un amico alla
 cerchia di amici di un utente. Viene **creato un arco non orientato tra i due utenti** (se A è amico
