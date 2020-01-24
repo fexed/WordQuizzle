@@ -55,6 +55,7 @@ public class WQClient {
                 if (command.equals("answer")) {
                     if (received.split(":")[1].equals("OK")) {
                         WQClientController.gui.loggedIn(name);
+                        new Thread(new WQClientReceiver(skt, keyR)).start();
                         return 0;
                     }
                     else return -1;
@@ -64,23 +65,26 @@ public class WQClient {
         return -1;
     }
 
+    public int receive(String received) {
+        String command = received.split(":")[0];
+        if (command.equals("answer")) {
+            String str = received.substring(command.length()+1);
+            WQClientController.gui.updateCommText(str);
+            return 0;
+        } else if (command.equals("notif")) {
+            String str = received.substring(command.length()+1);
+            WQClientController.gui.showTextDialog(str);
+            return 0;
+        } else return -1;
+    }
+
     public int send(String txt) {
         try {
             ByteBuffer buff = ByteBuffer.wrap(txt.getBytes(StandardCharsets.UTF_8));
             int n;
             do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
             WQClientController.gui.updateCommText("(Io): " + txt);
-            buff = ByteBuffer.allocate(128);
-            do { buff.clear(); n = ((SocketChannel) keyR.channel()).read(buff); } while (n == 0);
-            do { n = ((SocketChannel) keyR.channel()).read(buff); } while (n > 0);
-            buff.flip();
-            String received = StandardCharsets.UTF_8.decode(buff).toString();
-            String command = received.split(":")[0];
-            if (command.equals("answer")) {
-                String str = received.substring(command.length()+1);
-                WQClientController.gui.updateCommText(str);
-                return 0;
-            } else return -1;
+            return 0;
         } catch (IOException ex) { WQClientController.gui.updateCommText(ex.getMessage()); ex.printStackTrace(); }
         return -1;
     }

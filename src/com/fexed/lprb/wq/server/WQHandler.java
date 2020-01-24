@@ -13,6 +13,7 @@ public class WQHandler implements Runnable {
     private SocketChannel skt;
     private String username;
     private boolean online;
+    private SelectionKey keyR, keyW;
 
     public WQHandler(WQServer server, SocketChannel skt) {
         this.server = server;
@@ -20,11 +21,20 @@ public class WQHandler implements Runnable {
         this.online = true;
     }
 
+    public void send(String str) {
+        try {
+            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+            int n;
+            do {
+                n = ((SocketChannel) keyW.channel()).write(buff);
+            } while (n > 0);
+        } catch(Exception ignored) {}
+    }
+
     @Override
     public void run() {
         ByteBuffer bBuff = ByteBuffer.allocate(128);
         String str;
-        SelectionKey keyR, keyW;
 
         try {
             skt.configureBlocking(false);
@@ -53,7 +63,7 @@ public class WQHandler implements Runnable {
                                 this.username = name;
                                 String pwd = received.split(":")[1].split(" ")[1];
                                 System.out.println("Verifica " + name + " " + pwd);
-                                n = WQServerController.server.login(name, pwd);
+                                n = WQServerController.server.login(name, pwd, this);
                                 if (n == 0) {
                                     str = "answer:OK";
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
@@ -129,6 +139,8 @@ public class WQHandler implements Runnable {
                             do {
                                 n = ((SocketChannel) keyW.channel()).write(buff);
                             } while (n > 0);
+                            String name = received.split(":")[1];
+                            WQServerController.server.sfida(this.username, name);
                             break;
                         }
                         default:

@@ -10,6 +10,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class WQServer extends RemoteServer implements WQInterface {
     private boolean running;
     private HashMap<String, WQUtente> userBase;
-    private ArrayList<String> loggedIn;
+    private HashMap<String, WQHandler> loggedIn;
     private int port;
 
     /**
@@ -65,11 +66,11 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @param password La password dell'utente
      * @return 0 se il login va a buon fine, -1 se ci sono errori
      */
-    public int login(String nickUtente, String password){
+    public int login(String nickUtente, String password, WQHandler handler){
         if (userBase.containsKey(nickUtente.toLowerCase())) {
             if (userBase.get(nickUtente.toLowerCase()).password.equals(password)) {
-                if (!loggedIn.contains(nickUtente.toLowerCase())) {
-                    loggedIn.add(nickUtente);
+                if (!loggedIn.keySet().contains(nickUtente.toLowerCase())) {
+                    loggedIn.put(nickUtente, handler);
                     WQServerController.gui.addOnline(nickUtente);
                     return 0;
                 } else return -1; //TODO codice di errore login
@@ -92,7 +93,7 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return JSON rappresentante la lista degli utenti online ({@code ArraList<WQUtente>})
      */
     public String mostraOnline(){
-        ArrayList<String> online = new ArrayList<>(loggedIn);
+        ArrayList<String> online = new ArrayList<>(loggedIn.keySet());
         Gson gson = new Gson();
         return gson.toJson(online);
     }
@@ -135,7 +136,10 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @param nickAmico
      */
     public void sfida(String nickUtente, String nickAmico){
-
+        //TODO
+        if (loggedIn.containsKey(nickAmico)) {
+            loggedIn.get(nickAmico).send("notif:" + nickUtente + " vuole sfidarti!");
+        }
     }
 
     /**
@@ -222,7 +226,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         } catch (IOException e) {
             userBase = new HashMap<>();
         }
-        loggedIn = new ArrayList<>();
+        loggedIn = new HashMap<>();
     }
 
     /**
