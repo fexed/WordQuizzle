@@ -32,7 +32,7 @@ public class WQUtente {
      * @param password La password
      */
     public WQUtente(String username, String password) {
-        this.username = password;
+        this.username = username;
         this.password = password;
         this.points = 0;
         this.friends = new ArrayList<>();
