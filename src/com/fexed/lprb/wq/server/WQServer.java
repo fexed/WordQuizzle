@@ -19,7 +19,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
@@ -264,6 +266,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         WQServerController.server = this;
 
         try {
+            WQServerController.gui.updateStatsText(Time.from(Calendar.getInstance().toInstant()).toString());
             loadServer();
             srvSkt = ServerSocketChannel.open();
             srvSkt.socket().bind(new InetSocketAddress(porta));
