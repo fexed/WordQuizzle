@@ -1,5 +1,7 @@
 package com.fexed.lprb.wq.server;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -65,12 +67,17 @@ public class WQHandler implements Runnable {
                                 n = WQServerController.server.login(name, pwd, this);
                                 if (n == 0) {
                                     str = "answer:OK";
-                                    key.attach(WQServerController.server.ottieniUtente(this.username));
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                     do {
                                         n = ((SocketChannel) key.channel()).write(buff);
                                     } while (n > 0);
                                     WQServerController.gui.updateStatsText(name + " si è connesso.");
+                                    Gson gson = new Gson();
+                                    str = gson.toJson(WQServerController.server.ottieniUtente(this.username));
+                                    buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                    do {
+                                        n = ((SocketChannel) key.channel()).write(buff);
+                                    } while (n > 0);
                                 } else {
                                     str = "answer:ERR";
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));

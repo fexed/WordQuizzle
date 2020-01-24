@@ -59,8 +59,8 @@ public class WQClientGUI {
     private JList<String> friendList;
     private DefaultListModel<String> friendListModel;
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
-    public void loggedIn(String username) {
-        loginNameLbl.setText(username);
+    public void loggedIn(String username, int points) {
+        loginNameLbl.setText(username + " (" + points + " punti)");
         loginNameLbl.setForeground(green);
         loginBtn.setEnabled(false);
         loginBtn.setVisible(false);

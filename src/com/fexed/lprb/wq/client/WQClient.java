@@ -2,6 +2,7 @@ package com.fexed.lprb.wq.client;
 
 import com.fexed.lprb.wq.WQInterface;
 import com.fexed.lprb.wq.WQUtente;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -14,6 +15,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Federico Matteoni
@@ -49,16 +52,22 @@ public class WQClient {
                 do { n = ((SocketChannel) key.channel()).read(buff); } while (n > 0);
                 buff.flip();
                 String received = StandardCharsets.UTF_8.decode(buff).toString();
-                System.out.println(received);
                 String command = received.split(":")[0];
                 if (command.equals("answer")) {
                     if (received.split(":")[1].equals("OK")) {
-                        WQClientController.gui.loggedIn(name);
-                        WQUtente myUser = (WQUtente) key.attachment();
+                        WQUtente myUser = null;
+                        Gson gson = new Gson();
+                        buff = ByteBuffer.allocate(128);
+                        do { buff.clear(); n = ((SocketChannel) key.channel()).read(buff); } while (n == 0);
+                        do { n = ((SocketChannel) key.channel()).read(buff); } while (n > 0);
+                        buff.flip();
+                        received = StandardCharsets.UTF_8.decode(buff).toString();
+                        myUser = gson.fromJson(received, WQUtente.class);
                         if (myUser != null) {
                             System.out.println(myUser.toString());
                             WQClientController.gui.addAllFriends(myUser.friends);
                         }
+                        WQClientController.gui.loggedIn(myUser.username, myUser.points);
                         new Thread(new WQClientReceiver(skt, key)).start();
                         return 0;
                     }
