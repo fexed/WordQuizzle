@@ -31,6 +31,13 @@ public class WQServer extends RemoteServer implements WQInterface {
     private ArrayList<String> loggedIn;
     private int port;
 
+    /**
+     * Operazione per inserire un nuovo utente.
+     * @param nickUtente Il nickname dell'utente da aggiungere
+     * @param password La password dell'utente da aggiungere
+     * @return 0 se l'aggiunta va a buon fine, -1 se l'utente è già esistente, -2 se la password è vuota
+     * @throws RemoteException
+     */
     @Override
     public int registraUtente(String nickUtente, String password) throws RemoteException {
         //TODO controlli vari
@@ -49,6 +56,12 @@ public class WQServer extends RemoteServer implements WQInterface {
         }
     }
 
+    /**
+     * Procedura di login per un utente già registrato
+     * @param nickUtente Il nickname dell'utente
+     * @param password La password dell'utente
+     * @return 0 se il login va a buon fine, -1 se ci sono errori
+     */
     public int login(String nickUtente, String password){
         if (userBase.containsKey(nickUtente)) {
             if (userBase.get(nickUtente).password.equals(password)) {
@@ -56,37 +69,87 @@ public class WQServer extends RemoteServer implements WQInterface {
                     loggedIn.add(nickUtente);
                     WQServerController.gui.addOnline(nickUtente);
                     return 0;
-                } else return -1;
+                } else return -1; //TODO codice di errore login
             }
             else return -1;
         } else return -1;
     }
 
+    /**
+     * Effettua il logout dell'utente dal servizio
+     * @param nickUtente Il nickname dell'utente che si vuole scollegare
+     */
     public void logout(String nickUtente){
         loggedIn.remove(nickUtente);
         WQServerController.gui.removeOnline(nickUtente);
     }
 
+    /**
+     * Visualizza la lista degli utenti attualmente online
+     * @return JSON rappresentante la lista degli utenti online ({@code ArraList<WQUtente>})
+     */
+    public String mostraOnline(){
+        ArrayList<WQUtente> online = new ArrayList<>();
+        for (String name : loggedIn) {
+            online.add(userBase.get(name));
+        }
+        Gson gson = new Gson();
+        return gson.toJson(online);
+    }
+
+    /**
+     * Usata da un utente per aggiungerne un altro alla propria lista amici. L'operazione aggiunge {@code nickAmico} alla lista amici di {@code nickUtente} e viceversa. Non è necessario che {@code nickAmico} accetti l'amicizia.
+     * @param nickUtente L'utente che vuole aggiungere alla propria lista amici
+     * @param nickAmico L'utente da aggiungere alla lista amici
+     * @return 0 se l'operazione va a buon fine, -1 se {@code nickAmico} non esiste o -2 se l'amicizia è già esistente
+     */
     public int aggiungiAmico(String nickUtente, String nickAmico){
+
         return -1;
     }
 
+    /**
+     * Usata per visualizzare la propria lista amici
+     * @param nickUtente L'utente che vuole visualizzare la propria lista amici
+     * @return JSON rappresentante la lista amici ({@code ArraList<WQUtente>})
+     */
     public String listaAmici(String nickUtente) {
-        return "";
+        ArrayList<WQUtente> friendList = new ArrayList<>();
+        for (String name : userBase.get(nickUtente).friends) {
+            friendList.add(userBase.get(name));
+        }
+        Gson gson = new Gson();
+        return gson.toJson(friendList.toArray());
     }
 
     public void sfida(String nickUtente, String nickAmico){
 
     }
 
+    /**
+     * Restituisce il punteggio di {@code nickUtente}
+     * @param nickUtente L'utente di cui si vuole sapere il punteggio
+     * @return Il punteggio di {@code nickUtente}
+     */
     public int mostraPunteggio(String nickUtente) {
-        return -1;
+        return userBase.get(nickUtente).points;
     }
 
+    /**
+     * Restituisce un JSON rappresentante la classifica degli utenti amici di {@code nickUtente}.
+     * @param nickUtente L'utente che vuole conoscere la classifica
+     * @return JSON rappresentante la classifica
+     */
     public String mostraClassifica(String nickUtente) {
         return "";
     }
 
+    /**
+     * Salva {@code fileData} su {@code fileName}
+     * @param filename Il nome del file su cui salvare
+     * @param fileData I dati da salvare
+     * @return 0 se il salvataggio è andato a buon fine, -1 se il file non può essere creato o è una directory, -2 se c'è IOException
+     */
     private int saveToFile(String filename, String fileData) {
         System.out.println("Saving " + fileData + " to " + filename);
         try {
@@ -100,6 +163,10 @@ public class WQServer extends RemoteServer implements WQInterface {
         }
     }
 
+    /**
+     * Inizializza il WQServer
+     * @throws RemoteException
+     */
     private void loadServer() throws RemoteException {
         //RMI
         WQInterface stub = (WQInterface) UnicastRemoteObject.exportObject(this, port+1);
@@ -130,7 +197,12 @@ public class WQServer extends RemoteServer implements WQInterface {
         loggedIn = new ArrayList<>();
     }
 
+    /**
+     * Restituisce una stringa con varie info sullo stato attuale del server
+     * @return Le info
+     */
     public String getInfos() {
+        //TODO migliorare getInfos()
         String str = "*Utenti registrati:\n";
         for(String key : userBase.keySet()) {
             str = str.concat("*-  " + key + ", " + userBase.get(key).points + "\n");
@@ -144,6 +216,9 @@ public class WQServer extends RemoteServer implements WQInterface {
         return str;
     }
 
+    /**
+     * Ferma l'esecuzione del server
+     */
     public void stopServer() {
         this.running = false;
     }
