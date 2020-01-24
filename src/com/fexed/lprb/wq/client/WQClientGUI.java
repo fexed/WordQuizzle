@@ -58,6 +58,7 @@ public class WQClientGUI {
     public void loggedIn(String username) {
         loginNameLbl.setText(username);
         loginNameLbl.setForeground(green);
+        loginNameLbl.setFont(stdFontBig);
         loginBtn.setEnabled(false);
         loginBtn.setVisible(false);
         loginBtn.setText("    Loggato    ");
@@ -159,6 +160,7 @@ public class WQClientGUI {
         d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
         d.getContentPane().setBackground(primaryLight);
         JLabel textLbl = initThemedLabel(text, JLabel.CENTER);
+        textLbl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         JButton okBtn = initThemedButton("Ok");
         okBtn.addActionListener(new ActionListener() {
             @Override
@@ -172,6 +174,7 @@ public class WQClientGUI {
         d.getContentPane().add(Box.createHorizontalGlue());
         d.pack();
         d.setResizable(false);
+        d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
         d.setVisible(true);
     }
 
@@ -210,14 +213,14 @@ public class WQClientGUI {
                 int n = WQClientController.client.login(name, pwd);
                 d.setVisible(false);
                 if (n == -1) {
-                    showTextDialog("Errore nella procedura di login: password vuota.");
+                    showTextDialog("Errore nella procedura di login.");
                     showLoginDialog();
                 }
             }
         });
         d.getContentPane().add(dLoginBtn);
         d.setSize(200, 200);
-        d.setLocation(950, 450);
+        d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
         d.getRootPane().setDefaultButton(dLoginBtn);
         d.setResizable(false);
         d.setVisible(true);

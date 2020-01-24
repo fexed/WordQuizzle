@@ -44,7 +44,6 @@ public class WQHandler implements Runnable {
                     } while (n > 0);
                     bBuff.flip();
                     String received = StandardCharsets.UTF_8.decode(bBuff).toString();
-                    System.out.println("Ricevo " + received);
                     String command = received.split(":")[0];
                     if (command.equals("login")) {
                         String name = received.split(":")[1].split(" ")[0];
