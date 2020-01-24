@@ -5,13 +5,16 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * @author Federico Matteoni
+ */
 public class WQClientReceiver implements Runnable {
     private SocketChannel skt;
-    private SelectionKey keyR;
+    private SelectionKey key;
 
     public WQClientReceiver(SocketChannel skt, SelectionKey keyR) {
         this.skt = skt;
-        this.keyR = keyR;
+        this.key = keyR;
     }
 
     @Override
@@ -22,10 +25,10 @@ public class WQClientReceiver implements Runnable {
                 int n;
                 do {
                     buff.clear();
-                    n = ((SocketChannel) keyR.channel()).read(buff);
+                    n = ((SocketChannel) key.channel()).read(buff);
                 } while (n == 0);
                 do {
-                    n = ((SocketChannel) keyR.channel()).read(buff);
+                    n = ((SocketChannel) key.channel()).read(buff);
                 } while (n > 0);
                 buff.flip();
                 String received = StandardCharsets.UTF_8.decode(buff).toString();

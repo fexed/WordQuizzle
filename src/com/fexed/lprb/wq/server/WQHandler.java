@@ -13,7 +13,7 @@ public class WQHandler implements Runnable {
     private SocketChannel skt;
     private String username;
     private boolean online;
-    private SelectionKey keyR, keyW;
+    private SelectionKey key;
 
     public WQHandler(WQServer server, SocketChannel skt) {
         this.server = server;
@@ -26,7 +26,7 @@ public class WQHandler implements Runnable {
             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
             int n;
             do {
-                n = ((SocketChannel) keyW.channel()).write(buff);
+                n = ((SocketChannel) key.channel()).write(buff);
             } while (n > 0);
         } catch(Exception ignored) {}
     }
@@ -39,19 +39,18 @@ public class WQHandler implements Runnable {
         try {
             skt.configureBlocking(false);
             Selector selector = Selector.open();
-            keyR = skt.register(selector, SelectionKey.OP_READ);
-            keyW = skt.register(selector, SelectionKey.OP_WRITE);
+            key = skt.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
             do {
                 int n;
                 do {
                     Thread.sleep(50);
                     bBuff.clear();
-                    n = ((SocketChannel) keyR.channel()).read(bBuff);
+                    n = ((SocketChannel) key.channel()).read(bBuff);
                 } while (n == 0);
                 if (n == -1) online = false;
                 else {
                     do {
-                        n = ((SocketChannel) keyR.channel()).read(bBuff);
+                        n = ((SocketChannel) key.channel()).read(bBuff);
                     } while (n > 0);
                     bBuff.flip();
                     String received = StandardCharsets.UTF_8.decode(bBuff).toString();
@@ -66,17 +65,17 @@ public class WQHandler implements Runnable {
                                 n = WQServerController.server.login(name, pwd, this);
                                 if (n == 0) {
                                     str = "answer:OK";
-                                    keyW.attach(WQServerController.server.ottieniUtente(this.username));
+                                    key.attach(WQServerController.server.ottieniUtente(this.username));
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                     do {
-                                        n = ((SocketChannel) keyW.channel()).write(buff);
+                                        n = ((SocketChannel) key.channel()).write(buff);
                                     } while (n > 0);
                                     WQServerController.gui.updateStatsText(name + " si è connesso.");
                                 } else {
                                     str = "answer:ERR";
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                     do {
-                                        n = ((SocketChannel) keyW.channel()).write(buff);
+                                        n = ((SocketChannel) key.channel()).write(buff);
                                     } while (n > 0);
                                     online = false;
                                 }
@@ -84,7 +83,7 @@ public class WQHandler implements Runnable {
                                 str = "answer:ERR";
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                 do {
-                                    n = ((SocketChannel) keyW.channel()).write(buff);
+                                    n = ((SocketChannel) key.channel()).write(buff);
                                 } while (n > 0);
                             }
                             break;
@@ -93,7 +92,7 @@ public class WQHandler implements Runnable {
                             str = "answer:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
-                                n = ((SocketChannel) keyW.channel()).write(buff);
+                                n = ((SocketChannel) key.channel()).write(buff);
                             } while (n > 0);
                             break;
                         }
@@ -102,7 +101,7 @@ public class WQHandler implements Runnable {
                             str = "answer:OKaddfriend";
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
-                                n = ((SocketChannel) keyW.channel()).write(buff);
+                                n = ((SocketChannel) key.channel()).write(buff);
                             } while (n > 0);
                             break;
                         }
@@ -111,7 +110,7 @@ public class WQHandler implements Runnable {
                             str = "answer:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
-                                n = ((SocketChannel) keyW.channel()).write(buff);
+                                n = ((SocketChannel) key.channel()).write(buff);
                             } while (n > 0);
                             break;
                         }
@@ -120,7 +119,7 @@ public class WQHandler implements Runnable {
                             str = "answer:".concat(points + "");
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
-                                n = ((SocketChannel) keyW.channel()).write(buff);
+                                n = ((SocketChannel) key.channel()).write(buff);
                             } while (n > 0);
                             break;
                         }
@@ -129,7 +128,7 @@ public class WQHandler implements Runnable {
                             str = "answer:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
-                                n = ((SocketChannel) keyW.channel()).write(buff);
+                                n = ((SocketChannel) key.channel()).write(buff);
                             } while (n > 0);
                             break;
                         }
@@ -138,7 +137,7 @@ public class WQHandler implements Runnable {
                             str = "answer:OKchallenge";
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
-                                n = ((SocketChannel) keyW.channel()).write(buff);
+                                n = ((SocketChannel) key.channel()).write(buff);
                             } while (n > 0);
                             String name = received.split(":")[1];
                             WQServerController.server.sfida(this.username, name);

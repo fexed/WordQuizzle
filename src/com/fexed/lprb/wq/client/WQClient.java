@@ -21,8 +21,7 @@ import java.rmi.registry.Registry;
 public class WQClient {
     private int port;
     private SocketChannel skt;
-    private SelectionKey keyW;
-    private SelectionKey keyR;
+    private SelectionKey key;
 
     public int login(String name, String password) {
         //INPUT FIX
@@ -38,17 +37,16 @@ public class WQClient {
                 skt.connect(new InetSocketAddress("127.0.0.1", port));
                 skt.configureBlocking(false);
                 Selector selector = Selector.open();
-                keyW = skt.register(selector, SelectionKey.OP_WRITE);
-                keyR = skt.register(selector, SelectionKey.OP_READ);
+                key = skt.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ);
 
                 String str = "login:" + name + " " + password;
                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                 int n;
-                do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
+                do { n = ((SocketChannel) key.channel()).write(buff); } while (n > 0);
 
                 buff = ByteBuffer.allocate(128);
-                do { buff.clear(); n = ((SocketChannel) keyR.channel()).read(buff); } while (n == 0);
-                do { n = ((SocketChannel) keyR.channel()).read(buff); } while (n > 0);
+                do { buff.clear(); n = ((SocketChannel) key.channel()).read(buff); } while (n == 0);
+                do { n = ((SocketChannel) key.channel()).read(buff); } while (n > 0);
                 buff.flip();
                 String received = StandardCharsets.UTF_8.decode(buff).toString();
                 System.out.println(received);
@@ -56,9 +54,12 @@ public class WQClient {
                 if (command.equals("answer")) {
                     if (received.split(":")[1].equals("OK")) {
                         WQClientController.gui.loggedIn(name);
-                        WQUtente myUser = (WQUtente) keyR.attachment();
-                        if (myUser != null) WQClientController.gui.addAllFriends(myUser.friends);
-                        new Thread(new WQClientReceiver(skt, keyR)).start();
+                        WQUtente myUser = (WQUtente) key.attachment();
+                        if (myUser != null) {
+                            System.out.println(myUser.toString());
+                            WQClientController.gui.addAllFriends(myUser.friends);
+                        }
+                        new Thread(new WQClientReceiver(skt, key)).start();
                         return 0;
                     }
                     else return -1;
@@ -85,7 +86,7 @@ public class WQClient {
         try {
             ByteBuffer buff = ByteBuffer.wrap(txt.getBytes(StandardCharsets.UTF_8));
             int n;
-            do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
+            do { n = ((SocketChannel) key.channel()).write(buff); } while (n > 0);
             WQClientController.gui.updateCommText("(Io): " + txt);
             return 0;
         } catch (IOException ex) { WQClientController.gui.updateCommText(ex.getMessage()); ex.printStackTrace(); }
