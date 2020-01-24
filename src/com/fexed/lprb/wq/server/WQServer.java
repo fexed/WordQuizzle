@@ -19,6 +19,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -103,11 +104,18 @@ public class WQServer extends RemoteServer implements WQInterface {
      * Usata da un utente per aggiungerne un altro alla propria lista amici. L'operazione aggiunge {@code nickAmico} alla lista amici di {@code nickUtente} e viceversa. Non è necessario che {@code nickAmico} accetti l'amicizia.
      * @param nickUtente L'utente che vuole aggiungere alla propria lista amici
      * @param nickAmico L'utente da aggiungere alla lista amici
-     * @return 0 se l'operazione va a buon fine, -1 se {@code nickAmico} non esiste o -2 se l'amicizia è già esistente
+     * @return 0 se l'operazione va a buon fine, -1 se {@code nickAmico} non esiste, -2 se l'amicizia è già esistente, -3 se {@code nickUtente} non esiste
      */
     public int aggiungiAmico(String nickUtente, String nickAmico){
-
-        return -1;
+        if (userBase.containsKey(nickUtente)) {
+            if (userBase.containsKey(nickAmico)) {
+                if (!userBase.get(nickUtente).friends.contains(userBase.get(nickAmico).username)) {
+                    userBase.get(nickUtente).friends.add(nickAmico);
+                    userBase.get(nickAmico).friends.add(nickUtente);
+                    return 0;
+                } else return -2;
+            } else return -1;
+        } else return -3;
     }
 
     /**
@@ -124,6 +132,11 @@ public class WQServer extends RemoteServer implements WQInterface {
         return gson.toJson(friendList.toArray());
     }
 
+    /**
+     * {@code nickUtente} sfida {@code nickAmico} se quest'ultimo appartiene alla lista amici.
+     * @param nickUtente
+     * @param nickAmico
+     */
     public void sfida(String nickUtente, String nickAmico){
 
     }
@@ -143,7 +156,18 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return JSON rappresentante la classifica
      */
     public String mostraClassifica(String nickUtente) {
-        return "";
+        ArrayList<WQUtente> listaOrdinata = new ArrayList<>();
+        for (String name : userBase.get(nickUtente).friends) {
+            listaOrdinata.add(userBase.get(name));
+        }
+        listaOrdinata.sort(new Comparator<WQUtente>() {
+            @Override
+            public int compare(WQUtente o1, WQUtente o2) {
+                return Integer.compare(o1.points, o2.points);
+            }
+        });
+        Gson gson = new Gson();
+        return gson.toJson(listaOrdinata);
     }
 
     /**
