@@ -55,7 +55,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         } else {
             WQUtente user = new WQUtente(nickUtente, password);
             userBase.put(nickUtente, user);
-            WQServerController.gui.addRegistered(nickUtente);
+            WQServerController.gui.addRegistered(user);
             Gson gson = new Gson();
             int n = saveToFile("userBase", gson.toJson(userBase));
             WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato con successo!");
@@ -226,7 +226,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             reader.setLenient(true);
             Type type = new TypeToken<HashMap<String, WQUtente>>(){}.getType();
             userBase = gson.fromJson(reader, type);
-            WQServerController.gui.addAllRegistered(userBase.keySet());
+            WQServerController.gui.addAllRegistered(userBase.values());
         } catch (IOException e) {
             userBase = new HashMap<>();
         }

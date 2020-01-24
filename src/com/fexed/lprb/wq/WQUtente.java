@@ -51,4 +51,9 @@ public class WQUtente {
         this.points = points;
         this.friends = friends;
     }
+
+    @Override
+    public String toString() {
+        return this.username + ": " + this.points  + " punti, " + this.friends.size() + " amici";
+    }
 }

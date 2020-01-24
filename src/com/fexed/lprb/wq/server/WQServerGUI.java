@@ -1,5 +1,6 @@
 package com.fexed.lprb.wq.server;
 
+import com.fexed.lprb.wq.WQUtente;
 import com.fexed.lprb.wq.client.WQClientController;
 
 import javax.swing.*;
@@ -50,8 +51,8 @@ public class WQServerGUI {
     private JButton startBtn;
     private JList<String> onlineList;
     private DefaultListModel<String> onlineListModel;
-    private JList<String> registeredList;
-    private DefaultListModel<String> registeredListModel;
+    private JList<WQUtente> registeredList;
+    private DefaultListModel<WQUtente> registeredListModel;
     public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
     public void serverIsOnline(int port) {
         titleLabel.setForeground(green);
@@ -71,10 +72,10 @@ public class WQServerGUI {
     public void removeOnline(String user) {
         onlineListModel.removeElement(user);
     }
-    public void addRegistered(String user) {
+    public void addRegistered(WQUtente user) {
         registeredListModel.addElement(user);
     }
-    public void addAllRegistered(Collection<? extends String> users ) {
+    public void addAllRegistered(Collection<? extends WQUtente> users ) {
         registeredListModel.addAll(users);
     }
 
