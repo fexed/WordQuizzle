@@ -27,6 +27,7 @@ public class WQClient {
         //INPUT FIX
         name = name.replaceAll(" ", "");
         name = name.replaceAll(":", "");
+        name = name.toLowerCase();
         password = password.replaceAll(" ", "");
         password = password.replaceAll(":", "");
         try {
@@ -76,10 +77,7 @@ public class WQClient {
             String received = StandardCharsets.UTF_8.decode(buff).toString();
             String command = received.split(":")[0];
             if (command.equals("answer")) {
-                String str = "";
-                for (int i = 1; i < received.split(":").length; i++) {
-                    str = str.concat(received.split(":")[i]);
-                }
+                String str = received.substring(command.length()+1);
                 WQClientController.gui.updateCommText(str);
                 return 0;
             } else return -1;

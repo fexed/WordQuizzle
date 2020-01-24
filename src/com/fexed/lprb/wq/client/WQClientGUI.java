@@ -115,7 +115,13 @@ public class WQClientGUI {
         commText.setForeground(txtColor);
         commText.setBackground(primaryDark);
         commText.setFont(stdFontMsg);
+        commText.setEditable(false);
+        commText.setLineWrap(true);
+        commText.setWrapStyleWord(true);
         commText.setBorder(BorderFactory.createEmptyBorder(5, 7, 5, 5));
+        JScrollPane scrollTextArea = new JScrollPane(commText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollTextArea.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        scrollTextArea.setPreferredSize(new Dimension(700, 300));
         JPanel commMsgPane = new JPanel();
         commMsgPane.setBackground(primary);
         commMsgPane.setLayout(new FlowLayout());
@@ -171,7 +177,7 @@ public class WQClientGUI {
         commCommandsPane.add(pointsBtn);
         commCommandsPane.add(rankingBtn);
         commCommandsPane.add(onlineBtn);
-        commPane.add(commText);
+        commPane.add(scrollTextArea);
         commPane.add(Box.createRigidArea(new Dimension(0, 5)));
         commPane.add(commMsgPane);
         centerPane.add(loginPane);
@@ -195,7 +201,7 @@ public class WQClientGUI {
         showLoginDialog();
     }
 
-    private void showTextDialog(String text) {
+    public void showTextDialog(String text) {
         JFrame f = new JFrame();
         JDialog d = new JDialog(f, "Word Quizzle! Info", true);
         d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));

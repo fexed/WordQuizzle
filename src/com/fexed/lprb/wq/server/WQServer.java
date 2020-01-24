@@ -44,7 +44,7 @@ public class WQServer extends RemoteServer implements WQInterface {
     @Override
     public int registraUtente(String nickUtente, String password) throws RemoteException {
         //TODO controlli vari
-        if (userBase.containsKey(nickUtente)) {
+        if (userBase.containsKey(nickUtente.toLowerCase())) {
             return -1;
         } else if (password.equals("")) {
             WQServerController.gui.updateStatsText("Tentativo di registrare l'utente \"" + nickUtente + "\" con password vuota.");
@@ -66,9 +66,9 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return 0 se il login va a buon fine, -1 se ci sono errori
      */
     public int login(String nickUtente, String password){
-        if (userBase.containsKey(nickUtente)) {
-            if (userBase.get(nickUtente).password.equals(password)) {
-                if (!loggedIn.contains(nickUtente)) {
+        if (userBase.containsKey(nickUtente.toLowerCase())) {
+            if (userBase.get(nickUtente.toLowerCase()).password.equals(password)) {
+                if (!loggedIn.contains(nickUtente.toLowerCase())) {
                     loggedIn.add(nickUtente);
                     WQServerController.gui.addOnline(nickUtente);
                     return 0;
@@ -164,8 +164,12 @@ public class WQServer extends RemoteServer implements WQInterface {
                 return Integer.compare(o1.points, o2.points);
             }
         });
+        ArrayList<String> lista = new ArrayList<>();
+        for (WQUtente usr : listaOrdinata) {
+            lista.add(usr.username);
+        }
         Gson gson = new Gson();
-        return gson.toJson(listaOrdinata);
+        return gson.toJson(lista);
     }
 
     /**
@@ -227,14 +231,12 @@ public class WQServer extends RemoteServer implements WQInterface {
      */
     public String getInfos() {
         //TODO migliorare getInfos()
-        String str = "*Utenti registrati:\n";
-        for(String key : userBase.keySet()) {
-            str = str.concat("*-  " + key + ", " + userBase.get(key).points + "\n");
-        }
-
-        str = str.concat("*\n*Utenti online:\n");
-        for(String key : loggedIn) {
-            str = str = str.concat("*-  " + key + "\n");
+        String str = "\n\nWQServer!\n";
+        str = str.concat("Con " + loggedIn.size() + " utenti connessi su " + userBase.size() + " registrati\n");
+        str = str.concat("Online sulla porta " + this.port + " e " + (this.port+1) + "\n");
+        str = str.concat("Utenti registrati:\n");
+        for(WQUtente usr : userBase.values()) {
+            str = str.concat("-  " + usr.username + "\n   " + usr.points + " punti, " + usr.friends.size() + " amici\n");
         }
 
         return str;

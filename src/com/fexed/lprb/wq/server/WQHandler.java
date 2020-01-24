@@ -46,56 +46,94 @@ public class WQHandler implements Runnable {
                     bBuff.flip();
                     String received = StandardCharsets.UTF_8.decode(bBuff).toString();
                     String command = received.split(":")[0];
-                    if (command.equals("login")) {
-                        String name = received.split(":")[1].split(" ")[0];
-                        this.username = name;
-                        String pwd = received.split(":")[1].split(" ")[1];
-                        System.out.println("Verifica " + name + " " + pwd);
-                        n = WQServerController.server.login(name, pwd);
-                        if (n == 0) {
-                            str = "answer:OK";
+                    switch (command) {
+                        case "login":
+                            if (this.username == null) {
+                                String name = received.split(":")[1].split(" ")[0];
+                                this.username = name;
+                                String pwd = received.split(":")[1].split(" ")[1];
+                                System.out.println("Verifica " + name + " " + pwd);
+                                n = WQServerController.server.login(name, pwd);
+                                if (n == 0) {
+                                    str = "answer:OK";
+                                    ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                    do {
+                                        n = ((SocketChannel) keyW.channel()).write(buff);
+                                    } while (n > 0);
+                                    WQServerController.gui.updateStatsText(name + " si è connesso.");
+                                } else {
+                                    str = "answer:ERR";
+                                    ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                    do {
+                                        n = ((SocketChannel) keyW.channel()).write(buff);
+                                    } while (n > 0);
+                                    online = false;
+                                }
+                            } else {
+                                str = "answer:ERR";
+                                ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                do {
+                                    n = ((SocketChannel) keyW.channel()).write(buff);
+                                } while (n > 0);
+                            }
+                            break;
+                        case "showonline": {
+                            String json = WQServerController.server.mostraOnline();
+                            str = "answer:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                            do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                            WQServerController.gui.updateStatsText(name + " si è connesso.");
+                            do {
+                                n = ((SocketChannel) keyW.channel()).write(buff);
+                            } while (n > 0);
+                            break;
                         }
-                        else {
-                            str = "answer:ERR";
+                        case "addfriend": {
+                            //TODO addfriend
+                            str = "answer:OKaddfriend";
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                            do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                            online = false;
+                            do {
+                                n = ((SocketChannel) keyW.channel()).write(buff);
+                            } while (n > 0);
+                            break;
                         }
-                    } else if (command.equals("showonline")) {
-                        String json = WQServerController.server.mostraOnline();
-                        str = "answer:".concat(json);
-                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                        do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                    } else if (command.equals("addfriend")) {
-                        //TODO
-                        str = "answer:OK";
-                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                        do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                    } else if (command.equals("friendlist")) {
-                        String json = WQServerController.server.listaAmici(this.username);
-                        str = "answer:".concat(json);
-                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                        do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                    } else if (command.equals("points")) {
-                        int points = WQServerController.server.mostraPunteggio(this.username);
-                        str = "answer:".concat(points + "");
-                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                        do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                    } else if (command.equals("ranking")) {
-                        String json = WQServerController.server.mostraClassifica(this.username);
-                        str = "answer:".concat(json);
-                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                        do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                    } else if (command.equals("challenge")) {
-                        //TODO
-                        str = "answer:OK";
-                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                        do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
-                    } else {
-                        WQServerController.gui.updateStatsText("(" + username + "): " + received);
+                        case "friendlist": {
+                            String json = WQServerController.server.listaAmici(this.username);
+                            str = "answer:".concat(json);
+                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do {
+                                n = ((SocketChannel) keyW.channel()).write(buff);
+                            } while (n > 0);
+                            break;
+                        }
+                        case "points": {
+                            int points = WQServerController.server.mostraPunteggio(this.username);
+                            str = "answer:".concat(points + "");
+                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do {
+                                n = ((SocketChannel) keyW.channel()).write(buff);
+                            } while (n > 0);
+                            break;
+                        }
+                        case "ranking": {
+                            String json = WQServerController.server.mostraClassifica(this.username);
+                            str = "answer:".concat(json);
+                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do {
+                                n = ((SocketChannel) keyW.channel()).write(buff);
+                            } while (n > 0);
+                            break;
+                        }
+                        case "challenge": {
+                            //TODO challenge
+                            str = "answer:OKchallenge";
+                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do {
+                                n = ((SocketChannel) keyW.channel()).write(buff);
+                            } while (n > 0);
+                            break;
+                        }
+                        default:
+                            WQServerController.gui.updateStatsText("(" + username + "): " + received);
+                            break;
                     }
                 }
             } while (online);
