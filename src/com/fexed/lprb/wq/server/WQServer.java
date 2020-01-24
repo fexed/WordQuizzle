@@ -53,6 +53,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         } else {
             WQUtente user = new WQUtente(nickUtente, password);
             userBase.put(nickUtente, user);
+            WQServerController.gui.addRegistered(nickUtente);
             Gson gson = new Gson();
             int n = saveToFile("userBase", gson.toJson(userBase));
             WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato con successo!");
@@ -223,6 +224,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             reader.setLenient(true);
             Type type = new TypeToken<HashMap<String, WQUtente>>(){}.getType();
             userBase = gson.fromJson(reader, type);
+            WQServerController.gui.addAllRegistered(userBase.keySet());
         } catch (IOException e) {
             userBase = new HashMap<>();
         }
@@ -267,7 +269,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             srvSkt.socket().bind(new InetSocketAddress(porta));
             srvSkt.configureBlocking(false);
             WQServerController.gui.updateStatsText("Online!");
-            WQServerController.gui.serverIsOnline();
+            WQServerController.gui.serverIsOnline(port);
 
             WQServerController.gui.updateStatsText("In ascolto su " + this.port);
             do {

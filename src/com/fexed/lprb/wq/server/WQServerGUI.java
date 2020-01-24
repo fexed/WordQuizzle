@@ -7,6 +7,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.concurrent.Flow;
 
 /**
@@ -46,18 +47,23 @@ public class WQServerGUI {
     private JTextArea statsTxt;
     public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
     private JLabel titleLabel;
+    private JLabel infoLabel;
     private JButton startBtn;
     private JList<String> onlineList;
     private DefaultListModel<String> onlineListModel;
-    public void serverIsOnline() {
+    private JList<String> registeredList;
+    private DefaultListModel<String> registeredListModel;
+    public void serverIsOnline(int port) {
         titleLabel.setForeground(green);
         startBtn.setEnabled(false);
         startBtn.setText("    Server online    ");
+        infoLabel.setText("Online su porta " + port);
     }
     public void serverIsOffline() {
         titleLabel.setForeground(red);
         startBtn.setEnabled(true);
         startBtn.setText("    Avvia server    ");
+        infoLabel.setText("Offline");
     }
     public void addOnline(String user) {
         onlineListModel.addElement(user);
@@ -65,13 +71,19 @@ public class WQServerGUI {
     public void removeOnline(String user) {
         onlineListModel.removeElement(user);
     }
+    public void addRegistered(String user) {
+        registeredListModel.addElement(user);
+    }
+    public void addAllRegistered(Collection<? extends String> users ) {
+        registeredListModel.addAll(users);
+    }
 
     public WQServerGUI() {
         WQServerController.gui = this;
 
         //FRAME INIT
         JFrame w = new JFrame("WordQuizzle Server");
-        w.setSize(400, 600);
+        w.setSize(500, 600);
         w.setLocation(150, 150);
 
         //PANELS AND CONTAINER INIT
@@ -94,14 +106,12 @@ public class WQServerGUI {
         titleLabel = new JLabel("WordQuizzle!", JLabel.CENTER);
         titleLabel.setForeground(txtColor);
         titleLabel.setFont(stdFontBig);
-        JLabel titleBLabel = new JLabel("Server", JLabel.CENTER);
-        titleBLabel.setForeground(txtColor);
-        titleBLabel.setFont(stdFont);
-        northPane.add(Box.createHorizontalGlue());
+        infoLabel = new JLabel("Offline", JLabel.CENTER);
+        infoLabel.setForeground(txtColor);
+        infoLabel.setFont(stdFont);
         northPane.add(titleLabel);
-        northPane.add(Box.createRigidArea(new Dimension(10, 0)));
-        northPane.add(titleBLabel);
         northPane.add(Box.createHorizontalGlue());
+        northPane.add(infoLabel);
 
         //CENTER PANE
         statsTxt = new JTextArea("");
@@ -128,13 +138,36 @@ public class WQServerGUI {
         });
         JButton otherBtn = initThemedButton("Altro...");
         otherBtn.setEnabled(false);
+        JLabel onlineListLbl =  new JLabel("Utenti online", JLabel.LEFT);
+        onlineListLbl.setForeground(txtColor);
+        onlineListLbl.setFont(stdFont);
         onlineListModel = new DefaultListModel<>();
-        onlineListModel.addElement("Utenti online");
         onlineList = new JList<>(onlineListModel);
         onlineList.setBackground(primaryLight);
         onlineList.setForeground(txtColor);
+        onlineList.setPreferredSize(new Dimension(200, 150));
+        onlineList.setMaximumSize(new Dimension(200, 150));
+        onlineList.setMinimumSize(new Dimension(200, 50));
         onlineList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        controlPane.add(onlineListLbl);
+        controlPane.add(Box.createRigidArea(new Dimension(0, 5)));
         controlPane.add(onlineList);
+        controlPane.add(Box.createRigidArea(new Dimension(0, 10)));
+        JLabel registeredListLbl =  new JLabel("Utenti registrati", JLabel.LEFT);
+        registeredListLbl.setForeground(txtColor);
+        registeredListLbl.setFont(stdFont);
+        registeredListModel = new DefaultListModel<>();
+        registeredList = new JList<>(registeredListModel);
+        registeredList.setBackground(primaryLight);
+        registeredList.setForeground(txtColor);
+        registeredList.setPreferredSize(new Dimension(200, 150));
+        registeredList.setMaximumSize(new Dimension(200, 150));
+        registeredList.setMinimumSize(new Dimension(200, 50));
+        registeredList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        controlPane.add(registeredListLbl);
+        controlPane.add(Box.createRigidArea(new Dimension(0, 5)));
+        controlPane.add(registeredList);
+        controlPane.add(Box.createRigidArea(new Dimension(0, 20)));
         controlPane.add(Box.createVerticalGlue());
         controlPane.add(startBtn);
         controlPane.add(Box.createRigidArea(new Dimension(0, 10)));
