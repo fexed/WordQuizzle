@@ -69,7 +69,20 @@ public class WQClient {
             int n;
             do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
             WQClientController.gui.updateCommText("(Io): " + txt);
-            return 0;
+            buff = ByteBuffer.allocate(128);
+            do { buff.clear(); n = ((SocketChannel) keyR.channel()).read(buff); } while (n == 0);
+            do { n = ((SocketChannel) keyR.channel()).read(buff); } while (n > 0);
+            buff.flip();
+            String received = StandardCharsets.UTF_8.decode(buff).toString();
+            String command = received.split(":")[0];
+            if (command.equals("answer")) {
+                String str = "";
+                for (int i = 1; i < received.split(":").length; i++) {
+                    str = str.concat(received.split(":")[i]);
+                }
+                WQClientController.gui.updateCommText(str);
+                return 0;
+            } else return -1;
         } catch (IOException ex) { WQClientController.gui.updateCommText(ex.getMessage()); ex.printStackTrace(); }
         return -1;
     }

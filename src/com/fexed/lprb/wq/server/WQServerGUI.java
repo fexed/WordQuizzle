@@ -134,7 +134,6 @@ public class WQServerGUI {
         onlineList.setBackground(primaryLight);
         onlineList.setForeground(txtColor);
         onlineList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        onlineList.setBounds(0, 0, 150, 400);
         controlPane.add(onlineList);
         controlPane.add(Box.createVerticalGlue());
         controlPane.add(startBtn);

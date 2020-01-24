@@ -92,10 +92,7 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return JSON rappresentante la lista degli utenti online ({@code ArraList<WQUtente>})
      */
     public String mostraOnline(){
-        ArrayList<WQUtente> online = new ArrayList<>();
-        for (String name : loggedIn) {
-            online.add(userBase.get(name));
-        }
+        ArrayList<String> online = new ArrayList<>(loggedIn);
         Gson gson = new Gson();
         return gson.toJson(online);
     }
@@ -160,6 +157,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         for (String name : userBase.get(nickUtente).friends) {
             listaOrdinata.add(userBase.get(name));
         }
+        listaOrdinata.add(userBase.get(nickUtente));
         listaOrdinata.sort(new Comparator<WQUtente>() {
             @Override
             public int compare(WQUtente o1, WQUtente o2) {

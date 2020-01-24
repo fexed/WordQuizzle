@@ -119,6 +119,9 @@ public class WQClientGUI {
         JPanel commMsgPane = new JPanel();
         commMsgPane.setBackground(primary);
         commMsgPane.setLayout(new FlowLayout());
+        JPanel commCommandsPane = new JPanel();
+        commCommandsPane.setBackground(primary);
+        commCommandsPane.setLayout(new FlowLayout());
         JTextField inputFld = initThemedTextField(15);
         JButton sendBtn = initThemedButton("Invia");
         sendBtn.addActionListener(new ActionListener() {
@@ -126,16 +129,54 @@ public class WQClientGUI {
             public void actionPerformed(ActionEvent e) {
                 String txt = inputFld.getText();
                 inputFld.setText("");
-                WQClientController.client.send(txt);
+                int n = WQClientController.client.send(txt);
+                if (n == -1) showTextDialog("Errore");
+            }
+        });
+        JButton addFriendBtn = initThemedButton("Aggiungi amico");
+        addFriendBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int n = WQClientController.client.send("addfriend");
+                if (n == -1) showTextDialog("Errore");
+            }
+        });
+        JButton pointsBtn = initThemedButton("Punteggio");
+        pointsBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int n = WQClientController.client.send("points");
+                if (n == -1) showTextDialog("Errore");
+            }
+        });
+        JButton rankingBtn = initThemedButton("Classifica");
+        rankingBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int n = WQClientController.client.send("ranking");
+                if (n == -1) showTextDialog("Errore");
+            }
+        });
+        JButton onlineBtn = initThemedButton("Utenti online");
+        onlineBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int n = WQClientController.client.send("showonline");
+                if (n == -1) showTextDialog("Errore");
             }
         });
         commMsgPane.add(inputFld);
         commMsgPane.add(sendBtn);
+        commCommandsPane.add(addFriendBtn);
+        commCommandsPane.add(pointsBtn);
+        commCommandsPane.add(rankingBtn);
+        commCommandsPane.add(onlineBtn);
         commPane.add(commText);
         commPane.add(Box.createRigidArea(new Dimension(0, 5)));
         commPane.add(commMsgPane);
         centerPane.add(loginPane);
         centerPane.add(commPane);
+        centerPane.add(commCommandsPane);
 
         //SOUTH PANE
         JLabel footerLabel = new JLabel("Federico Matteoni - 530257", JLabel.RIGHT);
