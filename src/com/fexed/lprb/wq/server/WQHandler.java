@@ -66,6 +66,7 @@ public class WQHandler implements Runnable {
                                 n = WQServerController.server.login(name, pwd, this);
                                 if (n == 0) {
                                     str = "answer:OK";
+                                    keyW.attach(WQServerController.server.ottieniUtente(this.username));
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                     do {
                                         n = ((SocketChannel) keyW.channel()).write(buff);

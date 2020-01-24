@@ -1,6 +1,7 @@
 package com.fexed.lprb.wq.client;
 
 import com.fexed.lprb.wq.WQInterface;
+import com.fexed.lprb.wq.WQUtente;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -55,6 +56,8 @@ public class WQClient {
                 if (command.equals("answer")) {
                     if (received.split(":")[1].equals("OK")) {
                         WQClientController.gui.loggedIn(name);
+                        WQUtente myUser = (WQUtente) keyR.attachment();
+                        if (myUser != null) WQClientController.gui.addAllFriends(myUser.friends);
                         new Thread(new WQClientReceiver(skt, keyR)).start();
                         return 0;
                     }

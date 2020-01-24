@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.NoRouteToHostException;
+import java.util.Collection;
 import java.util.concurrent.Flow;
 
 /**
@@ -67,6 +68,9 @@ public class WQClientGUI {
     }
     public void addFriend(String friend) {
         friendListModel.addElement(friend);
+    }
+    public void addAllFriends(Collection<? extends String> friends) {
+        friendListModel.addAll(friends);
     }
 
 

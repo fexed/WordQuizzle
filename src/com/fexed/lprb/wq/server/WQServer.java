@@ -64,6 +64,15 @@ public class WQServer extends RemoteServer implements WQInterface {
     }
 
     /**
+     * Ritorna l'utente desiderato
+     * @param nickUtente L'utente da ottenere
+     * @return L'utente
+     */
+    public WQUtente ottieniUtente(String nickUtente) {
+        return userBase.get(nickUtente);
+    }
+
+    /**
      * Procedura di login per un utente già registrato
      * @param nickUtente Il nickname dell'utente
      * @param password La password dell'utente
