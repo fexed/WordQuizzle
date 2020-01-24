@@ -190,6 +190,9 @@ public class WQServerGUI {
         p.add(southPane, BorderLayout.PAGE_END);
         w.setContentPane(p);
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        w.pack();
+        w.setMinimumSize(w.getSize());
+        w.setSize(500, 600);
         w.setVisible(true);
     }
 
