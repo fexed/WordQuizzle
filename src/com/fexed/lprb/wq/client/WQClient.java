@@ -24,6 +24,7 @@ public class WQClient {
     private SelectionKey keyR;
 
     public int login(String name, String password) {
+        //INPUT FIX
         name = name.replaceAll(" ", "");
         name = name.replaceAll(":", "");
         password = password.replaceAll(" ", "");
@@ -46,7 +47,9 @@ public class WQClient {
                 buff = ByteBuffer.allocate(128);
                 do { buff.clear(); n = ((SocketChannel) keyR.channel()).read(buff); } while (n == 0);
                 do { n = ((SocketChannel) keyR.channel()).read(buff); } while (n > 0);
+                buff.flip();
                 String received = StandardCharsets.UTF_8.decode(buff).toString();
+                System.out.println(received);
                 String command = received.split(":")[0];
                 if (command.equals("answer")) {
                     if (received.split(":")[1].equals("OK")) {
@@ -78,7 +81,6 @@ public class WQClient {
             wq = (WQInterface) r.lookup("WordQuizzle_530527");
             n = wq.registraUtente(name, password);
             if (n == 0) WQClientController.gui.updateCommText("Utente \"" + name + "\" registrato con successo.");
-            else if (n == -1) WQClientController.gui.updateCommText("Utente \"" + name + "\" già registrato.");
             else if (n == -2) WQClientController.gui.updateCommText("Errore, password vuota per \"" + name + "\"");
             return n;
         } catch (RemoteException | NotBoundException e) { WQClientController.gui.updateCommText(e.getMessage()); }

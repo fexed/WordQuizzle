@@ -23,7 +23,6 @@ public class WQHandler implements Runnable {
     @Override
     public void run() {
         ByteBuffer bBuff = ByteBuffer.allocate(128);
-        StringBuilder sBuff = new StringBuilder();
         String str;
         SelectionKey keyR, keyW;
 
@@ -45,11 +44,13 @@ public class WQHandler implements Runnable {
                     } while (n > 0);
                     bBuff.flip();
                     String received = StandardCharsets.UTF_8.decode(bBuff).toString();
+                    System.out.println("Ricevo " + received);
                     String command = received.split(":")[0];
                     if (command.equals("login")) {
                         String name = received.split(":")[1].split(" ")[0];
                         this.username = name;
                         String pwd = received.split(":")[1].split(" ")[1];
+                        System.out.println("Verifica " + name + " " + pwd);
                         n = WQServerController.server.login(name, pwd);
                         if (n == 0) {
                             str = "answer:OK";
@@ -57,13 +58,19 @@ public class WQHandler implements Runnable {
                             do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
                             WQServerController.gui.updateStatsText(name + " si è connesso.");
                         }
-                        else online = false;
+                        else {
+                            str = "answer:ERR";
+                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
+                            online = false;
+                        }
                     } else {
                         WQServerController.gui.updateStatsText("(" + username + "): " + received);
                     }
                 }
             } while (online);
-        } catch (IOException ex) { WQServerController.gui.updateStatsText(ex.getMessage()); ex.printStackTrace(); }
+        } catch (IOException ex) { ex.printStackTrace(); }
+        WQServerController.gui.updateStatsText(this.username + " è andato offline.");
         WQServerController.server.logout(username);
     }
 }

@@ -196,11 +196,11 @@ public class WQClientGUI {
             public void actionPerformed(ActionEvent e) {
                 String name = dUserFld.getText();
                 String pwd = String.copyValueOf(dPwdFld.getPassword());
-                d.setVisible(false);
                 int n = WQClientController.client.login(name, pwd);
+                d.setVisible(false);
                 if (n == -1) {
-                    showLoginDialog();
                     showTextDialog("Errore nella procedura di login: password vuota.");
+                    showLoginDialog();
                 }
             }
         });
