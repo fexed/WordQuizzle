@@ -1,6 +1,6 @@
 package com.fexed.lprb.wq.client;
 
-import com.fexed.lprb.wq.server.WQInterface;
+import com.fexed.lprb.wq.WQInterface;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

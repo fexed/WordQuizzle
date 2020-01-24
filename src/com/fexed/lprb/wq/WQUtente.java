@@ -1,4 +1,4 @@
-package com.fexed.lprb.wq.server;
+package com.fexed.lprb.wq;
 
 import java.util.ArrayList;
 

@@ -1,5 +1,7 @@
 package com.fexed.lprb.wq.server;
 
+import com.fexed.lprb.wq.WQInterface;
+import com.fexed.lprb.wq.WQUtente;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
