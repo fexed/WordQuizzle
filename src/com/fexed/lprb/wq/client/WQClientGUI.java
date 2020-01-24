@@ -115,7 +115,9 @@ public class WQClientGUI {
         sendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                WQClientController.client.send(inputFld.getText());
+                String txt = inputFld.getText();
+                inputFld.setText("");
+                WQClientController.client.send(txt);
             }
         });
         commMsgPane.add(inputFld);
@@ -138,6 +140,7 @@ public class WQClientGUI {
         p.add(southPane, BorderLayout.PAGE_END);
         w.setContentPane(p);
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        w.getRootPane().setDefaultButton(sendBtn);
         w.setVisible(true);
         showLoginDialog();
     }
