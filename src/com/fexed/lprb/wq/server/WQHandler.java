@@ -64,7 +64,7 @@ public class WQHandler implements Runnable {
                                 this.username = name;
                                 String pwd = received.split(":")[1].split(" ")[1];
                                 System.out.println("Verifica " + name + " " + pwd);
-                                n = WQServerController.server.login(name, pwd, this);
+                                n = this.server.login(name, pwd, this);
                                 if (n == 0) {
                                     str = "answer:OK";
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
@@ -73,7 +73,7 @@ public class WQHandler implements Runnable {
                                     } while (n > 0);
                                     WQServerController.gui.updateStatsText(name + " si è connesso.");
                                     Gson gson = new Gson();
-                                    str = gson.toJson(WQServerController.server.ottieniUtente(this.username));
+                                    str = gson.toJson(this.server.ottieniUtente(this.username));
                                     buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                     do {
                                         n = ((SocketChannel) key.channel()).write(buff);
@@ -95,7 +95,7 @@ public class WQHandler implements Runnable {
                             }
                             break;
                         case "showonline": {
-                            String json = WQServerController.server.mostraOnline();
+                            String json = this.server.mostraOnline();
                             str = "answer:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
@@ -104,16 +104,44 @@ public class WQHandler implements Runnable {
                             break;
                         }
                         case "addfriend": {
-                            //TODO addfriend
-                            str = "answer:OKaddfriend";
-                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                            do {
-                                n = ((SocketChannel) key.channel()).write(buff);
-                            } while (n > 0);
+                            try {
+                                String name = received.split(":")[1];
+                                n = this.server.aggiungiAmico(this.username, name);
+                                if (n == 0) { //amicizia creata
+                                    str = "answer:OKFREN";
+                                    ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                    do {
+                                        n = ((SocketChannel) key.channel()).write(buff);
+                                    } while (n > 0);
+                                    Gson gson = new Gson();
+                                    str = gson.toJson(this.server.ottieniUtente(this.username));
+                                    buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                    do {
+                                        n = ((SocketChannel) key.channel()).write(buff);
+                                    } while (n > 0);
+                                } else {
+                                    str = "answer:ERR ";
+                                    if (n == -1) str = str.concat(name + " non esistente.");
+                                    else if (n == -2) str = str.concat("Sei già amico con " + name);
+                                    else if (n == -3)
+                                        str = str.concat(this.username + " non esistente."); //non dovrebbe mai succedere
+                                    ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                    do {
+                                        n = ((SocketChannel) key.channel()).write(buff);
+                                    } while (n > 0);
+                                }
+                            } catch (Exception ex) {
+                                str = "answer:ERR " + ex.getMessage();
+                                ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                do {
+                                    n = ((SocketChannel) key.channel()).write(buff);
+                                } while (n > 0);
+                                WQServerController.gui.updateStatsText(ex.getMessage());
+                            }
                             break;
                         }
                         case "friendlist": {
-                            String json = WQServerController.server.listaAmici(this.username);
+                            String json = this.server.listaAmici(this.username);
                             str = "answer:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
@@ -122,7 +150,7 @@ public class WQHandler implements Runnable {
                             break;
                         }
                         case "points": {
-                            int points = WQServerController.server.mostraPunteggio(this.username);
+                            int points = this.server.mostraPunteggio(this.username);
                             str = "answer:".concat(points + "");
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
@@ -131,7 +159,7 @@ public class WQHandler implements Runnable {
                             break;
                         }
                         case "ranking": {
-                            String json = WQServerController.server.mostraClassifica(this.username);
+                            String json = this.server.mostraClassifica(this.username);
                             str = "answer:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
@@ -147,7 +175,7 @@ public class WQHandler implements Runnable {
                                 n = ((SocketChannel) key.channel()).write(buff);
                             } while (n > 0);
                             String name = received.split(":")[1];
-                            WQServerController.server.sfida(this.username, name);
+                            this.server.sfida(this.username, name);
                             break;
                         }
                         default:
@@ -158,6 +186,6 @@ public class WQHandler implements Runnable {
             } while (online);
         } catch (Exception ex) { ex.printStackTrace(); }
         WQServerController.gui.updateStatsText(this.username + " è andato offline.");
-        WQServerController.server.logout(username);
+        this.server.logout(username);
     }
 }

@@ -169,8 +169,44 @@ public class WQClientGUI {
         addFriendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int n = WQClientController.client.send("addfriend");
-                if (n == -1) showTextDialog("Errore");
+                JFrame f = new JFrame();
+                JDialog d = new JDialog(f, "WordQuizzle! Aggiungi un amico", true);
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+                panel.setBackground(primaryLight);
+                panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                JLabel infoLabel = initThemedLabel("Inserisci il nickname dell'utente che vuoi aggiungere come amico.", JLabel.CENTER);
+                JTextField inputFld = initThemedTextField(10);
+                JButton confirmBtn = initThemedButton("Aggiungi");
+                JButton cancelBtn = initThemedButton("Annulla");
+                panel.add(infoLabel);
+                panel.add(inputFld);
+                JPanel btnPanel = new JPanel();
+                btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.LINE_AXIS));
+                btnPanel.add(confirmBtn);
+                btnPanel.add(cancelBtn);
+                panel.add(btnPanel);
+
+                confirmBtn.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        d.setVisible(false);
+                        String nickAmico = inputFld.getText();
+                        int n = WQClientController.client.send("addfriend:" + nickAmico);
+                        if (n == -1) showTextDialog("Errore");
+                    }
+                });
+                cancelBtn.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        d.setVisible(false);
+                    }
+                });
+                d.getRootPane().setDefaultButton(confirmBtn);
+                d.setContentPane(panel);
+                d.pack();
+                d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
+                d.setVisible(true);
             }
         });
         JButton pointsBtn = initThemedButton("Punteggio");

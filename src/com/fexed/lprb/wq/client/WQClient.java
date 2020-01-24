@@ -81,8 +81,36 @@ public class WQClient {
     public int receive(String received) {
         String command = received.split(":")[0];
         if (command.equals("answer")) {
-            String str = received.substring(command.length()+1);
-            WQClientController.gui.updateCommText(str);
+            String response = received.split(":")[1];
+            if (response.equals("OKFREN")) {
+                try {
+                    WQUtente myUser = null;
+                    int n;
+                    Gson gson = new Gson();
+                    ByteBuffer buff = ByteBuffer.allocate(128);
+                    do {
+                        buff.clear();
+                        n = ((SocketChannel) key.channel()).read(buff);
+                    } while (n == 0);
+                    do {
+                        n = ((SocketChannel) key.channel()).read(buff);
+                    } while (n > 0);
+                    buff.flip();
+                    received = StandardCharsets.UTF_8.decode(buff).toString();
+                    myUser = gson.fromJson(received, WQUtente.class);
+                    if (myUser != null) {
+                        System.out.println(myUser.toString());
+                        WQClientController.gui.addAllFriends(myUser.friends);
+                    }
+                } catch (Exception ex) {
+                    String str = received.substring(command.length() + 1);
+                    WQClientController.gui.updateCommText(str);
+                    WQClientController.gui.updateCommText(ex.getMessage());
+                }
+            } else {
+                String str = received.substring(command.length() + 1);
+                WQClientController.gui.updateCommText(str);
+            }
             return 0;
         } else if (command.equals("notif")) {
             String str = received.substring(command.length()+1);

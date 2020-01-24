@@ -56,8 +56,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             WQUtente user = new WQUtente(nickUtente, password);
             userBase.put(nickUtente, user);
             WQServerController.gui.addRegistered(user);
-            Gson gson = new Gson();
-            int n = saveToFile("userBase", gson.toJson(userBase));
+            saveServer();
             WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato con successo!");
             return 0;
         }
@@ -122,6 +121,7 @@ public class WQServer extends RemoteServer implements WQInterface {
                 if (!userBase.get(nickUtente).friends.contains(userBase.get(nickAmico).username)) {
                     userBase.get(nickUtente).friends.add(nickAmico);
                     userBase.get(nickAmico).friends.add(nickUtente);
+                    saveServer();
                     return 0;
                 } else return -2;
             } else return -1;
@@ -240,6 +240,14 @@ public class WQServer extends RemoteServer implements WQInterface {
             userBase = new HashMap<>();
         }
         loggedIn = new HashMap<>();
+    }
+
+    /**
+     * Salva su file i dati del server
+     */
+    public void saveServer() {
+        Gson gson = new Gson();
+        int n = saveToFile("userBase", gson.toJson(userBase));
     }
 
     /**
