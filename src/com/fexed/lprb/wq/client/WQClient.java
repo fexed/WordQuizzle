@@ -68,6 +68,7 @@ public class WQClient {
             ByteBuffer buff = ByteBuffer.wrap(txt.getBytes(StandardCharsets.UTF_8));
             int n;
             do { n = ((SocketChannel) keyW.channel()).write(buff); } while (n > 0);
+            WQClientController.gui.updateCommText("(Io): " + txt);
             return 0;
         } catch (IOException ex) { WQClientController.gui.updateCommText(ex.getMessage()); ex.printStackTrace(); }
         return -1;

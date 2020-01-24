@@ -16,6 +16,8 @@ public class WQClientGUI {
     private Color primaryDark = Color.decode("#07243C");
     private Color accent = Color.decode("#C61774");
     private Color txtColor = Color.decode("#F4F5F0");
+    private Color green = Color.decode("#6F9A3E");
+    private Color red = Color.decode("#9A3E42");
     private Font stdFontBig = new Font("Sans-Serif", Font.BOLD, 20);
     private Font stdFont = new Font("Sans-Serif", Font.PLAIN, 12);
     private Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
@@ -53,7 +55,13 @@ public class WQClientGUI {
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
     private JLabel loginNameLbl;
     private JButton loginBtn;
-    public void loggedIn(String username) { loginNameLbl.setText("Username: " + username); loginBtn.setEnabled(false); }
+    public void loggedIn(String username) {
+        loginNameLbl.setText(username);
+        loginNameLbl.setForeground(green);
+        loginBtn.setEnabled(false);
+        loginBtn.setVisible(false);
+        loginBtn.setText("    Loggato    ");
+    }
 
     public WQClientGUI() {
         WQClientController.gui = this;
@@ -209,6 +217,8 @@ public class WQClientGUI {
         });
         d.getContentPane().add(dLoginBtn);
         d.setSize(200, 200);
+        d.setLocation(950, 450);
+        d.getRootPane().setDefaultButton(dLoginBtn);
         d.setResizable(false);
         d.setVisible(true);
     }
