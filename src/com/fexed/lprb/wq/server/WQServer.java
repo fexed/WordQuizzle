@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class WQServer extends RemoteServer implements WQInterface {
     private boolean running;
-    private HashMap<String, String> userBase;
+    private HashMap<String, WQUtente> userBase;
     private ArrayList<String> loggedIn;
     private int port;
 
@@ -40,7 +40,8 @@ public class WQServer extends RemoteServer implements WQInterface {
             WQServerController.gui.updateStatsText("Tentativo di registrare l'utente \"" + nickUtente + "\" con password vuota.");
             return -2;
         } else {
-            userBase.put(nickUtente, password);
+            WQUtente user = new WQUtente(nickUtente, password);
+            userBase.put(nickUtente, user);
             Gson gson = new Gson();
             int n = saveToFile("userBase", gson.toJson(userBase));
             WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato con successo!");
@@ -50,7 +51,7 @@ public class WQServer extends RemoteServer implements WQInterface {
 
     public int login(String nickUtente, String password){
         if (userBase.containsKey(nickUtente)) {
-            if (userBase.get(nickUtente).equals(password)) {
+            if (userBase.get(nickUtente).password.equals(password)) {
                 if (!loggedIn.contains(nickUtente)) {
                     loggedIn.add(nickUtente);
                     WQServerController.gui.addOnline(nickUtente);
@@ -121,7 +122,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             Gson gson = new Gson();
             JsonReader reader = new JsonReader(new StringReader(userBaseJson));
             reader.setLenient(true);
-            Type type = new TypeToken<HashMap<String, String>>(){}.getType();
+            Type type = new TypeToken<HashMap<String, WQUtente>>(){}.getType();
             userBase = gson.fromJson(reader, type);
         } catch (IOException e) {
             userBase = new HashMap<>();
@@ -132,7 +133,7 @@ public class WQServer extends RemoteServer implements WQInterface {
     public String getInfos() {
         String str = "*Utenti registrati:\n";
         for(String key : userBase.keySet()) {
-            str = str.concat("*-  " + key + ", " + userBase.get(key) + "\n");
+            str = str.concat("*-  " + key + ", " + userBase.get(key).points + "\n");
         }
 
         str = str.concat("*\n*Utenti online:\n");
