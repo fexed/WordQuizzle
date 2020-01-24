@@ -45,7 +45,6 @@ public class WQServerGUI {
 
     //COMPONENTS
     private JTextArea statsTxt;
-    public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
     private JLabel titleLabel;
     private JLabel infoLabel;
     private JButton startBtn;
@@ -53,6 +52,7 @@ public class WQServerGUI {
     private DefaultListModel<String> onlineListModel;
     private JList<String> registeredList;
     private DefaultListModel<String> registeredListModel;
+    public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
     public void serverIsOnline(int port) {
         titleLabel.setForeground(green);
         startBtn.setEnabled(false);

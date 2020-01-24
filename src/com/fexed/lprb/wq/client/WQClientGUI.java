@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.NoRouteToHostException;
 import java.util.concurrent.Flow;
 
 /**
@@ -52,17 +53,22 @@ public class WQClientGUI {
 
     //COMPONENTS
     private JTextArea commText;
-    public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
     private JLabel loginNameLbl;
     private JButton loginBtn;
+    private JList<String> friendList;
+    private DefaultListModel<String> friendListModel;
+    public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
     public void loggedIn(String username) {
         loginNameLbl.setText(username);
         loginNameLbl.setForeground(green);
-        loginNameLbl.setFont(stdFontBig);
         loginBtn.setEnabled(false);
         loginBtn.setVisible(false);
         loginBtn.setText("    Loggato    ");
     }
+    public void addFriend(String friend) {
+        friendListModel.addElement(friend);
+    }
+
 
     public WQClientGUI() {
         WQClientController.gui = this;
@@ -79,9 +85,10 @@ public class WQClientGUI {
         JPanel northPane = new JPanel();
         northPane.setBackground(primary);
         northPane.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
+        northPane.setLayout(new BoxLayout(northPane, BoxLayout.LINE_AXIS));
         JPanel centerPane = new JPanel();
         centerPane.setBackground(primary);
-        centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.PAGE_AXIS));
+        centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.LINE_AXIS));
         JPanel southPane = new JPanel();
         southPane.setBackground(primary);
         southPane.setLayout(new BoxLayout(southPane, BoxLayout.LINE_AXIS));
@@ -91,7 +98,6 @@ public class WQClientGUI {
         JLabel titleLabel = initThemedLabelBig("WordQuizzle!", JLabel.CENTER);
         northPane.add(titleLabel);
 
-        //CENTER PANE
         JPanel loginPane = new JPanel();
         loginPane.setBackground(primary);
         loginPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -103,9 +109,25 @@ public class WQClientGUI {
                 showLoginDialog();
             }
         });
-        loginNameLbl = initThemedLabel("<login non eseguito>", JLabel.LEFT);
+        JLabel loginStatusLbl = initThemedLabel("Login: ", JLabel.LEFT);
+        loginNameLbl = initThemedLabel("<non eseguito>", JLabel.LEFT);
+        loginPane.add(loginStatusLbl);
         loginPane.add(loginNameLbl);
         loginPane.add(loginBtn);
+        northPane.add(loginPane);
+
+        //CENTER PANE
+        friendListModel = new DefaultListModel<>();
+        friendList = new JList<>(friendListModel);
+        friendList.setBackground(primaryLight);
+        friendList.setPreferredSize(new Dimension(200, 200));
+        friendList.setMaximumSize(new Dimension(200, 1024));
+        friendList.setMinimumSize(new Dimension(200, 50));
+        friendList.setForeground(txtColor);
+        //dimensions
+        friendList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        centerPane.add(friendList);
+        centerPane.add(Box.createRigidArea(new Dimension(10, 0)));
 
         JPanel commPane = new JPanel();
         commPane.setBackground(primary);
@@ -121,7 +143,7 @@ public class WQClientGUI {
         commText.setBorder(BorderFactory.createEmptyBorder(5, 7, 5, 5));
         JScrollPane scrollTextArea = new JScrollPane(commText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollTextArea.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        scrollTextArea.setPreferredSize(new Dimension(700, 300));
+        scrollTextArea.setPreferredSize(new Dimension(0, 300));
         JPanel commMsgPane = new JPanel();
         commMsgPane.setBackground(primary);
         commMsgPane.setLayout(new FlowLayout());
@@ -180,9 +202,9 @@ public class WQClientGUI {
         commPane.add(scrollTextArea);
         commPane.add(Box.createRigidArea(new Dimension(0, 5)));
         commPane.add(commMsgPane);
-        centerPane.add(loginPane);
+        commPane.add(Box.createRigidArea(new Dimension(0, 5)));
+        commPane.add(commCommandsPane);
         centerPane.add(commPane);
-        centerPane.add(commCommandsPane);
 
         //SOUTH PANE
         JLabel footerLabel = new JLabel("Federico Matteoni - 530257", JLabel.RIGHT);
@@ -198,6 +220,8 @@ public class WQClientGUI {
         w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         w.getRootPane().setDefaultButton(sendBtn);
         w.setVisible(true);
+        w.pack();
+        w.setMinimumSize(w.getSize());
         showLoginDialog();
     }
 
