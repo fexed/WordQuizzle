@@ -51,9 +51,11 @@ public class WQServer extends RemoteServer implements WQInterface {
     public int login(String nickUtente, String password){
         if (userBase.containsKey(nickUtente)) {
             if (userBase.get(nickUtente).equals(password)) {
-                loggedIn.add(nickUtente);
-                WQServerController.gui.addOnline(nickUtente);
-                return 0;
+                if (!loggedIn.contains(nickUtente)) {
+                    loggedIn.add(nickUtente);
+                    WQServerController.gui.addOnline(nickUtente);
+                    return 0;
+                } else return -1;
             }
             else return -1;
         } else return -1;
