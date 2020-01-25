@@ -6,15 +6,16 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * Thread che ascolta le comunicazioni in arrivo dal server
  * @author Federico Matteoni
  */
 public class WQClientReceiver implements Runnable {
     private SocketChannel skt;
     private SelectionKey key;
 
-    public WQClientReceiver(SocketChannel skt, SelectionKey keyR) {
+    public WQClientReceiver(SocketChannel skt, SelectionKey key) {
         this.skt = skt;
-        this.key = keyR;
+        this.key = key;
     }
 
     @Override
@@ -24,6 +25,8 @@ public class WQClientReceiver implements Runnable {
                 ByteBuffer buff = ByteBuffer.allocate(128);
                 int n;
                 do {
+                    try { Thread.sleep(100); }
+                    catch (InterruptedException ignored) {}
                     buff.clear();
                     n = ((SocketChannel) key.channel()).read(buff);
                 } while (n == 0);

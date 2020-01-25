@@ -1,50 +1,20 @@
 package com.fexed.lprb.wq.server;
 
+import com.fexed.lprb.wq.WQGUI;
 import com.fexed.lprb.wq.WQUtente;
-import com.fexed.lprb.wq.client.WQClientController;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.concurrent.Flow;
 
 /**
+ * Implementazione della GUI del server
  * @author Federico Matteoni
  */
-public class WQServerGUI {
-    //THEME
-    private Color primary = Color.decode("#0F4C81");
-    private Color primaryLight = Color.decode("#1774C6");
-    private Color primaryDark = Color.decode("#07243C");
-    private Color accent = Color.decode("#C61774");
-    private Color txtColor = Color.decode("#F4F5F0");
-    private Color green = Color.decode("#6F9A3E");
-    private Color red = Color.decode("#9A3E42");
-    private Font stdFontBig = new Font("Sans-Serif", Font.BOLD, 20);
-    private Font stdFont = new Font("Sans-Serif", Font.PLAIN, 12);
-    private Font stdFontMsg = new Font("Monospaced", Font.PLAIN, 12);
-    private Font stdFontSmall = new Font("Sans-Serif", Font.BOLD, 8);
-
-    private JButton initThemedButton(String text) {
-        JButton btn = new JButton("    " + text + "    ");
-        btn.setBackground(primaryDark);
-        btn.setForeground(txtColor);
-        btn.setFont(stdFont);
-        btn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryLight));
-        return btn;
-    }
-    private JTextField initThemedTextField(int columns) {
-        JTextField fld = new JTextField(columns);
-        fld.setBackground(txtColor);
-        fld.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, primaryDark));
-        fld.setFont(stdFont);
-        return fld;
-    }
-
-    //COMPONENTS
+public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
+    //SERVER COMPONENTS
     private JTextArea statsTxt;
     private JLabel titleLabel;
     private JLabel infoLabel;

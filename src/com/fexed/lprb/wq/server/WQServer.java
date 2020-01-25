@@ -10,7 +10,6 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
@@ -29,12 +28,28 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Il server di WordQuizzle
  * @author Federico Matteoni
  */
 public class WQServer extends RemoteServer implements WQInterface {
+    /**
+     * Flag per tenere il server in esecuzione o avviare la procedura di spegnimento
+     */
     private boolean running;
+
+    /**
+     * Gli utenti registrati
+     */
     private HashMap<String, WQUtente> userBase;
+
+    /**
+     * Gli utenti attualmente collegati
+     */
     private HashMap<String, WQHandler> loggedIn;
+
+    /**
+     * La porta di ascolto del server
+     */
     private int port;
 
     /**
@@ -243,7 +258,7 @@ public class WQServer extends RemoteServer implements WQInterface {
     }
 
     /**
-     * Salva su file i dati del server
+     * Salva su file i dati degli utenti del server
      */
     public void saveServer() {
         Gson gson = new Gson();
@@ -295,7 +310,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             do {
                 skt = srvSkt.accept();
                 if (skt != null) threadPool.execute(new WQHandler(this, skt));
-                else Thread.sleep(100);
+                else Thread.sleep(500);
             } while (running);
 
             WQServerController.gui.updateStatsText("Spegnimento...");

@@ -1,15 +1,16 @@
 package com.fexed.lprb.wq.server;
 
 import com.google.gson.Gson;
-
-import java.io.IOException;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Handler della connessione con un singolo client
+ * @author Federico Matteoni
+ */
 public class WQHandler implements Runnable {
     private WQServer server;
     private SocketChannel skt;
@@ -23,6 +24,10 @@ public class WQHandler implements Runnable {
         this.online = true;
     }
 
+    /**
+     * Invia {@code str} al client
+     * @param str Il testo da spedire
+     */
     public void send(String str) {
         try {
             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
@@ -45,7 +50,7 @@ public class WQHandler implements Runnable {
             do {
                 int n;
                 do {
-                    Thread.sleep(50);
+                    Thread.sleep(100);
                     bBuff.clear();
                     n = ((SocketChannel) key.channel()).read(bBuff);
                 } while (n == 0);

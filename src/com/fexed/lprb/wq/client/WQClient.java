@@ -15,10 +15,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
+ * Il client di WordQuizzle
  * @author Federico Matteoni
  */
 public class WQClient {
@@ -26,6 +25,12 @@ public class WQClient {
     private SocketChannel skt;
     private SelectionKey key;
 
+    /**
+     * Esegue la registrazione dell'utente e, se è andata a buon fine o se l'utente era già registrato, il login a WordQuizzle.
+     * @param name Il nickname con cui eseguire il login
+     * @param password La password con cui eseguire il login
+     * @return 0 se il login è andato a buon fine, -1 se ci sono stati problemi
+     */
     public int login(String name, String password) {
         //INPUT FIX
         name = name.replaceAll(" ", "");
@@ -78,6 +83,11 @@ public class WQClient {
         return -1;
     }
 
+    /**
+     * Elabora la stringa ricevuta dal server
+     * @param received La stringa ricevuta
+     * @return 0 se la stringa è stata elaborata correttamente, -1 se la stringa non è valida
+     */
     public int receive(String received) {
         String command = received.split(":")[0];
         if (command.equals("answer")) {
@@ -119,6 +129,11 @@ public class WQClient {
         } else return -1;
     }
 
+    /**
+     * Invia una stringa di testo al server
+     * @param txt Il testo da spedire
+     * @return 0 se la comunicazione è avvenuta correttamente, -1 in caso contrario
+     */
     public int send(String txt) {
         try {
             ByteBuffer buff = ByteBuffer.wrap(txt.getBytes(StandardCharsets.UTF_8));
@@ -130,6 +145,12 @@ public class WQClient {
         return -1;
     }
 
+    /**
+     * Avvia la procedura di registrazione a WordQuizzle
+     * @param name Il nickname con cui registrarsi
+     * @param password La password con cui registrarsi
+     * @return 0 se la registrazione è avvenuta con successo, -1 se l'utente è già registrato, -2 se la password è vuota, -3 se ci sono errori di comunicazione
+     */
     public int register(String name, String password) {
         int n;
         WQInterface wq;

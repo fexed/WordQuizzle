@@ -3,6 +3,7 @@ package com.fexed.lprb.wq;
 import java.util.ArrayList;
 
 /**
+ * L'utente di WordQuizzle
  * @author Federico Matteoni
  */
 public class WQUtente {
