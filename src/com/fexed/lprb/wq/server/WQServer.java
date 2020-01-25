@@ -117,12 +117,13 @@ public class WQServer extends RemoteServer implements WQInterface {
 
     /**
      * Visualizza la lista degli utenti attualmente online
-     * @return JSON rappresentante la lista degli utenti online ({@code ArraList<WQUtente>})
+     * @return JSON rappresentante la lista degli utenti online ({@code ArraList<String>})
      */
     public String mostraOnline(){
         ArrayList<String> online = new ArrayList<>(loggedIn.keySet());
         Gson gson = new Gson();
-        return gson.toJson(online);
+        String json = gson.toJson(online);
+        return json;
     }
 
     /**

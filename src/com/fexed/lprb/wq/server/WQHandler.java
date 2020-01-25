@@ -1,5 +1,6 @@
 package com.fexed.lprb.wq.server;
 
+import com.fexed.lprb.wq.WQUtente;
 import com.google.gson.Gson;
 
 import java.net.*;
@@ -8,6 +9,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -152,8 +154,9 @@ public class WQHandler implements Runnable {
                             }
                             break;
                         case "showonline": {
+                            WQServerController.gui.updateStatsText(this.username + " richiede lista online.");
                             String json = this.server.mostraOnline();
-                            str = "answer:".concat(json);
+                            str = "onlinelist:".concat(json);
                             ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                             do {
                                 n = ((SocketChannel) key.channel()).write(buff);

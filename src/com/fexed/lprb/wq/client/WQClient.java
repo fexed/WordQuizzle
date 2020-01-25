@@ -3,8 +3,12 @@ package com.fexed.lprb.wq.client;
 import com.fexed.lprb.wq.WQInterface;
 import com.fexed.lprb.wq.WQUtente;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -16,6 +20,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -105,43 +110,60 @@ public class WQClient {
      */
     public int receive(String received) {
         String command = received.split(":")[0];
-        if (command.equals("answer")) {
-            String response = received.split(":")[1];
-            if (response.equals("OKFREN")) {
-                try {
-                    WQUtente myUser = null;
-                    int n;
-                    Gson gson = new Gson();
-                    ByteBuffer buff = ByteBuffer.allocate(128);
-                    do {
-                        buff.clear();
-                        n = ((SocketChannel) key.channel()).read(buff);
-                    } while (n == 0);
-                    do {
-                        n = ((SocketChannel) key.channel()).read(buff);
-                    } while (n > 0);
-                    buff.flip();
-                    received = StandardCharsets.UTF_8.decode(buff).toString();
-                    myUser = gson.fromJson(received, WQUtente.class);
-                    if (myUser != null) {
-                        System.out.println(myUser.toString());
-                        WQClientController.gui.addAllFriends(myUser.friends);
+        switch (command) {
+            case "answer":
+                String response = received.split(":")[1];
+                if (response.equals("OKFREN")) {
+                    try {
+                        WQUtente myUser = null;
+                        int n;
+                        Gson gson = new Gson();
+                        ByteBuffer buff = ByteBuffer.allocate(128);
+                        do {
+                            buff.clear();
+                            n = ((SocketChannel) key.channel()).read(buff);
+                        } while (n == 0);
+                        do {
+                            n = ((SocketChannel) key.channel()).read(buff);
+                        } while (n > 0);
+                        buff.flip();
+                        received = StandardCharsets.UTF_8.decode(buff).toString();
+                        myUser = gson.fromJson(received, WQUtente.class);
+                        if (myUser != null) {
+                            System.out.println(myUser.toString());
+                            WQClientController.gui.addAllFriends(myUser.friends);
+                        }
+                    } catch (Exception ex) {
+                        String str = received.substring(command.length() + 1);
+                        WQClientController.gui.updateCommText(str);
+                        WQClientController.gui.updateCommText(ex.getMessage());
                     }
-                } catch (Exception ex) {
+                } else {
                     String str = received.substring(command.length() + 1);
                     WQClientController.gui.updateCommText(str);
-                    WQClientController.gui.updateCommText(ex.getMessage());
                 }
-            } else {
+                return 0;
+            case "notif":
                 String str = received.substring(command.length() + 1);
-                WQClientController.gui.updateCommText(str);
-            }
-            return 0;
-        } else if (command.equals("notif")) {
-            String str = received.substring(command.length()+1);
-            WQClientController.gui.showTextDialog(str);
-            return 0;
-        } else return -1;
+                WQClientController.gui.showTextDialog(str);
+                return 0;
+            case "onlinelist":
+                String json = received.substring(command.length()+1);
+                Gson gson = new Gson();
+                Type type = new TypeToken<ArrayList<String>>() {}.getType();
+                JsonReader reader = new JsonReader(new StringReader(json));
+                reader.setLenient(true);
+                ArrayList<String> utentiOnline = gson.fromJson(reader, type);
+                WQClientController.gui.updateCommText("Utenti attualmente collegati: ");
+                for (String user : utentiOnline) {
+                    WQClientController.gui.updateCommText("- " + user);
+                }
+                WQClientController.gui.updateCommText("");
+                return 0;
+            default:
+                WQClientController.gui.showTextDialog(received);
+                return -1;
+        }
     }
 
     /**

@@ -143,8 +143,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         addFriendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame f = new JFrame();
-                JDialog d = new JDialog(f, "WordQuizzle! Aggiungi un amico", true);
+                JDialog d = new JDialog(w, "WordQuizzle! Aggiungi un amico", true);
                 JPanel panel = new JPanel();
                 panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
                 panel.setBackground(primaryLight);
@@ -179,7 +178,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 d.getRootPane().setDefaultButton(confirmBtn);
                 d.setContentPane(panel);
                 d.pack();
-                d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
+                //d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
                 d.setVisible(true);
             }
         });
@@ -241,8 +240,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     }
 
     public void showTextDialog(String text) {
-        JFrame f = new JFrame();
-        JDialog d = new JDialog(f, "Word Quizzle! Info", true);
+        JDialog d = new JDialog(w, "Word Quizzle! Info", true);
         d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
         d.getContentPane().setBackground(primaryLight);
         JLabel textLbl = initThemedLabel(text, JLabel.CENTER);
@@ -260,7 +258,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.getContentPane().add(Box.createHorizontalGlue());
         d.pack();
         d.setResizable(false);
-        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        //d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
         d.setVisible(true);
     }
 
@@ -276,8 +274,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     }
 
     private void showLoginDialog() {
-        JFrame f = new JFrame();
-        JDialog d = new JDialog(f, "Word Quizzle! Login", true);
+        JDialog d = new JDialog(w, "Word Quizzle! Login", true);
         d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
         d.getContentPane().setBackground(primaryLight);
         JTextField dUserFld = initThemedTextField(15);
@@ -317,7 +314,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         });
         d.getContentPane().add(dLoginBtn);
         d.setSize(200, 200);
-        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        //d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
         d.getRootPane().setDefaultButton(dLoginBtn);
         d.setResizable(false);
         d.setVisible(true);

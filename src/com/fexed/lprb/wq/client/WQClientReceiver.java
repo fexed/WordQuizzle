@@ -1,5 +1,7 @@
 package com.fexed.lprb.wq.client;
 
+import com.google.gson.JsonParseException;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.nio.ByteBuffer;
@@ -37,8 +39,11 @@ public class WQClientReceiver implements Runnable {
                 } while (n > 0);
                 buff.flip();
                 String received = StandardCharsets.UTF_8.decode(buff).toString();
-                WQClientController.client.receive(received);
+
+                try {
+                    WQClientController.client.receive(received);
+                } catch (JsonParseException ex) { WQClientController.client.receive(ex.getMessage()); ex.printStackTrace();}
             } while (true); //TODO fix
-        } catch (Exception ex) { WQClientController.client.receive(ex.getMessage()); }
+        } catch (Exception ex) { WQClientController.client.receive(ex.getMessage()); ex.printStackTrace();}
     }
 }
