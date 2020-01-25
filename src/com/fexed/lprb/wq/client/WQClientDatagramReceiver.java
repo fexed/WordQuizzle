@@ -20,26 +20,29 @@ public class WQClientDatagramReceiver implements Runnable {
 
     @Override
     public void run() {
-        byte[] buff = new byte[128];
-        DatagramPacket datagramPacket = new DatagramPacket(buff, buff.length);
+        byte[] buff;
+        DatagramPacket datagramPacket;
 
         do {
             try {
+                buff = new byte[128];
+                datagramPacket = new DatagramPacket(buff, buff.length);
                 datagramSocket.receive(datagramPacket);
                 String received = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(buff)).toString();
                 String command = received.split(":")[0];
                 if (command.equals("challengeRequest")) {
                     WQClientController.gui.updateCommText("Sfida ricevuta...");
                     int n = WQClientController.gui.showChallengeDialog(received.split(":")[1]);
+                    buff = new byte[128];
                     if (n == JOptionPane.OK_OPTION) {
                         WQClientController.gui.updateCommText("Sfida accettata!");
                         buff = "challengeResponse:OK".getBytes(StandardCharsets.UTF_8);
-                        datagramPacket = new DatagramPacket(buff, buff.length);
+                        datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
                         datagramSocket.send(datagramPacket);
                     } else {
                         WQClientController.gui.updateCommText("Sfida rifiutata.");
                         buff = "challengeResponse:NO".getBytes(StandardCharsets.UTF_8);
-                        datagramPacket = new DatagramPacket(buff, buff.length);
+                        datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
                         datagramSocket.send(datagramPacket);
                     }
                 }

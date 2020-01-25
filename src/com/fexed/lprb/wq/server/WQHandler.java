@@ -58,10 +58,18 @@ public class WQHandler implements Runnable {
             datagramSocket.send(datagramPacket);
 
             try {
+                buffer = new byte[128];
+                datagramPacket = new DatagramPacket(buffer, buffer.length);
                 datagramSocket.receive(datagramPacket);
-                if (StandardCharsets.UTF_8.decode(ByteBuffer.wrap(datagramPacket.getData())).toString().equals("challengeResponse:OK")) {
+                String received = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(datagramPacket.getData())).toString();
+                String response = received.split(":")[1].trim();
+                if ("OK".equals(response)) {
+                    WQServerController.gui.updateStatsText(this.username + " ha accettato!");
                     return datagramSocket;
-                } else return null;
+                } else {
+                    WQServerController.gui.updateStatsText(this.username + " ha rifiutato!");
+                    return null;
+                }
             } catch (SocketTimeoutException ex) {
                 WQServerController.gui.updateStatsText("Timeout!");
                 return null;
@@ -97,11 +105,11 @@ public class WQHandler implements Runnable {
                         case "login":
                             if (this.username == null) {
                                 String name = received.split(":")[1].split(" ")[0];
-                                this.username = name;
                                 String pwd = received.split(":")[1].split(" ")[1];
                                 System.out.println("Verifica " + name + " " + pwd);
                                 n = this.server.login(name, pwd, this);
                                 if (n == 0) {
+                                    this.username = name;
                                     str = "answer:OK";
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                     do {
@@ -217,7 +225,6 @@ public class WQHandler implements Runnable {
                             break;
                         }
                         case "challenge": {
-                            //TODO challenge
                             String name = received.split(":")[1];
                             this.server.sfida(this.username, name);
                             break;
@@ -229,7 +236,9 @@ public class WQHandler implements Runnable {
                 }
             } while (online);
         } catch (Exception ex) { ex.printStackTrace(); }
-        WQServerController.gui.updateStatsText(this.username + " è andato offline.");
-        this.server.logout(username);
+        if (this.username != null) {
+            WQServerController.gui.updateStatsText(this.username + " è andato offline.");
+            this.server.logout(username);
+        }
     }
 }

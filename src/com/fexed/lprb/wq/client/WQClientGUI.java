@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 /**
@@ -14,6 +16,7 @@ import java.util.Collection;
  */
 public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     //CLIENT COMPONENTS
+    private JFrame w;
     private JTextArea commText;
     private JLabel loginNameLbl;
     private JButton loginBtn;
@@ -39,7 +42,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         WQClientController.gui = this;
 
         //FRAME INIT
-        JFrame w = new JFrame("WordQuizzle!");
+        w = new JFrame("WordQuizzle!");
         w.setSize(800, 600);
         w.setLocation(550, 150);
 
@@ -92,6 +95,17 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         friendList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         centerPane.add(friendList);
         centerPane.add(Box.createRigidArea(new Dimension(10, 0)));
+        friendList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getClickCount() == 2) {
+                    int index = friendList.getSelectedIndex();
+                    String nick = friendListModel.get(index);
+                    WQClientController.client.send("challenge:" + nick);
+                }
+            }
+        });
 
         JPanel commPane = new JPanel();
         commPane.setBackground(primary);
@@ -246,7 +260,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.getContentPane().add(Box.createHorizontalGlue());
         d.pack();
         d.setResizable(false);
-        d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
+        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
         d.setVisible(true);
     }
 
@@ -258,7 +272,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         JLabel textLbl = initThemedLabelBig(nickSfidante + " ti sta sfidando!", JLabel.CENTER);
         textLbl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.add(textLbl);
-        return JOptionPane.showConfirmDialog(null, panel, "Sfida ricevuta!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        return JOptionPane.showConfirmDialog(w, panel, "Sfida ricevuta!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
     }
 
     private void showLoginDialog() {
@@ -303,7 +317,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         });
         d.getContentPane().add(dLoginBtn);
         d.setSize(200, 200);
-        d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
+        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
         d.getRootPane().setDefaultButton(dLoginBtn);
         d.setResizable(false);
         d.setVisible(true);
