@@ -3,13 +3,19 @@ package com.fexed.lprb.wq.server;
 import com.fexed.lprb.wq.WQInterface;
 import com.fexed.lprb.wq.WQUtente;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import netscape.javascript.JSObject;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.DatagramSocket;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -20,10 +26,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -176,6 +179,37 @@ public class WQServer extends RemoteServer implements WQInterface {
                         WQServerController.gui.updateStatsText("Che abbia inizio la sfida tra " + nickUtente + " e " + nickAmico + "!");
                         WQHandler sfidanteUtente = loggedIn.get(nickUtente);
                         WQHandler sfidanteAmico = loggedIn.get(nickAmico);
+
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File("dizionario")));
+                            ArrayList<String> dizionario = new ArrayList<>();
+                            String line;
+                            while ( (line = bufferedReader.readLine()) != null ) { dizionario.add(line); }
+                            bufferedReader.close();
+                            int K = 6; //parole scelte a caso dal dizionario
+                            HashMap<String, String> randomWords = new HashMap<>();
+                            Collections.shuffle(dizionario);
+                            for (int i = 0; i < K; i ++) {
+                                String word = dizionario.get(i);
+                                URL url = new URL("https://api.mymemory.translated.net/get?q=" + word + "!&langpair=it|en");
+                                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                                connection.setRequestMethod("GET");
+                                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                                String inputLine;
+                                StringBuffer content = new StringBuffer();
+                                while ((inputLine = in.readLine()) != null) {
+                                    content.append(inputLine);
+                                }
+                                in.close();
+                                JsonElement json = new JsonParser().parse(content.toString());
+                                String translation = json.getAsJsonObject().get("matches").getAsJsonArray().get(0).getAsJsonObject().get("translation").getAsString();
+                                randomWords.put(word, translation.toLowerCase());
+                            }
+
+                            //https://mymemory.translated.net/doc/spec.php
+                        } catch (FileNotFoundException ignored) {
+                        } catch (IOException ex) {WQServerController.gui.updateStatsText(ex.getMessage());}
+
                     } else {
                         WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
                     }
