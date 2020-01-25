@@ -174,6 +174,8 @@ public class WQServer extends RemoteServer implements WQInterface {
                     DatagramSocket dtgSkt = loggedIn.get(nickAmico).challenge(nickUtente, this.port);
                     if (dtgSkt != null) {
                         WQServerController.gui.updateStatsText("Che abbia inizio la sfida tra " + nickUtente + " e " + nickAmico + "!");
+                        WQHandler sfidanteUtente = loggedIn.get(nickUtente);
+                        WQHandler sfidanteAmico = loggedIn.get(nickAmico);
                     } else {
                         WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
                     }
