@@ -24,7 +24,7 @@ login o la password è errata, restituisce un messaggio d’errore.
 
 - [x] `logout(nickUtente)`: effettua il logout dell'utente dal servizio.
 
-- [ ] `aggiungi_amico(nickUtente, nickAmico)`: **registrazione di un’amicizia**, cioè aggiungere un amico alla
+- [x] `aggiungi_amico(nickUtente, nickAmico)`: **registrazione di un’amicizia**, cioè aggiungere un amico alla
 cerchia di amici di un utente. Viene **creato un arco non orientato tra i due utenti** (se A è amico
 di B, B è amico di A). Il **server risponde con un codice** che indica l’avvenuta registrazione
 dell’amicizia oppure con un codice di errore, se il nickname del nodo destinazione/sorgente
@@ -32,7 +32,7 @@ della richiesta non esiste, oppure se è stato richiesto di creare una relazione
 esistente. Non è necessario che il server richieda l’accettazione dell’amicizia da parte di
 `nickAmico`.
 
-- [ ] `lista_amici(nickUtente)`: utilizzata da un utente per **visualizzare la lista dei propri amici**, fornendo
+- [x] `lista_amici(nickUtente)`: utilizzata da un utente per **visualizzare la lista dei propri amici**, fornendo
 le proprie generalità. Il **server restituisce un oggetto JSON** che rappresenta la lista degli amici.
 
 - [ ] `sfida(nickUtente, nickAmico)`: l’utente `nickUtente` intende sfidare l’utente di nome `nickAmico`. Il
