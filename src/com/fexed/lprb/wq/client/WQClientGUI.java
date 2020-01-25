@@ -4,10 +4,7 @@ import com.fexed.lprb.wq.WQGUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Collection;
 
 /**
@@ -93,7 +90,14 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         friendList.setMinimumSize(new Dimension(200, 50));
         friendList.setForeground(txtColor);
         friendList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        centerPane.add(friendList);
+        JPanel friendsPanel = new JPanel();
+        friendsPanel.setLayout(new BoxLayout(friendsPanel, BoxLayout.PAGE_AXIS));
+        friendsPanel.setBackground(primary);
+        JLabel friendLbl = initThemedLabel("Lista amici", JLabel.LEFT);
+        friendsPanel.add(friendLbl);
+        friendLbl.add(Box.createRigidArea(new Dimension(0, 2)));
+        friendsPanel.add(friendList);
+        centerPane.add(friendsPanel);
         centerPane.add(Box.createRigidArea(new Dimension(10, 0)));
         friendList.addMouseListener(new MouseAdapter() {
             @Override
@@ -258,19 +262,54 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.getContentPane().add(Box.createHorizontalGlue());
         d.pack();
         d.setResizable(false);
-        //d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
         d.setVisible(true);
     }
 
     @Override
     public int showChallengeDialog(String nickSfidante) {
+        final int[] n = new int[1];
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setBackground(primaryLight);
         JLabel textLbl = initThemedLabelBig(nickSfidante + " ti sta sfidando!", JLabel.CENTER);
         textLbl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.add(textLbl);
-        return JOptionPane.showConfirmDialog(w, panel, "Sfida ricevuta!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        JPanel buttonsPnl = new JPanel();
+        buttonsPnl.setLayout(new BoxLayout(buttonsPnl, BoxLayout.LINE_AXIS));
+        buttonsPnl.setBackground(primaryLight);
+        JButton okBtn = initThemedButton("Accetta");
+        JDialog d = new JDialog(w, "WordQuizzle! Richiesta di sfida", true);
+        okBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                n[0] = JOptionPane.OK_OPTION;
+                d.setVisible(false);
+            }
+        });
+        JButton noBtn = initThemedButton("Rifiuta");
+        noBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                n[0] = JOptionPane.CANCEL_OPTION;
+                d.setVisible(false);
+            }
+        });
+        buttonsPnl.add(Box.createHorizontalGlue());
+        buttonsPnl.add(okBtn);
+        buttonsPnl.add(Box.createRigidArea(new Dimension(5, 0)));
+        buttonsPnl.add(noBtn);
+        buttonsPnl.add(Box.createHorizontalGlue());
+        panel.add(buttonsPnl);
+        d.setContentPane(panel);
+        d.pack();
+        d.setResizable(false);
+        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        d.setVisible(true);
+
+        //Bit of a hack, ma non riesco a trovare di meglio per avere la finestra in tema
+        while(d.isVisible())try{Thread.sleep(50);}catch(InterruptedException e){}
+        return n[0];
     }
 
     private void showLoginDialog() {
@@ -314,7 +353,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         });
         d.getContentPane().add(dLoginBtn);
         d.setSize(200, 200);
-        //d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
         d.getRootPane().setDefaultButton(dLoginBtn);
         d.setResizable(false);
         d.setVisible(true);
