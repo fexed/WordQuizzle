@@ -250,6 +250,17 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.setVisible(true);
     }
 
+    @Override
+    public int showChallengeDialog(String nickSfidante) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setBackground(primaryLight);
+        JLabel textLbl = initThemedLabelBig(nickSfidante + " ti sta sfidando!", JLabel.CENTER);
+        textLbl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.add(textLbl);
+        return JOptionPane.showConfirmDialog(null, panel, "Sfida ricevuta!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+    }
+
     private void showLoginDialog() {
         JFrame f = new JFrame();
         JDialog d = new JDialog(f, "Word Quizzle! Login", true);

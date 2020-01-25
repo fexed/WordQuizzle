@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
@@ -164,8 +165,19 @@ public class WQServer extends RemoteServer implements WQInterface {
      */
     public void sfida(String nickUtente, String nickAmico){
         //TODO
-        if (loggedIn.containsKey(nickAmico)) {
-            loggedIn.get(nickAmico).send("notif:" + nickUtente + " vuole sfidarti!");
+        WQServerController.gui.updateStatsText("Sfida da " + nickUtente + " a " + nickAmico + "!");
+        if (userBase.containsKey(nickAmico)) { //se esiste
+            if (userBase.get(nickUtente).friends.contains(nickAmico)) { //se è amico
+                if (loggedIn.containsKey(nickAmico)) { //se è online
+                    WQServerController.gui.updateStatsText("Richiesta mandata a " + nickAmico);
+                    DatagramSocket dtgSkt = loggedIn.get(nickAmico).challenge(nickUtente, this.port);
+                    if (dtgSkt != null) {
+                        WQServerController.gui.updateStatsText("Che abbia inizio la sfida tra " + nickUtente + " e " + nickAmico + "!");
+                    } else {
+                        WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
+                    }
+                }
+            }
         }
     }
 

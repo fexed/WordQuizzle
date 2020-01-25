@@ -1,11 +1,14 @@
 package com.fexed.lprb.wq.server;
 
 import com.google.gson.Gson;
+
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 /**
  * Handler della connessione con un singolo client
@@ -17,6 +20,7 @@ public class WQHandler implements Runnable {
     private String username;
     private boolean online;
     private SelectionKey key;
+    public int challengePort;
 
     public WQHandler(WQServer server, SocketChannel skt) {
         this.server = server;
@@ -36,6 +40,33 @@ public class WQHandler implements Runnable {
                 n = ((SocketChannel) key.channel()).write(buff);
             } while (n > 0);
         } catch(Exception ignored) {}
+    }
+
+    /**
+     * Inoltra via UPD la richiesta di sfida proveniente da {@code nickSfidante}
+     * @param nickSfidante Il nickname dell'utente che ha richiesto la sfida
+     * @return il socket se la richiesta viene accettata, null altrimenti
+     */
+    public DatagramSocket challenge(String nickSfidante, int port) {
+        WQServerController.gui.updateStatsText("(" + this.username + "): " + nickSfidante + " vuole sfidarmi!");
+        try {
+            DatagramSocket datagramSocket = new DatagramSocket();
+            datagramSocket.connect(InetAddress.getLocalHost(), this.challengePort);
+            datagramSocket.setSoTimeout(10000); //10s per accettare la sfida
+            byte[] buffer = ("challengeRequest:" + nickSfidante).getBytes(StandardCharsets.UTF_8);
+            DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
+            datagramSocket.send(datagramPacket);
+
+            try {
+                datagramSocket.receive(datagramPacket);
+                if (StandardCharsets.UTF_8.decode(ByteBuffer.wrap(datagramPacket.getData())).toString().equals("challengeResponse:OK")) {
+                    return datagramSocket;
+                } else return null;
+            } catch (SocketTimeoutException ex) {
+                WQServerController.gui.updateStatsText("Timeout!");
+                return null;
+            }
+        } catch (Exception e) { WQServerController.gui.updateStatsText(e.getMessage()); e.printStackTrace(); return null; }
     }
 
     @Override
@@ -83,6 +114,19 @@ public class WQHandler implements Runnable {
                                     do {
                                         n = ((SocketChannel) key.channel()).write(buff);
                                     } while (n > 0);
+                                    buff = ByteBuffer.allocate(128);
+                                    do {
+                                        try { Thread.sleep(100); }
+                                        catch (InterruptedException ignored) {}
+                                        buff.clear();
+                                        n = ((SocketChannel) key.channel()).read(buff);
+                                    } while (n == 0);
+                                    do {
+                                        n = ((SocketChannel) key.channel()).read(buff);
+                                    } while (n > 0);
+                                    buff.flip();
+                                    received = StandardCharsets.UTF_8.decode(buff).toString(); //challengePort;
+                                    challengePort = Integer.parseInt(received.split(":")[1]);
                                 } else {
                                     str = "answer:ERR";
                                     ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
@@ -174,11 +218,6 @@ public class WQHandler implements Runnable {
                         }
                         case "challenge": {
                             //TODO challenge
-                            str = "answer:OKchallenge";
-                            ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                            do {
-                                n = ((SocketChannel) key.channel()).write(buff);
-                            } while (n > 0);
                             String name = received.split(":")[1];
                             this.server.sfida(this.username, name);
                             break;

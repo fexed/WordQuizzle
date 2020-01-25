@@ -37,4 +37,10 @@ public interface WQClientGUIInterface {
      * @param text Il testo da mostrare
      */
     void showTextDialog(String text);
+
+    /**
+     * Mostra una finestra di dialogo riguardante la sfida proveniente da {@code nickSfidante}
+     * @param nickSfidante Il testo da mostrare
+     */
+    int showChallengeDialog(String nickSfidante);
 }

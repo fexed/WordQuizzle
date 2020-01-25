@@ -1,12 +1,14 @@
 package com.fexed.lprb.wq.client;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Thread che ascolta le comunicazioni in arrivo dal server
+ * Thread che ascolta le comunicazioni TCP in arrivo dal server
  * @author Federico Matteoni
  */
 public class WQClientReceiver implements Runnable {

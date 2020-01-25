@@ -5,6 +5,7 @@ import com.fexed.lprb.wq.WQUtente;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -15,6 +16,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Random;
 
 /**
  * Il client di WordQuizzle
@@ -74,6 +76,19 @@ public class WQClient {
                         }
                         WQClientController.gui.loggedIn(myUser.username, myUser.points);
                         new Thread(new WQClientReceiver(skt, key)).start();
+                        try {
+                            DatagramSocket datagramSocket = new DatagramSocket();
+                            new Thread(new WQClientDatagramReceiver(datagramSocket)).start();
+                            str = "challengePort:" + datagramSocket.getLocalPort();
+                            buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do { n = ((SocketChannel) key.channel()).write(buff); } while (n > 0);
+                            WQClientController.gui.updateCommText("DatagramReceiver su porta: " + datagramSocket.getLocalPort());
+                        } catch (Exception ex) {
+                            str = "challengePort:-1";
+                            buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                            do { n = ((SocketChannel) key.channel()).write(buff); } while (n > 0);
+                            WQClientController.gui.updateCommText("Impossibile avviare il datagramReceiver: " + ex.getMessage());
+                        }
                         return 0;
                     }
                     else return -1;
