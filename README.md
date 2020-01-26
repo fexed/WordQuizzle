@@ -35,7 +35,7 @@ esistente. Non è necessario che il server richieda l’accettazione dell’amic
 - [x] `lista_amici(nickUtente)`: utilizzata da un utente per **visualizzare la lista dei propri amici**, fornendo
 le proprie generalità. Il **server restituisce un oggetto JSON** che rappresenta la lista degli amici.
 
-- [ ] `sfida(nickUtente, nickAmico)`: l’utente `nickUtente` intende sfidare l’utente di nome `nickAmico`. Il
+- [x] `sfida(nickUtente, nickAmico)`: l’utente `nickUtente` intende sfidare l’utente di nome `nickAmico`. Il
 server **controlla che `nickAmico` appartenga alla lista di amicizie di `nickUtente`**, in caso negativo
 restituisce un codice di errore e l’operazione termina. In caso positivo, il server invia a
 `nickAmico` una richiesta di accettazione della sfida e, solo dopo che la richiesta è stata
@@ -81,11 +81,11 @@ Nella realizzazione del progetto devono essere utilizzate molte delle tecnologie
 - [x] La **fase di login** deve essere **effettuata come prima operazione dopo aver instaurato una
 connessione TCP con il server**. Su questa connessione TCP, dopo previa login
 effettuata con successo, avvengono le interazioni client- server (richieste/risposte).
-- [ ] Il server **inoltra la richiesta di sfida** originata da `nickUtente` all'utente `nickAmico` **usando la
+- [x] Il server **inoltra la richiesta di sfida** originata da `nickUtente` all'utente `nickAmico` **usando la
 comunicazione UDP**.
-- [ ] Il server può essere realizzato **multithreaded** oppure può effettuare il **multiplexing dei
+- [x] Il server può essere realizzato **multithreaded** oppure può effettuare il **multiplexing dei
 canali** mediante NIO.
-- [ ] Il server **gestisce un dizionario** di N parole italiane, **memorizzato in un file**. Durante la
+- [x] Il server **gestisce un dizionario** di N parole italiane, **memorizzato in un file**. Durante la
 fase di setup di una sfida fra due utenti il server seleziona K parole a caso su N parole
 presenti nel dizionario. Prima dell’inizio della partita, ma dopo che ha ricevuto
 l’accettazione della sfida da parte dell’amico, il server chiede, tramite una **chiamata
