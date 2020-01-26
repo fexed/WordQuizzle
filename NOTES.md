@@ -11,3 +11,8 @@
  * `points`
  * `ranking`
  * `notif:<testo>`
+ * `challengeRound:`
+   * `1` start
+   * `-1` end
+   * `-2` rifiutata
+   * `-3` fine attendi risultati
