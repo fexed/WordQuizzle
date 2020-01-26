@@ -14,6 +14,12 @@ public interface WQClientGUIInterface {
     void updateCommText(String txt);
 
     /**
+     * Pulisce il log di comunicazione della GUI
+     * @param txt Il testo da scrivere sul log
+     */
+    void clearCommText(String txt);
+
+    /**
      * Segnala alla GUI l'avvenuta procedura di login
      * @param username L'username con cui ci si è collegati
      * @param points Il punteggio attuale dell'utente collegato

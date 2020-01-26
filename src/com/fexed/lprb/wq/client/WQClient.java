@@ -189,7 +189,7 @@ public class WQClient {
                     return 0;
                 case "challengeRound":
                     String word = received.split(":")[1];
-                    if (word.equals("1")) WQClientController.gui.updateCommText("**** La sfida ha inizio! Preparati.");
+                    if (word.equals("1")) WQClientController.gui.clearCommText("**** La sfida ha inizio! Preparati.");
                     else if (word.equals("-1")) WQClientController.gui.updateCommText("***** La sfida è terminata!");
                     else if (word.equals("-2")) WQClientController.gui.updateCommText("La sfida è stata rifiutata!");
                     else if (word.equals("-3")) WQClientController.gui.updateCommText("Fine! Attendi i risultati.");
@@ -217,7 +217,8 @@ public class WQClient {
      */
     public int send(String txt) {
         try {
-            ByteBuffer buff = ByteBuffer.wrap(suffix.concat(txt).getBytes(StandardCharsets.UTF_8));
+            String sent = suffix.concat(txt);
+            ByteBuffer buff = ByteBuffer.wrap(sent.getBytes(StandardCharsets.UTF_8));
             if (suffix.equals("challengeAnswer:")) {
                 answerTimer.cancel();
                 answerTimer = null;
@@ -225,7 +226,8 @@ public class WQClient {
             suffix = "";
             int n;
             do { n = ((SocketChannel) key.channel()).write(buff); } while (n > 0);
-            WQClientController.gui.updateCommText("(Io): " + txt);
+            if (sent.equals("challengeAnswer:-1")) WQClientController.gui.updateCommText("(Io): ...");
+            else WQClientController.gui.updateCommText("(Io): " + txt);
             return 0;
         } catch (IOException ex) { WQClientController.gui.updateCommText(ex.getMessage()); ex.printStackTrace(); }
         return -1;

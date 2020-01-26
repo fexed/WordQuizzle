@@ -23,6 +23,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     private JList<String> friendList;
     private DefaultListModel<String> friendListModel;
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
+    public void clearCommText(String txt) { commText.setText(txt); }
     public void loggedIn(String username, int points) {
         this.username = username;
         loginNameLbl.setText(username + " (" + points + " punti)");

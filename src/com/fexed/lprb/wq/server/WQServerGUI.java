@@ -32,6 +32,7 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
     private JList<WQUtente> registeredList;
     private DefaultListModel<WQUtente> registeredListModel;
     public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
+    public void clearStatsText(String txt){ statsTxt.setText(txt); }
     public void serverIsOnline(int port) {
         titleLabel.setForeground(green);
         startBtn.setEnabled(false);

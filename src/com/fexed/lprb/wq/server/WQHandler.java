@@ -73,11 +73,12 @@ public class WQHandler implements Runnable {
                 String received = StandardCharsets.UTF_8.decode(bBuff).toString();
                 String command = received.split(":")[0];
                 String translatedWord = received.split(":")[1];
-                WQServerController.gui.updateStatsText("(" + this.username + "): " + word + " = " + translatedWord);
+                String wordToGet = randomWords.get(word).toLowerCase().replaceAll("!", "");
+                WQServerController.gui.updateStatsText("(" + this.username + ", " + word + "): " + translatedWord + " - " + wordToGet);
 
                 if (command.equals("challengeAnswer")) {
                     if (translatedWord.equals("-1")) pointsMade += 0;
-                    else if (translatedWord.equals(randomWords.get(word))) pointsMade += 2;
+                    else if (translatedWord.toLowerCase().contains(wordToGet)) pointsMade += 2;
                     else pointsMade -= 1;
                 }
             }
@@ -278,10 +279,6 @@ public class WQHandler implements Runnable {
                                 String name = received.split(":")[1];
                                 this.server.sfida(this.username, name);
                                 break;
-                            }
-                            case "challengeAnswer": {
-                                String translation = received.split(":")[1];
-
                             }
                             default:
                                 WQServerController.gui.updateStatsText("(" + username + "): " + received);

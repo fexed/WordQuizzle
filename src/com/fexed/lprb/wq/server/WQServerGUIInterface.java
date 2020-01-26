@@ -15,6 +15,12 @@ public interface WQServerGUIInterface {
     void updateStatsText(String txt);
 
     /**
+     * pulisce il log di comunicazione della GUI
+     * @param txt Il testo da scrivere sul log
+     */
+    void clearStatsText(String txt);
+
+    /**
      * Segnala alla GUI che il server è online
      * @param port La porta di ascolto del server
      */
