@@ -178,7 +178,9 @@ public class WQServer extends RemoteServer implements WQInterface {
                     if (dtgSkt != null) {
                         WQServerController.gui.updateStatsText("Che abbia inizio la sfida tra " + nickUtente + " e " + nickAmico + "!");
                         WQHandler sfidanteUtente = loggedIn.get(nickUtente);
+                        sfidanteUtente.send("challengeRound:1");
                         WQHandler sfidanteAmico = loggedIn.get(nickAmico);
+                        sfidanteAmico.send("challengeRound:1");
 
                         try {
                             BufferedReader bufferedReader = new BufferedReader(new FileReader(new File("dizionario")));
@@ -196,26 +198,41 @@ public class WQServer extends RemoteServer implements WQInterface {
                                 connection.setRequestMethod("GET");
                                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                                 String inputLine;
-                                StringBuffer content = new StringBuffer();
+                                StringBuilder content = new StringBuilder();
                                 while ((inputLine = in.readLine()) != null) {
                                     content.append(inputLine);
                                 }
                                 in.close();
                                 JsonElement json = new JsonParser().parse(content.toString());
-                                String translation = json.getAsJsonObject().get("matches").getAsJsonArray().get(0).getAsJsonObject().get("translation").getAsString();
+                                String translation = json.getAsJsonObject().get("matches").getAsJsonArray().get(0).getAsJsonObject().get("translation").getAsString(); //JSON parsing
                                 randomWords.put(word, translation.toLowerCase());
                             }
-
-                            //https://mymemory.translated.net/doc/spec.php
+                            new Thread(new WQServerChallenge(sfidanteUtente, sfidanteAmico, randomWords, this)).start();
                         } catch (FileNotFoundException ignored) {
                         } catch (IOException ex) {WQServerController.gui.updateStatsText(ex.getMessage());}
 
                     } else {
                         WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
+                        WQHandler sfidanteUtente = loggedIn.get(nickUtente);
+                        sfidanteUtente.send("challengeRound:-2");
                     }
                 }
             }
         }
+    }
+
+    public void fineSfida(WQHandler sfidanteUtente, int pointsUtente, WQHandler sfidanteAmico, int pointsAmico) {
+        //CHALLENGE END
+        sfidanteUtente.send("challengeRound:-1");
+        sfidanteAmico.send("challengeRound:-1");
+
+        WQUtente utente = userBase.get(sfidanteUtente.username);
+        WQUtente amico = userBase.get(sfidanteAmico.username);
+        utente.points += pointsUtente;
+        amico.points += pointsAmico;
+        if (pointsUtente > pointsAmico) utente.points += 5;
+        else if (pointsAmico > pointsUtente) amico.points += 5;
+        saveServer();
     }
 
     /**

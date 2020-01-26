@@ -22,6 +22,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 
 /**
  * Il client di WordQuizzle
@@ -31,6 +32,8 @@ public class WQClient {
     private int port;
     private SocketChannel skt;
     private SelectionKey key;
+    private String suffix = "";
+    private Timer answerTimer;
 
     /**
      * Esegue la registrazione dell'utente e, se è andata a buon fine o se l'utente era già registrato, il login a WordQuizzle.
@@ -109,60 +112,79 @@ public class WQClient {
      * @return 0 se la stringa è stata elaborata correttamente, -1 se la stringa non è valida
      */
     public int receive(String received) {
-        String command = received.split(":")[0];
-        switch (command) {
-            case "answer":
-                String response = received.split(":")[1];
-                if (response.equals("OKFREN")) {
-                    try {
-                        WQUtente myUser = null;
-                        int n;
-                        Gson gson = new Gson();
-                        ByteBuffer buff = ByteBuffer.allocate(128);
-                        do {
-                            buff.clear();
-                            n = ((SocketChannel) key.channel()).read(buff);
-                        } while (n == 0);
-                        do {
-                            n = ((SocketChannel) key.channel()).read(buff);
-                        } while (n > 0);
-                        buff.flip();
-                        received = StandardCharsets.UTF_8.decode(buff).toString();
-                        myUser = gson.fromJson(received, WQUtente.class);
-                        if (myUser != null) {
-                            System.out.println(myUser.toString());
-                            WQClientController.gui.addAllFriends(myUser.friends);
+        try {
+            String command = received.split(":")[0];
+            switch (command) {
+                case "answer":
+                    String response = received.split(":")[1];
+                    if (response.equals("OKFREN")) {
+                        try {
+                            WQUtente myUser = null;
+                            int n;
+                            Gson gson = new Gson();
+                            ByteBuffer buff = ByteBuffer.allocate(128);
+                            do {
+                                buff.clear();
+                                n = ((SocketChannel) key.channel()).read(buff);
+                            } while (n == 0);
+                            do {
+                                n = ((SocketChannel) key.channel()).read(buff);
+                            } while (n > 0);
+                            buff.flip();
+                            received = StandardCharsets.UTF_8.decode(buff).toString();
+                            myUser = gson.fromJson(received, WQUtente.class);
+                            if (myUser != null) {
+                                System.out.println(myUser.toString());
+                                WQClientController.gui.addAllFriends(myUser.friends);
+                            }
+                        } catch (Exception ex) {
+                            String str = received.substring(command.length() + 1);
+                            WQClientController.gui.updateCommText(str);
+                            WQClientController.gui.updateCommText(ex.getMessage());
                         }
-                    } catch (Exception ex) {
+                    } else {
                         String str = received.substring(command.length() + 1);
                         WQClientController.gui.updateCommText(str);
-                        WQClientController.gui.updateCommText(ex.getMessage());
                     }
-                } else {
+                    return 0;
+                case "notif":
                     String str = received.substring(command.length() + 1);
-                    WQClientController.gui.updateCommText(str);
-                }
-                return 0;
-            case "notif":
-                String str = received.substring(command.length() + 1);
-                WQClientController.gui.showTextDialog(str);
-                return 0;
-            case "onlinelist":
-                String json = received.substring(command.length()+1);
-                Gson gson = new Gson();
-                Type type = new TypeToken<ArrayList<String>>() {}.getType();
-                JsonReader reader = new JsonReader(new StringReader(json));
-                reader.setLenient(true);
-                ArrayList<String> utentiOnline = gson.fromJson(reader, type);
-                WQClientController.gui.updateCommText("Utenti attualmente collegati: ");
-                for (String user : utentiOnline) {
-                    WQClientController.gui.updateCommText("- " + user);
-                }
-                WQClientController.gui.updateCommText("");
-                return 0;
-            default:
-                WQClientController.gui.showTextDialog(received);
-                return -1;
+                    WQClientController.gui.showTextDialog(str);
+                    return 0;
+                case "onlinelist":
+                    String json = received.substring(command.length() + 1);
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<ArrayList<String>>() {
+                    }.getType();
+                    JsonReader reader = new JsonReader(new StringReader(json));
+                    reader.setLenient(true);
+                    ArrayList<String> utentiOnline = gson.fromJson(reader, type);
+                    WQClientController.gui.updateCommText("Utenti attualmente collegati: ");
+                    for (String user : utentiOnline) {
+                        WQClientController.gui.updateCommText("- " + user);
+                    }
+                    WQClientController.gui.updateCommText("");
+                    return 0;
+                case "challengeRound":
+                    String word = received.split(":")[1];
+                    if (word.equals("1")) WQClientController.gui.updateCommText("**** La sfida ha inizio! Preparati.");
+                    else if (word.equals("-1")) WQClientController.gui.updateCommText("***** La sfida è terminata!");
+                    else if (word.equals("-2")) WQClientController.gui.updateCommText("La sfida è stata rifiutata!");
+                    else if (word.equals("-3")) WQClientController.gui.updateCommText("Fine! Attendi i risultati.");
+                    else {
+                        WQClientController.gui.updateCommText("Parola da tradurre: " + word);
+                        suffix = "challengeAnswer:";
+                        answerTimer = new Timer();
+                        answerTimer.schedule(new WQClientTimerTask(this), 5000);
+                    }
+                    return 0;
+                default:
+                    WQClientController.gui.showTextDialog(received);
+                    return -1;
+            }
+        } catch (NullPointerException ex) {
+            WQClientController.gui.showTextDialog(received);
+            return -1;
         }
     }
 
@@ -173,7 +195,12 @@ public class WQClient {
      */
     public int send(String txt) {
         try {
-            ByteBuffer buff = ByteBuffer.wrap(txt.getBytes(StandardCharsets.UTF_8));
+            ByteBuffer buff = ByteBuffer.wrap(suffix.concat(txt).getBytes(StandardCharsets.UTF_8));
+            if (suffix.equals("challengeAnswer:")) {
+                answerTimer.cancel();
+                answerTimer = null;
+            }
+            suffix = "";
             int n;
             do { n = ((SocketChannel) key.channel()).write(buff); } while (n > 0);
             WQClientController.gui.updateCommText("(Io): " + txt);
