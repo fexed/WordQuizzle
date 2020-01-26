@@ -4,11 +4,9 @@ import com.fexed.lprb.wq.WQInterface;
 import com.fexed.lprb.wq.WQUtente;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import netscape.javascript.JSObject;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -55,6 +53,11 @@ public class WQServer extends RemoteServer implements WQInterface {
      * La porta di ascolto del server
      */
     private int port;
+
+    /**
+     * Timestamp del momento in cui il server è andato online
+     */
+    private long onlineSince;
 
     /**
      * Operazione per inserire un nuovo utente.
@@ -369,8 +372,13 @@ public class WQServer extends RemoteServer implements WQInterface {
      */
     public String getInfos() {
         //TODO migliorare getInfos()
-        String str = "\n\nWQServer!\n";
-        str = str.concat("Con " + loggedIn.size() + " utenti connessi su " + userBase.size() + " registrati\n");
+        String str = "\n\nWordQuizzle server! Realizzato da Federico Matteoni, mat. 530257\n";
+        long onlineMillis = System.currentTimeMillis() - onlineSince;
+        int seconds = (int) (onlineMillis/1000) % 60;
+        int minutes = (int) (onlineMillis/(1000*60)) % 60;
+        int hours = (int) (onlineMillis / (1000*60*60)) % 60;
+        str = str.concat("Online da " + (hours > 0 ? hours + "h " : "") + (minutes > 0 ? minutes + "m " : "") + seconds + "s\n");
+        str = str.concat("Con " + loggedIn.size() + " utenti connessi su " + userBase.size() + " registrati.\n");
         str = str.concat("Online sulla porta " + this.port + " e " + (this.port+1) + "\n");
         str = str.concat("Utenti registrati:\n");
         for(WQUtente usr : userBase.values()) {
@@ -402,6 +410,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             srvSkt.socket().bind(new InetSocketAddress(porta));
             srvSkt.configureBlocking(false);
             WQServerController.gui.updateStatsText("Online!");
+            onlineSince = System.currentTimeMillis();
             WQServerController.gui.serverIsOnline(port);
 
             WQServerController.gui.updateStatsText("In ascolto su " + this.port);
