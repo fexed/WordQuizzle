@@ -363,7 +363,16 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 int n = WQClientController.client.login(name, pwd);
                 d.setVisible(false);
                 if (n == -1) {
-                    showTextDialog("Errore nella procedura di login.");
+                    showTextDialog("Errore nella procedura di login: l'utente non esiste");
+                    showLoginDialog();
+                } else if (n == -2) {
+                    showTextDialog("Errore nella procedura di login: password sbagliata");
+                    showLoginDialog();
+                } else if (n == -3) {
+                    showTextDialog("Errore nella procedura di login: l'utente è già collegato");
+                    showLoginDialog();
+                } else {
+                    showTextDialog("Errore nella procedura di login");
                     showLoginDialog();
                 }
             }

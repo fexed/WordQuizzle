@@ -185,6 +185,27 @@ public class WQHandler implements Runnable {
                                         buff.flip();
                                         received = StandardCharsets.UTF_8.decode(buff).toString(); //challengePort;
                                         challengePort = Integer.parseInt(received.split(":")[1]);
+                                    } else if (n == -1) {
+                                        str = "answer:ERR1";
+                                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                        do {
+                                            n = ((SocketChannel) key.channel()).write(buff);
+                                        } while (n > 0);
+                                        online = false;
+                                    } else if (n == -2) {
+                                        str = "answer:ERR2";
+                                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                        do {
+                                            n = ((SocketChannel) key.channel()).write(buff);
+                                        } while (n > 0);
+                                        online = false;
+                                    } else if (n == -3) {
+                                        str = "answer:ERR3";
+                                        ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
+                                        do {
+                                            n = ((SocketChannel) key.channel()).write(buff);
+                                        } while (n > 0);
+                                        online = false;
                                     } else {
                                         str = "answer:ERR";
                                         ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));

@@ -68,7 +68,6 @@ public class WQServer extends RemoteServer implements WQInterface {
      */
     @Override
     public int registraUtente(String nickUtente, String password) throws RemoteException {
-        //TODO controlli vari
         if (userBase.containsKey(nickUtente.toLowerCase())) {
             return -1;
         } else if (password.equals("")) {
@@ -100,9 +99,9 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return 0 se il login va a buon fine, -1 se ci sono errori
      */
     public int login(String nickUtente, String password, WQHandler handler){
-        if (userBase.containsKey(nickUtente.toLowerCase())) {
-            if (userBase.get(nickUtente.toLowerCase()).password.equals(password)) {
-                if (!loggedIn.keySet().contains(nickUtente.toLowerCase())) {
+        if (userBase.containsKey(nickUtente.toLowerCase())) { //utente esiste
+            if (userBase.get(nickUtente.toLowerCase()).password.equals(password)) { //password corretta
+                if (!loggedIn.containsKey(nickUtente.toLowerCase())) { //non è già collegato
                     loggedIn.put(nickUtente, handler);
                     WQServerController.gui.addOnline(nickUtente);
                     WQUtente loggedUser = userBase.get(nickUtente);
@@ -111,9 +110,9 @@ public class WQServer extends RemoteServer implements WQInterface {
                         catch (NullPointerException ignored) {}
                     }
                     return 0;
-                } else return -1; //TODO codice di errore login
+                } else return -3; //TODO codice di errore login
             }
-            else return -1;
+            else return -2;
         } else return -1;
     }
 
@@ -184,7 +183,6 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @param nickAmico
      */
     public void sfida(String nickUtente, String nickAmico){
-        //TODO
         WQServerController.gui.updateStatsText("Sfida da " + nickUtente + " a " + nickAmico + "!");
         if (userBase.containsKey(nickAmico)) { //se esiste
             if (userBase.get(nickUtente).friends.contains(nickAmico)) { //se è amico
@@ -371,8 +369,7 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return Le info
      */
     public String getInfos() {
-        //TODO migliorare getInfos()
-        String str = "\n\nWordQuizzle server! Realizzato da Federico Matteoni, mat. 530257\n";
+        String str = "WordQuizzle server! Realizzato da Federico Matteoni, mat. 530257\n";
         long onlineMillis = System.currentTimeMillis() - onlineSince;
         int seconds = (int) (onlineMillis/1000) % 60;
         int minutes = (int) (onlineMillis/(1000*60)) % 60;
@@ -380,9 +377,9 @@ public class WQServer extends RemoteServer implements WQInterface {
         str = str.concat("Online da " + (hours > 0 ? hours + "h " : "") + (minutes > 0 ? minutes + "m " : "") + seconds + "s\n");
         str = str.concat("Con " + loggedIn.size() + " utenti connessi su " + userBase.size() + " registrati.\n");
         str = str.concat("Online sulla porta " + this.port + " e " + (this.port+1) + "\n");
-        str = str.concat("Utenti registrati:\n");
+        str = str.concat("\nUtenti registrati:\n");
         for(WQUtente usr : userBase.values()) {
-            str = str.concat("-  " + usr.username + "\n   " + usr.points + " punti, " + usr.friends.size() + " amici\n");
+            str = str.concat("-  " + usr.toString() + "\n");
         }
 
         return str;
@@ -431,5 +428,4 @@ public class WQServer extends RemoteServer implements WQInterface {
             WQServerController.gui.serverIsOffline();
         } catch (Exception e) {WQServerController.gui.updateStatsText(e.getMessage()); WQServerController.gui.serverIsOffline(); e.printStackTrace();}
     }
-
 }

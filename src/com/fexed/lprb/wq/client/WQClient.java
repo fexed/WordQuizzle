@@ -98,8 +98,13 @@ public class WQClient {
                             WQClientController.gui.updateCommText("Impossibile avviare il datagramReceiver: " + ex.getMessage());
                         }
                         return 0;
-                    }
-                    else return -1;
+                    } else if (received.split(":")[1].equals("ERR1")) {
+                        return -1;
+                    } else if (received.split(":")[1].equals("ERR2")) {
+                        return -2;
+                    } else if (received.split(":")[1].equals("ERR3")) {
+                        return -3;
+                    } else return -4;
                 }
             } else return -1;
         } catch (IOException e) { WQClientController.gui.updateCommText(e.getMessage()); e.printStackTrace(); }
