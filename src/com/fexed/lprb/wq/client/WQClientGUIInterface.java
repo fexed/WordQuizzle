@@ -55,4 +55,14 @@ public interface WQClientGUIInterface {
      * @param point Il nuovo punteggio
      */
     void updatePoints(int point);
+
+    /**
+     * Disabilita i commandi della GUI
+     */
+    void disableCommands();
+
+    /**
+     * Abilita i commandi della GUI
+     */
+    void enableCommands();
 }

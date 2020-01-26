@@ -2,9 +2,6 @@ package com.fexed.lprb.wq.client;
 
 import com.google.gson.JsonParseException;
 
-import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;

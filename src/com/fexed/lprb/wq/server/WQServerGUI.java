@@ -138,7 +138,7 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         otherBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                statsTxt.setText("");
+                clearStatsText("");
             }
         });
         JLabel onlineListLbl =  new JLabel("Utenti online", JLabel.LEFT);

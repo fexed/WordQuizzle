@@ -79,7 +79,7 @@ public class WQClient {
                         received = StandardCharsets.UTF_8.decode(buff).toString();
                         myUser = gson.fromJson(received, WQUtente.class);
                         if (myUser != null) {
-                            System.out.println(myUser.toString());
+                            System.out.println(myUser.description());
                             WQClientController.gui.addAllFriends(myUser.friends);
                         }
                         WQClientController.gui.loggedIn(myUser.username, myUser.points);
@@ -106,9 +106,9 @@ public class WQClient {
                         return -3;
                     } else return -4;
                 }
-            } else return -1;
+            } else return -4;
         } catch (IOException e) { WQClientController.gui.updateCommText(e.getMessage()); e.printStackTrace(); }
-        return -1;
+        return -4;
     }
 
     /**
@@ -194,10 +194,19 @@ public class WQClient {
                     return 0;
                 case "challengeRound":
                     String word = received.split(":")[1];
-                    if (word.equals("1")) WQClientController.gui.clearCommText("**** La sfida ha inizio! Preparati.");
-                    else if (word.equals("-1")) WQClientController.gui.updateCommText("***** La sfida è terminata!");
+                    if (word.equals("1")) {
+                        WQClientController.gui.clearCommText("**** La sfida ha inizio! Preparati.");
+                        WQClientController.gui.disableCommands();
+                    }
+                    else if (word.equals("-1")) {
+                        WQClientController.gui.updateCommText("***** La sfida è terminata!");
+                        WQClientController.gui.enableCommands();
+                    }
                     else if (word.equals("-2")) WQClientController.gui.updateCommText("La sfida è stata rifiutata!");
-                    else if (word.equals("-3")) WQClientController.gui.updateCommText("Fine! Attendi i risultati.");
+                    else if (word.equals("-3")) {
+                        WQClientController.gui.updateCommText("Fine! Attendi i risultati.");
+                        WQClientController.gui.enableCommands();
+                    }
                     else {
                         WQClientController.gui.updateCommText("Parola da tradurre: " + word);
                         suffix = "challengeAnswer:";

@@ -20,6 +20,11 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     private JTextArea commText;
     private JLabel loginNameLbl;
     private JButton loginBtn;
+    private JButton sendBtn;
+    private JButton addFriendBtn;
+    private JButton pointsBtn;
+    private JButton onlineBtn;
+    private JButton rankingBtn;
     private JList<String> friendList;
     private DefaultListModel<String> friendListModel;
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
@@ -41,6 +46,18 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     }
     public void addAllFriends(Collection<? extends String> friends) {
         friendListModel.addAll(friends);
+    }
+    public void disableCommands() {
+        addFriendBtn.setEnabled(false);
+        pointsBtn.setEnabled(false);
+        onlineBtn.setEnabled(false);
+        rankingBtn.setEnabled(false);
+    }
+    public void enableCommands() {
+        addFriendBtn.setEnabled(true);
+        pointsBtn.setEnabled(true);
+        onlineBtn.setEnabled(true);
+        rankingBtn.setEnabled(true);
     }
 
 
@@ -142,7 +159,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         commCommandsPane.setBackground(primary);
         commCommandsPane.setLayout(new GridLayout());
         JTextField inputFld = initThemedTextField(15);
-        JButton sendBtn = initThemedButton("Invia");
+        sendBtn = initThemedButton("Invia");
         sendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -152,7 +169,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 if (n == -1) showTextDialog("Errore");
             }
         });
-        JButton addFriendBtn = initThemedButton("Aggiungi amico");
+        addFriendBtn = initThemedButton("Aggiungi amico");
         addFriendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,7 +212,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 d.setVisible(true);
             }
         });
-        JButton pointsBtn = initThemedButton("Punteggio");
+        pointsBtn = initThemedButton("Punteggio");
         pointsBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -203,7 +220,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 if (n == -1) showTextDialog("Errore");
             }
         });
-        JButton rankingBtn = initThemedButton("Classifica");
+        rankingBtn = initThemedButton("Classifica");
         rankingBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -211,7 +228,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 if (n == -1) showTextDialog("Errore");
             }
         });
-        JButton onlineBtn = initThemedButton("Utenti online");
+        onlineBtn = initThemedButton("Utenti online");
         onlineBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -358,22 +375,27 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         dLoginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = dUserFld.getText();
-                String pwd = String.copyValueOf(dPwdFld.getPassword());
-                int n = WQClientController.client.login(name, pwd);
-                d.setVisible(false);
-                if (n == -1) {
-                    showTextDialog("Errore nella procedura di login: l'utente non esiste");
-                    showLoginDialog();
-                } else if (n == -2) {
-                    showTextDialog("Errore nella procedura di login: password sbagliata");
-                    showLoginDialog();
-                } else if (n == -3) {
-                    showTextDialog("Errore nella procedura di login: l'utente è già collegato");
-                    showLoginDialog();
+                if (dUserFld.getText().length() > 0 && dPwdFld.getPassword().length > 0) {
+                    String name = dUserFld.getText();
+                    String pwd = String.copyValueOf(dPwdFld.getPassword());
+                    int n = WQClientController.client.login(name, pwd);
+                    d.setVisible(false);
+                    if (n == -1) {
+                        showTextDialog("Errore nella procedura di login: l'utente non esiste");
+                        showLoginDialog();
+                    } else if (n == -2) {
+                        showTextDialog("Errore nella procedura di login: password sbagliata");
+                        showLoginDialog();
+                    } else if (n == -3) {
+                        showTextDialog("Errore nella procedura di login: l'utente è già collegato");
+                        showLoginDialog();
+                    } else if (n == 0) {
+                    } else {
+                        showTextDialog("Errore nella procedura di login");
+                        showLoginDialog();
+                    }
                 } else {
-                    showTextDialog("Errore nella procedura di login");
-                    showLoginDialog();
+                    showTextDialog("Prego riempire tutti i campi.");
                 }
             }
         });
