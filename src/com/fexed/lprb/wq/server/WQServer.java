@@ -102,6 +102,11 @@ public class WQServer extends RemoteServer implements WQInterface {
                 if (!loggedIn.keySet().contains(nickUtente.toLowerCase())) {
                     loggedIn.put(nickUtente, handler);
                     WQServerController.gui.addOnline(nickUtente);
+                    WQUtente loggedUser = userBase.get(nickUtente);
+                    for (String friend : loggedUser.friends) {
+                        try { loggedIn.get(friend).send("answer:" + nickUtente + " si è appena collegato."); }
+                        catch (NullPointerException ignored) {}
+                    }
                     return 0;
                 } else return -1; //TODO codice di errore login
             }
@@ -116,6 +121,11 @@ public class WQServer extends RemoteServer implements WQInterface {
     public void logout(String nickUtente){
         loggedIn.remove(nickUtente);
         WQServerController.gui.removeOnline(nickUtente);
+        WQUtente loggedUser = userBase.get(nickUtente);
+        for (String friend : loggedUser.friends) {
+            try { loggedIn.get(friend).send("answer:" + nickUtente + " è andato offline."); }
+            catch (NullPointerException ignored) {}
+        }
     }
 
     /**
