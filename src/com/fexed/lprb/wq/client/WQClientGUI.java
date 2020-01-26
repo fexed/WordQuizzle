@@ -12,6 +12,7 @@ import java.util.Collection;
  * @author Federico Matteoni
  */
 public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
+    private String username;
     //CLIENT COMPONENTS
     private JFrame w;
     private JTextArea commText;
@@ -21,11 +22,16 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     private DefaultListModel<String> friendListModel;
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
     public void loggedIn(String username, int points) {
+        this.username = username;
         loginNameLbl.setText(username + " (" + points + " punti)");
         loginNameLbl.setForeground(green);
         loginBtn.setEnabled(false);
         loginBtn.setVisible(false);
         loginBtn.setText("    Loggato    ");
+    }
+    @Override
+    public void updatePoints(int point) {
+        loginNameLbl.setText(username + " (" + point + " punti)");
     }
     public void addFriend(String friend) {
         friendListModel.addElement(friend);

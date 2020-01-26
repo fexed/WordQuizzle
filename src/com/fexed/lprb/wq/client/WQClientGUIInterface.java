@@ -43,4 +43,10 @@ public interface WQClientGUIInterface {
      * @param nickSfidante Il testo da mostrare
      */
     int showChallengeDialog(String nickSfidante);
+
+    /**
+     * Aggiorna il punteggio visibile nella GUI
+     * @param point Il nuovo punteggio
+     */
+    void updatePoints(int point);
 }

@@ -142,6 +142,16 @@ public class WQClient {
                             WQClientController.gui.updateCommText(str);
                             WQClientController.gui.updateCommText(ex.getMessage());
                         }
+                    } else if (response.contains("challenge")) {
+                        int points = Integer.parseInt(response.split(" ")[1]);
+                        if (response.split(" ")[0].equals("challengeWin")) {
+                            WQClientController.gui.updateCommText("Hai vinto! Sei a " + points + " punti.");
+                        } else if (response.split(" ")[0].equals("challengeLose")) {
+                            WQClientController.gui.updateCommText("Hai perso... sei a " + points + " punti.");
+                        } else {
+                            WQClientController.gui.updateCommText("Sei a " + points + " punti.");
+                        }
+                        WQClientController.gui.updatePoints(points);
                     } else {
                         String str = received.substring(command.length() + 1);
                         WQClientController.gui.updateCommText(str);

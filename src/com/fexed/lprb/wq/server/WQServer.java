@@ -222,16 +222,23 @@ public class WQServer extends RemoteServer implements WQInterface {
     }
 
     public void fineSfida(WQHandler sfidanteUtente, int pointsUtente, WQHandler sfidanteAmico, int pointsAmico) {
-        //CHALLENGE END
-        sfidanteUtente.send("challengeRound:-1");
-        sfidanteAmico.send("challengeRound:-1");
-
         WQUtente utente = userBase.get(sfidanteUtente.username);
         WQUtente amico = userBase.get(sfidanteAmico.username);
         utente.points += pointsUtente;
         amico.points += pointsAmico;
-        if (pointsUtente > pointsAmico) utente.points += 5;
-        else if (pointsAmico > pointsUtente) amico.points += 5;
+        if (pointsUtente > pointsAmico) {
+            utente.points += 5;
+            sfidanteAmico.send("answer:challengeLose " + amico.points);
+            sfidanteUtente.send("answer:challengeWin " + utente.points);
+        }
+        else if (pointsAmico > pointsUtente) {
+            amico.points += 5;
+            sfidanteUtente.send("answer:challengeLose " + utente.points);
+            sfidanteAmico.send("answer:challengeWin " + amico.points);
+        } else {
+            sfidanteUtente.send("answer:challenge " + utente.points);
+            sfidanteAmico.send("answer:challenge " + amico.points);
+        }
         saveServer();
     }
 
@@ -258,7 +265,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         listaOrdinata.sort(new Comparator<WQUtente>() {
             @Override
             public int compare(WQUtente o1, WQUtente o2) {
-                return Integer.compare(o1.points, o2.points);
+                return Integer.compare(o2.points, o1.points);
             }
         });
         ArrayList<String> lista = new ArrayList<>();
