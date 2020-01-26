@@ -60,7 +60,6 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         rankingBtn.setEnabled(true);
     }
 
-
     public WQClientGUI() {
         WQClientController.gui = this;
 
