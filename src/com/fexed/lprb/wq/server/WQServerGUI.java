@@ -121,7 +121,13 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         controlPane.setBackground(primary);
         controlPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         startBtn = initThemedButton("Avvia Server");
-        JButton dumpBtn = initThemedButton("Dump infos");
+        startBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new WQServer(1337);
+            }
+        });
+        JButton dumpBtn = initThemedButton("Informazioni");
         dumpBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
