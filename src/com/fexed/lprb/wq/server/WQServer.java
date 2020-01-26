@@ -110,7 +110,7 @@ public class WQServer extends RemoteServer implements WQInterface {
                         catch (NullPointerException ignored) {}
                     }
                     return 0;
-                } else return -3; //TODO codice di errore login
+                } else return -3;
             }
             else return -2;
         } else return -1;
