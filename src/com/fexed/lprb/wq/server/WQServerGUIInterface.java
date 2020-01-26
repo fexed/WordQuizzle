@@ -48,4 +48,14 @@ public interface WQServerGUIInterface {
      * @param users La collezione di utenti da aggiungere
      */
     void addAllRegistered(Collection<? extends WQUtente> users );
+
+    /**
+     * Aumenta il numero di thread avviati visibili sulla GUI
+     */
+    void addThreadsText();
+
+    /**
+     * Riduce il numero di thread avviati visibili sulla GUI
+     */
+    void subThreadsText();
 }

@@ -407,7 +407,10 @@ public class WQServer extends RemoteServer implements WQInterface {
             WQServerController.gui.updateStatsText("In ascolto su " + this.port);
             do {
                 skt = srvSkt.accept();
-                if (skt != null) threadPool.execute(new WQHandler(this, skt));
+                if (skt != null) {
+                    threadPool.execute(new WQHandler(this, skt));
+                    WQServerController.gui.addThreadsText();
+                }
                 else Thread.sleep(500);
             } while (running);
 

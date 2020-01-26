@@ -47,7 +47,7 @@ public class WQUtente {
      * @param friends La lista amici
      */
     public WQUtente(String username, String password, int points, ArrayList<String> friends) {
-        this.username = password;
+        this.username = username;
         this.password = password;
         this.points = points;
         this.friends = friends;
@@ -55,6 +55,22 @@ public class WQUtente {
 
     @Override
     public String toString() {
-        return this.username + ": " + this.points  + " punti, " + this.friends.size() + " amici";
+        return this.username + " [" + this.points  + " punt" + (this.points == 1 ? "o" : "i") + " - " + this.friends.size() + " amic" + (this.friends.size() == 1 ? "o" : "i") + "]";
+    }
+
+    /**
+     * Ritorna una breve descrizione dell'utente su più linee
+     * @return La descrizione con username, password, punti e amici.
+     */
+    public String description() {
+        String descr ="Nome utente: " + this.username + "\nPassword: " + this.password + "\n" + this.points  + " punt" + (this.points == 1 ? "o" : "i") + ", " + this.friends.size() + " amic" + (this.friends.size() == 1 ? "o" : "i");
+        if (this.friends.size() > 0) {
+            descr += ":";
+            for (String username : this.friends) {
+                descr = descr.concat("\n- " + username);
+            }
+        }
+
+        return descr;
     }
 }

@@ -296,6 +296,6 @@ public class WQHandler implements Runnable {
         if (this.username != null) {
             WQServerController.gui.updateStatsText(this.username + " è andato offline.");
             this.server.logout(username);
-        }
+        }WQServerController.gui.subThreadsText();
     }
 }

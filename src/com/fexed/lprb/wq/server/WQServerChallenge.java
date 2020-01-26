@@ -20,6 +20,7 @@ public class WQServerChallenge implements Runnable {
 
     @Override
     public void run() {
+        WQServerController.gui.addThreadsText();
         sfidante1.randomWords = new HashMap<>(randomWords);
         sfidante2.randomWords = new HashMap<>(randomWords);
 
@@ -38,5 +39,6 @@ public class WQServerChallenge implements Runnable {
         } while (sfidante2.isChallenging);
 
         server.fineSfida(sfidante1, sfidante1.pointsMade, sfidante2, sfidante2.pointsMade);
+        WQServerController.gui.subThreadsText();
     }
 }

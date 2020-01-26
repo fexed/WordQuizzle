@@ -2,11 +2,14 @@ package com.fexed.lprb.wq.server;
 
 import com.fexed.lprb.wq.WQGUI;
 import com.fexed.lprb.wq.WQUtente;
+import com.fexed.lprb.wq.client.WQClientController;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 /**
@@ -14,9 +17,14 @@ import java.util.Collection;
  * @author Federico Matteoni
  */
 public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
+    //SERVER DATA
+    int nThreads = 0;
+
     //SERVER COMPONENTS
+    private JFrame w;
     private JTextArea statsTxt;
     private JLabel titleLabel;
+    private JLabel threadsLabel;
     private JLabel infoLabel;
     private JButton startBtn;
     private JList<String> onlineList;
@@ -28,7 +36,8 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         titleLabel.setForeground(green);
         startBtn.setEnabled(false);
         startBtn.setText("    Server online    ");
-        infoLabel.setText("Online su porta " + port);
+        infoLabel.setText("Porta " + port);
+        threadsLabel.setText(nThreads + " thread" + (nThreads == 1 ? "" : "s" ));
     }
     public void serverIsOffline() {
         titleLabel.setForeground(red);
@@ -48,12 +57,20 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
     public void addAllRegistered(Collection<? extends WQUtente> users ) {
         registeredListModel.addAll(users);
     }
+    public void addThreadsText() {
+        nThreads++;
+        threadsLabel.setText(nThreads + " thread" + (nThreads == 1 ? "" : "s" ));
+    }
+    public void subThreadsText() {
+        nThreads--;
+        threadsLabel.setText(nThreads + " thread" + (nThreads == 1 ? "" : "s" ));
+    }
 
     public WQServerGUI() {
         WQServerController.gui = this;
 
         //FRAME INIT
-        JFrame w = new JFrame("WordQuizzle Server");
+        w = new JFrame("WordQuizzle Server");
         w.setSize(500, 600);
         w.setLocation(150, 150);
 
@@ -80,9 +97,12 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         infoLabel = new JLabel("Offline", JLabel.CENTER);
         infoLabel.setForeground(txtColor);
         infoLabel.setFont(stdFont);
+        threadsLabel = initThemedLabel("- threads", JLabel.RIGHT);
         northPane.add(titleLabel);
         northPane.add(Box.createHorizontalGlue());
         northPane.add(infoLabel);
+        northPane.add(Box.createRigidArea(new Dimension(15, 0)));
+        northPane.add(threadsLabel);
 
         //CENTER PANE
         statsTxt = new JTextArea("");
@@ -107,8 +127,13 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
                 updateStatsText(WQServerController.server.getInfos());
             }
         });
-        JButton otherBtn = initThemedButton("Altro...");
-        otherBtn.setEnabled(false);
+        JButton otherBtn = initThemedButton("Ripulisci il log");
+        otherBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statsTxt.setText("");
+            }
+        });
         JLabel onlineListLbl =  new JLabel("Utenti online", JLabel.LEFT);
         onlineListLbl.setForeground(txtColor);
         onlineListLbl.setFont(stdFont);
@@ -135,6 +160,17 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         registeredList.setMaximumSize(new Dimension(200, 150));
         registeredList.setMinimumSize(new Dimension(200, 50));
         registeredList.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        registeredList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getClickCount() == 2) {
+                    int index = registeredList.getSelectedIndex();
+                    String descr = registeredListModel.get(index).description();
+                    showTextDialog(descr);
+                }
+            }
+        });
         controlPane.add(registeredListLbl);
         controlPane.add(Box.createRigidArea(new Dimension(0, 5)));
         controlPane.add(registeredList);
@@ -165,6 +201,29 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         w.setMinimumSize(w.getSize());
         w.setSize(500, 600);
         w.setVisible(true);
+    }
+
+    public void showTextDialog(String text) {
+        JDialog d = new JDialog(w, "Word Quizzle server info", false);
+        d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
+        d.getContentPane().setBackground(primaryLight);
+        JLabel textLbl = initThemedLabel("<html>" + text.replaceAll("\n", "<br />") + "</html>", JLabel.CENTER);
+        textLbl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        JButton okBtn = initThemedButton("Ok");
+        okBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                d.setVisible(false);
+            }
+        });
+        d.getContentPane().add(textLbl);
+        d.getContentPane().add(Box.createHorizontalGlue());
+        d.getContentPane().add(okBtn);
+        d.getContentPane().add(Box.createHorizontalGlue());
+        d.pack();
+        d.setResizable(false);
+        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        d.setVisible(true);
     }
 
     public static void main(String args[]) {

@@ -12,7 +12,9 @@ import java.util.Collection;
  * @author Federico Matteoni
  */
 public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
+    //CLIENT DATA
     private String username;
+
     //CLIENT COMPONENTS
     private JFrame w;
     private JTextArea commText;
@@ -137,7 +139,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         commMsgPane.setLayout(new FlowLayout());
         JPanel commCommandsPane = new JPanel();
         commCommandsPane.setBackground(primary);
-        commCommandsPane.setLayout(new FlowLayout());
+        commCommandsPane.setLayout(new GridLayout());
         JTextField inputFld = initThemedTextField(15);
         JButton sendBtn = initThemedButton("Invia");
         sendBtn.addActionListener(new ActionListener() {
@@ -188,7 +190,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 d.getRootPane().setDefaultButton(confirmBtn);
                 d.setContentPane(panel);
                 d.pack();
-                //d.setLocation(550 + d.getWidth()/2, 150 + d.getHeight()/2);
+                d.setLocation(w.getX() + w.getWidth()/2 - d.getWidth()/2, w.getY() + w.getHeight()/2 - d.getHeight()/2);
                 d.setVisible(true);
             }
         });
@@ -216,12 +218,20 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 if (n == -1) showTextDialog("Errore");
             }
         });
+        JButton clearBtn = initThemedButton("Pulisci");
+        clearBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                commText.setText("");
+            }
+        });
         commMsgPane.add(inputFld);
         commMsgPane.add(sendBtn);
         commCommandsPane.add(addFriendBtn);
         commCommandsPane.add(pointsBtn);
         commCommandsPane.add(rankingBtn);
         commCommandsPane.add(onlineBtn);
+        commCommandsPane.add(clearBtn);
         commPane.add(scrollTextArea);
         commPane.add(Box.createRigidArea(new Dimension(0, 5)));
         commPane.add(commMsgPane);
@@ -268,7 +278,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.getContentPane().add(Box.createHorizontalGlue());
         d.pack();
         d.setResizable(false);
-        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        d.setLocation(w.getX() + w.getWidth()/2 - d.getWidth()/2, w.getY() + w.getHeight()/2 - d.getHeight()/2);
         d.setVisible(true);
     }
 
@@ -310,7 +320,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.setContentPane(panel);
         d.pack();
         d.setResizable(false);
-        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        d.setLocation(w.getX() + w.getWidth()/2 - d.getWidth()/2, w.getY() + w.getHeight()/2 - d.getHeight()/2);
         d.setVisible(true);
 
         //Bit of a hack, ma non riesco a trovare di meglio per avere la finestra in tema
@@ -359,7 +369,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         });
         d.getContentPane().add(dLoginBtn);
         d.setSize(200, 200);
-        d.setLocation(w.getX() + d.getWidth()/2, w.getY() + d.getHeight()/2);
+        d.setLocation(w.getX() + w.getWidth()/2 - d.getWidth()/2, w.getY() + w.getHeight()/2 - d.getHeight()/2);
         d.getRootPane().setDefaultButton(dLoginBtn);
         d.setResizable(false);
         d.setVisible(true);
