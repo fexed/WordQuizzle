@@ -130,10 +130,13 @@ public class WQServer extends RemoteServer implements WQInterface {
 
     /**
      * Visualizza la lista degli utenti attualmente online
-     * @return JSON rappresentante la lista degli utenti online ({@code ArraList<String>})
+     * @return JSON rappresentante la lista degli utenti online ({@code ArrayList<WQUtente>})
      */
     public String mostraOnline(){
-        ArrayList<String> online = new ArrayList<>(loggedIn.keySet());
+        ArrayList<WQUtente> online = new ArrayList<>();
+        for (String username : loggedIn.keySet()) {
+            online.add(userBase.get(username));
+        }
         Gson gson = new Gson();
         String json = gson.toJson(online);
         return json;
@@ -226,8 +229,20 @@ public class WQServer extends RemoteServer implements WQInterface {
                         WQHandler sfidanteUtente = loggedIn.get(nickUtente);
                         sfidanteUtente.send("challengeRound:-2");
                     }
+                } else {
+                    WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
+                    WQHandler sfidanteUtente = loggedIn.get(nickUtente);
+                    sfidanteUtente.send("challengeRound:-2");
                 }
+            } else {
+                WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
+                WQHandler sfidanteUtente = loggedIn.get(nickUtente);
+                sfidanteUtente.send("challengeRound:-2");
             }
+        } else {
+            WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
+            WQHandler sfidanteUtente = loggedIn.get(nickUtente);
+            sfidanteUtente.send("challengeRound:-2");
         }
     }
 
@@ -264,7 +279,7 @@ public class WQServer extends RemoteServer implements WQInterface {
     /**
      * Restituisce un JSON rappresentante la classifica degli utenti amici di {@code nickUtente}.
      * @param nickUtente L'utente che vuole conoscere la classifica
-     * @return JSON rappresentante la classifica
+     * @return JSON rappresentante la classifica ({@code ArrayList<WQUtente>})
      */
     public String mostraClassifica(String nickUtente) {
         ArrayList<WQUtente> listaOrdinata = new ArrayList<>();
@@ -278,9 +293,9 @@ public class WQServer extends RemoteServer implements WQInterface {
                 return Integer.compare(o2.points, o1.points);
             }
         });
-        ArrayList<String> lista = new ArrayList<>();
+        ArrayList<WQUtente> lista = new ArrayList<>();
         for (WQUtente usr : listaOrdinata) {
-            lista.add(usr.username);
+            lista.add(userBase.get(usr.username));
         }
         Gson gson = new Gson();
         return gson.toJson(lista);

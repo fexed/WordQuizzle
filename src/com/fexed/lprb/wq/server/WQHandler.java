@@ -258,7 +258,7 @@ public class WQHandler implements Runnable {
                             }
                             case "points": {
                                 int points = this.server.mostraPunteggio(this.username);
-                                str = "answer:".concat(points + "");
+                                str = "answer:Attualmente hai ".concat(points + " punti");
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                 do {
                                     n = ((SocketChannel) key.channel()).write(buff);
@@ -267,7 +267,7 @@ public class WQHandler implements Runnable {
                             }
                             case "ranking": {
                                 String json = this.server.mostraClassifica(this.username);
-                                str = "answer:".concat(json);
+                                str = "ranking:".concat(json);
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                 do {
                                     n = ((SocketChannel) key.channel()).write(buff);

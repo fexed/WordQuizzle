@@ -164,14 +164,26 @@ public class WQClient {
                 case "onlinelist":
                     String json = received.substring(command.length() + 1);
                     Gson gson = new Gson();
-                    Type type = new TypeToken<ArrayList<String>>() {
-                    }.getType();
+                    Type type = new TypeToken<ArrayList<WQUtente>>() {}.getType();
                     JsonReader reader = new JsonReader(new StringReader(json));
                     reader.setLenient(true);
-                    ArrayList<String> utentiOnline = gson.fromJson(reader, type);
+                    ArrayList<WQUtente> utentiOnline = gson.fromJson(reader, type);
                     WQClientController.gui.updateCommText("Utenti attualmente collegati: ");
-                    for (String user : utentiOnline) {
-                        WQClientController.gui.updateCommText("- " + user);
+                    for (WQUtente user : utentiOnline) {
+                        WQClientController.gui.updateCommText("- " + user.username + " (" + user.points + " punti)");
+                    }
+                    WQClientController.gui.updateCommText("");
+                    return 0;
+                case "ranking":
+                    json = received.substring(command.length() + 1);
+                    gson = new Gson();
+                    type = new TypeToken<ArrayList<WQUtente>>() {}.getType();
+                    reader = new JsonReader(new StringReader(json));
+                    reader.setLenient(true);
+                    ArrayList<WQUtente> classifica = gson.fromJson(reader, type);
+                    WQClientController.gui.updateCommText("Classifica: ");
+                    for (WQUtente user : classifica) {
+                        WQClientController.gui.updateCommText("- " + user.username + " (" + user.points + " punti)");
                     }
                     WQClientController.gui.updateCommText("");
                     return 0;

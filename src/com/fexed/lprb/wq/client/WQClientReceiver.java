@@ -27,7 +27,7 @@ public class WQClientReceiver implements Runnable {
     public void run() {
         try {
             do {
-                ByteBuffer buff = ByteBuffer.allocate(128);
+                ByteBuffer buff = ByteBuffer.allocate(1024);
                 int n;
                 do {
                     try { Thread.sleep(100); }
