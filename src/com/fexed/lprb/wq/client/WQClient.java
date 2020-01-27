@@ -122,31 +122,20 @@ public class WQClient {
             switch (command) {
                 case "answer":
                     String response = received.split(":")[1];
-                    if (response.equals("OKFREN")) {
-                        try {
-                            WQUtente myUser = null;
-                            int n;
-                            Gson gson = new Gson();
-                            ByteBuffer buff = ByteBuffer.allocate(128);
-                            do {
-                                buff.clear();
-                                n = ((SocketChannel) key.channel()).read(buff);
-                            } while (n == 0);
-                            do {
-                                n = ((SocketChannel) key.channel()).read(buff);
-                            } while (n > 0);
-                            buff.flip();
-                            received = StandardCharsets.UTF_8.decode(buff).toString();
-                            myUser = gson.fromJson(received, WQUtente.class);
-                            if (myUser != null) {
-                                System.out.println(myUser.toString());
-                                WQClientController.gui.addAllFriends(myUser.friends);
-                            }
-                        } catch (Exception ex) {
-                            String str = received.substring(command.length() + 1);
-                            WQClientController.gui.updateCommText(str);
-                            WQClientController.gui.updateCommText(ex.getMessage());
+                    if (response.contains("OKFREN")) {
+                        WQClientController.gui.updateCommText("Amico aggiunto con successso!");
+                        send("friendlist");
+                    } else if (response.contains("FRIENDS")) {
+                        String json = received.split(" ")[1];
+                        Gson gson = new Gson();
+                        WQUtente[] friends = gson.fromJson(json, WQUtente[].class);
+                        ArrayList<String> friendsNames = new ArrayList<>();
+                        WQClientController.gui.updateCommText("Amici:");
+                        for (int i = 0; i < friends.length; i++) {
+                            WQClientController.gui.updateCommText("- " + friends[i].username);
+                            friendsNames.add(friends[i].username);
                         }
+                        WQClientController.gui.addAllFriends(friendsNames);
                     } else if (response.contains("challenge")) {
                         int points = Integer.parseInt(response.split(" ")[1]);
                         if (response.split(" ")[0].equals("challengeWin")) {

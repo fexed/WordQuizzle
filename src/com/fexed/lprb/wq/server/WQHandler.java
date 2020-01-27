@@ -242,12 +242,6 @@ public class WQHandler implements Runnable {
                                         do {
                                             n = ((SocketChannel) key.channel()).write(buff);
                                         } while (n > 0);
-                                        Gson gson = new Gson();
-                                        str = gson.toJson(this.server.ottieniUtente(this.username));
-                                        buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
-                                        do {
-                                            n = ((SocketChannel) key.channel()).write(buff);
-                                        } while (n > 0);
                                     } else {
                                         str = "answer:ERR ";
                                         if (n == -1) str = str.concat(name + " non esistente.");
@@ -271,7 +265,7 @@ public class WQHandler implements Runnable {
                             }
                             case "friendlist": {
                                 String json = this.server.listaAmici(this.username);
-                                str = "answer:".concat(json);
+                                str = "answer:FRIENDS ".concat(json);
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                 do {
                                     n = ((SocketChannel) key.channel()).write(buff);

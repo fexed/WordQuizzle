@@ -45,6 +45,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         friendListModel.addElement(friend);
     }
     public void addAllFriends(Collection<? extends String> friends) {
+        friendListModel.removeAllElements();
         friendListModel.addAll(friends);
     }
     public void disableCommands() {
