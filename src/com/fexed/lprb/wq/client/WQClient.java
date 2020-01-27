@@ -175,9 +175,10 @@ public class WQClient {
                     reader = new JsonReader(new StringReader(json));
                     reader.setLenient(true);
                     ArrayList<WQUtente> classifica = gson.fromJson(reader, type);
+                    WQClientController.gui.updateCommText("");
                     WQClientController.gui.updateCommText("Classifica: ");
                     for (WQUtente user : classifica) {
-                        WQClientController.gui.updateCommText("- " + user.username + " (" + user.points + " punti)");
+                        WQClientController.gui.updateCommText(user.points + " punti: " + user.username);
                     }
                     WQClientController.gui.updateCommText("");
                     return 0;
