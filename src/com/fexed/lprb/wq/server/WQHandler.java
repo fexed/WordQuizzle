@@ -98,7 +98,7 @@ public class WQHandler implements Runnable {
         WQServerController.gui.updateStatsText("(" + this.username + "): " + nickSfidante + " vuole sfidarmi!");
         try {
             DatagramSocket datagramSocket = new DatagramSocket();
-            datagramSocket.connect(InetAddress.getLocalHost(), this.challengePort);
+            datagramSocket.connect(InetAddress.getByName("127.0.0.1"), this.challengePort);
             datagramSocket.setSoTimeout(10000); //10s per accettare la sfida
             byte[] buffer = ("challengeRequest:" + nickSfidante).getBytes(StandardCharsets.UTF_8);
             DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
