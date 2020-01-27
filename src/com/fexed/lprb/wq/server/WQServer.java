@@ -156,6 +156,11 @@ public class WQServer extends RemoteServer implements WQInterface {
                 if (!userBase.get(nickUtente).friends.contains(userBase.get(nickAmico).username)) {
                     userBase.get(nickUtente).friends.add(nickAmico);
                     userBase.get(nickAmico).friends.add(nickUtente);
+                    if (loggedIn.get(nickAmico) != null) {
+                        String json = listaAmici(nickAmico);
+                        String str = "answer:FRIENDS ".concat(json);
+                        loggedIn.get(nickAmico).send(str);
+                    }
                     saveServer();
                     return 0;
                 } else return -2;
