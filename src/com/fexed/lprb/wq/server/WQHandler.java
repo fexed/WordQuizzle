@@ -222,8 +222,7 @@ public class WQHandler implements Runnable {
                                     } while (n > 0);
                                 }
                                 break;
-                            case "showonline": {
-                                WQServerController.gui.updateStatsText(this.username + " richiede lista online.");
+                            case "showonlinelist": {
                                 String json = this.server.mostraOnline();
                                 str = "onlinelist:".concat(json);
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
@@ -263,25 +262,25 @@ public class WQHandler implements Runnable {
                                 }
                                 break;
                             }
-                            case "friendlist": {
+                            case "showfriendlist": {
                                 String json = this.server.listaAmici(this.username);
-                                str = "answer:FRIENDS ".concat(json);
+                                str = "friendlist:".concat(json);
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                 do {
                                     n = ((SocketChannel) key.channel()).write(buff);
                                 } while (n > 0);
                                 break;
                             }
-                            case "points": {
+                            case "showpoints": {
                                 int points = this.server.mostraPunteggio(this.username);
-                                str = "answer:Attualmente hai ".concat(points + " punti");
+                                str = "userpoints:".concat(points + "");
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                 do {
                                     n = ((SocketChannel) key.channel()).write(buff);
                                 } while (n > 0);
                                 break;
                             }
-                            case "ranking": {
+                            case "showranking": {
                                 String json = this.server.mostraClassifica(this.username);
                                 str = "ranking:".concat(json);
                                 ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));

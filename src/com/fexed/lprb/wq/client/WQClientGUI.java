@@ -216,7 +216,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         pointsBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int n = WQClientController.client.send("points");
+                int n = WQClientController.client.send("showpoints");
                 if (n == -1) showTextDialog("Errore");
             }
         });
@@ -224,7 +224,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         rankingBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int n = WQClientController.client.send("ranking");
+                int n = WQClientController.client.send("showranking");
                 if (n == -1) showTextDialog("Errore");
             }
         });
@@ -232,7 +232,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         onlineBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int n = WQClientController.client.send("showonline");
+                int n = WQClientController.client.send("showonlinelist");
                 if (n == -1) showTextDialog("Errore");
             }
         });
