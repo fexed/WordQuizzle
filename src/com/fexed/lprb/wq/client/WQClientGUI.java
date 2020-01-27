@@ -303,6 +303,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     @Override
     public int showChallengeDialog(String nickSfidante) {
         final int[] n = new int[1];
+        n[0] = JOptionPane.CANCEL_OPTION;
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setBackground(primaryLight);
@@ -339,10 +340,19 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.pack();
         d.setResizable(false);
         d.setLocation(w.getX() + w.getWidth()/2 - d.getWidth()/2, w.getY() + w.getHeight()/2 - d.getHeight()/2);
-        d.setVisible(true);
 
         //Bit of a hack, ma non riesco a trovare di meglio per avere la finestra in tema
-        while(d.isVisible())try{Thread.sleep(50);}catch(InterruptedException e){}
+        Timer timer = new Timer(10000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                d.setVisible(false);
+                d.dispose();
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
+        d.setVisible(true);
+        while(d.isVisible()) try{Thread.sleep(50);} catch(InterruptedException ignored){}
+        timer.stop();
         return n[0];
     }
 
