@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class WQClientDatagramReceiver implements Runnable {
     private DatagramSocket datagramSocket;
+    public static boolean isChallenging = false;
 
     public WQClientDatagramReceiver(DatagramSocket datagramSocket) {
         this.datagramSocket = datagramSocket;
@@ -31,19 +32,25 @@ public class WQClientDatagramReceiver implements Runnable {
                 String received = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(buff)).toString();
                 String command = received.split(":")[0];
                 if (command.equals("challengeRequest")) {
-                    WQClientController.gui.updateCommText("Sfida ricevuta...");
-                    int n = WQClientController.gui.showChallengeDialog(received.split(":")[1]);
-                    buff = new byte[128];
-                    if (n == JOptionPane.OK_OPTION) {
-                        WQClientController.gui.updateCommText("Sfida accettata!");
-                        buff = "challengeResponse:OK".getBytes(StandardCharsets.UTF_8);
-                        datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
-                        datagramSocket.send(datagramPacket);
-                    } else {
-                        WQClientController.gui.updateCommText("Sfida rifiutata.");
+                    if (isChallenging) {
                         buff = "challengeResponse:NO".getBytes(StandardCharsets.UTF_8);
                         datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
                         datagramSocket.send(datagramPacket);
+                    } else {
+                        WQClientController.gui.updateCommText("Sfida ricevuta...");
+                        int n = WQClientController.gui.showChallengeDialog(received.split(":")[1]);
+                        buff = new byte[128];
+                        if (n == JOptionPane.OK_OPTION) {
+                            WQClientController.gui.updateCommText("Sfida accettata!");
+                            buff = "challengeResponse:OK".getBytes(StandardCharsets.UTF_8);
+                            datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
+                            datagramSocket.send(datagramPacket);
+                        } else {
+                            WQClientController.gui.updateCommText("Sfida rifiutata.");
+                            buff = "challengeResponse:NO".getBytes(StandardCharsets.UTF_8);
+                            datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
+                            datagramSocket.send(datagramPacket);
+                        }
                     }
                 }
             } catch (IOException e) {

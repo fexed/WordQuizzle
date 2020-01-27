@@ -185,15 +185,18 @@ public class WQClient {
                     String word = received.split(":")[1];
                     if (word.equals("1")) {
                         WQClientController.gui.clearCommText("**** La sfida ha inizio! Preparati.");
+                        WQClientDatagramReceiver.isChallenging = true;
                         WQClientController.gui.disableCommands();
                     }
                     else if (word.equals("-1")) {
                         WQClientController.gui.updateCommText("***** La sfida è terminata!");
+                        WQClientDatagramReceiver.isChallenging = false;
                         WQClientController.gui.enableCommands();
                     }
                     else if (word.equals("-2")) WQClientController.gui.updateCommText("La sfida è stata rifiutata!");
                     else if (word.equals("-3")) {
                         WQClientController.gui.updateCommText("Fine! Attendi i risultati.");
+                        WQClientDatagramReceiver.isChallenging = false;
                         WQClientController.gui.enableCommands();
                     }
                     else {
