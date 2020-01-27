@@ -67,7 +67,7 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @throws RemoteException
      */
     @Override
-    public int registraUtente(String nickUtente, String password) throws RemoteException {
+    public synchronized int registraUtente(String nickUtente, String password) throws RemoteException {
         if (userBase.containsKey(nickUtente.toLowerCase())) {
             return -1;
         } else if (password.equals("")) {
@@ -98,7 +98,7 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @param password La password dell'utente
      * @return 0 se il login va a buon fine, -1 se ci sono errori
      */
-    public int login(String nickUtente, String password, WQHandler handler){
+    public synchronized int login(String nickUtente, String password, WQHandler handler){
         if (userBase.containsKey(nickUtente.toLowerCase())) { //utente esiste
             if (userBase.get(nickUtente.toLowerCase()).password.equals(password)) { //password corretta
                 if (!loggedIn.containsKey(nickUtente.toLowerCase())) { //non è già collegato
@@ -150,7 +150,7 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @param nickAmico L'utente da aggiungere alla lista amici
      * @return 0 se l'operazione va a buon fine, -1 se {@code nickAmico} non esiste, -2 se l'amicizia è già esistente, -3 se {@code nickUtente} non esiste
      */
-    public int aggiungiAmico(String nickUtente, String nickAmico){
+    public synchronized int aggiungiAmico(String nickUtente, String nickAmico){
         if (userBase.containsKey(nickUtente)) {
             if (userBase.containsKey(nickAmico)) {
                 if (!userBase.get(nickUtente).friends.contains(userBase.get(nickAmico).username)) {
