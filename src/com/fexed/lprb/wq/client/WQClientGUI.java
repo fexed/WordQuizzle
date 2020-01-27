@@ -12,20 +12,67 @@ import java.util.Collection;
  * @author Federico Matteoni
  */
 public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
-    //CLIENT DATA
+    //Dati del client
+
+    /**
+     * L'username dell'utente connesso
+     */
     private String username;
 
-    //CLIENT COMPONENTS
+    //Componenti del client
+    /**
+     * La finestra principale
+     */
     private JFrame w;
+
+    /**
+     * Il log di comunicazione
+     */
     private JTextArea commText;
+
+    /**
+     * Etichetta con le info dell'utente connesso (username e punti)
+     */
     private JLabel loginNameLbl;
+
+    /**
+     * Pulsante di login
+     */
     private JButton loginBtn;
+
+    /**
+     * Pulsante d'invio
+     */
     private JButton sendBtn;
+
+    /**
+     * Pulsante per aggiungere un amico
+     */
     private JButton addFriendBtn;
+
+    /**
+     * Pulsante per richiedere i punti al server
+     */
     private JButton pointsBtn;
+
+    /**
+     * Pulsante per richiedere la lista online al server
+     */
     private JButton onlineBtn;
+
+    /**
+     * Pulsante per richiedere la classifica della lista amici al server
+     */
     private JButton rankingBtn;
+
+    /**
+     * Lista degli amici
+     */
     private JList<String> friendList;
+
+    /**
+     * Modello per la lista degli amici
+     */
     private DefaultListModel<String> friendListModel;
     public void updateCommText(String txt) { commText.setText(commText.getText() + "\n" + txt); }
     public void clearCommText(String txt) { commText.setText(txt); }
@@ -64,31 +111,32 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     public WQClientGUI() {
         WQClientController.gui = this;
 
-        //FRAME INIT
+        //Inizializzazione della finestra principale
         w = new JFrame("WordQuizzle!");
         w.setSize(800, 600);
         w.setLocation(550, 150);
 
-        //PANELS AND CONTAINER INIT
+        //Inizializzazione del container principale e dei pannelli
         Container p = new JPanel();
         p.setBackground(primary);
         p.setLayout(new BorderLayout(5, 5));
-        JPanel northPane = new JPanel();
+        JPanel northPane = new JPanel(); //Pannello superiore
         northPane.setBackground(primary);
         northPane.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
         northPane.setLayout(new BoxLayout(northPane, BoxLayout.LINE_AXIS));
-        JPanel centerPane = new JPanel();
+        JPanel centerPane = new JPanel(); //Pannello centrale
         centerPane.setBackground(primary);
         centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.LINE_AXIS));
-        JPanel southPane = new JPanel();
+        JPanel southPane = new JPanel(); //Pannello inferiore
         southPane.setBackground(primary);
         southPane.setLayout(new BoxLayout(southPane, BoxLayout.LINE_AXIS));
         southPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
-        //NORTH PANE
-        JLabel titleLabel = initThemedLabelBig("WordQuizzle!", JLabel.CENTER);
+        //Pannello superiore
+        JLabel titleLabel = initThemedLabelBig("WordQuizzle!", JLabel.CENTER); //Etichetta del titolo
         northPane.add(titleLabel);
 
+        //Pannello con le operazioni e informazioni di login
         JPanel loginPane = new JPanel();
         loginPane.setBackground(primary);
         loginPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -107,8 +155,8 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         loginPane.add(loginBtn);
         northPane.add(loginPane);
 
-        //CENTER PANE
-        friendListModel = new DefaultListModel<>();
+        //Pannello centrale
+        friendListModel = new DefaultListModel<>(); //Inizializzazione della lista amicizia
         friendList = new JList<>(friendListModel);
         friendList.setBackground(primaryLight);
         friendList.setPreferredSize(new Dimension(200, 200));
@@ -129,7 +177,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 2) { //Doppio click per lanciare una sfida
                     int index = friendList.getSelectedIndex();
                     String nick = friendListModel.get(index);
                     WQClientController.client.send("challenge:" + nick);
@@ -137,11 +185,12 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
             }
         });
 
+        //Pannello delle comunicazioni
         JPanel commPane = new JPanel();
         commPane.setBackground(primary);
         commPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10 ,10));
         commPane.setLayout(new BoxLayout(commPane, BoxLayout.PAGE_AXIS));
-        commText = new JTextArea("Client online");
+        commText = new JTextArea(); //Inizializzazione log di comunicazione
         commText.setForeground(txtColor);
         commText.setBackground(primaryDark);
         commText.setFont(stdFontMsg);
@@ -152,32 +201,38 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         JScrollPane scrollTextArea = new JScrollPane(commText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollTextArea.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         scrollTextArea.setPreferredSize(new Dimension(0, 300));
+
         JPanel commMsgPane = new JPanel();
         commMsgPane.setBackground(primary);
         commMsgPane.setLayout(new FlowLayout());
+
         JPanel commCommandsPane = new JPanel();
         commCommandsPane.setBackground(primary);
         commCommandsPane.setLayout(new GridLayout());
         JTextField inputFld = initThemedTextField(15);
-        sendBtn = initThemedButton("Invia");
+        sendBtn = initThemedButton("Invia"); //Inizializzazione pulsante invia
         sendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Invio e pulizia della casella di testo
                 String txt = inputFld.getText();
                 inputFld.setText("");
                 int n = WQClientController.client.send(txt);
                 if (n == -1) showTextDialog("Errore");
             }
         });
-        addFriendBtn = initThemedButton("Aggiungi amico");
+        addFriendBtn = initThemedButton("Aggiungi amico"); //Inizializzazione pulsante aggiungi amicizia
         addFriendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Creazione della finestra di dialogo modale (blocca input nella finestra principale
                 JDialog d = new JDialog(w, "WordQuizzle! Aggiungi un amico", true);
-                JPanel panel = new JPanel();
+                JPanel panel = new JPanel(); //Container principale
                 panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
                 panel.setBackground(primaryLight);
                 panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+                //Etichetta con messaggio, casella di testo e pulsanti
                 JLabel infoLabel = initThemedLabel("Inserisci il nickname dell'utente che vuoi aggiungere come amico.", JLabel.CENTER);
                 JTextField inputFld = initThemedTextField(10);
                 JButton confirmBtn = initThemedButton("Aggiungi");
@@ -190,6 +245,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 btnPanel.add(cancelBtn);
                 panel.add(btnPanel);
 
+                //Pulsante di conferma, invia comando al server tramite il client
                 confirmBtn.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -199,6 +255,8 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                         if (n == -1) showTextDialog("Errore");
                     }
                 });
+
+                //Pulsante annulla, chiude la finestra
                 cancelBtn.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -212,23 +270,25 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 d.setVisible(true);
             }
         });
-        pointsBtn = initThemedButton("Punteggio");
+        pointsBtn = initThemedButton("Punteggio"); //Inizializzazione pulsante di richieta del punteggio
         pointsBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Invio del comando al server tramite il client
                 int n = WQClientController.client.send("showpoints");
                 if (n == -1) showTextDialog("Errore");
             }
         });
-        rankingBtn = initThemedButton("Classifica");
+        rankingBtn = initThemedButton("Classifica"); //Inizializzazione pulsante di richiesta della classifica
         rankingBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Invio comando al server
                 int n = WQClientController.client.send("showranking");
                 if (n == -1) showTextDialog("Errore");
             }
         });
-        onlineBtn = initThemedButton("Utenti online");
+        onlineBtn = initThemedButton("Utenti online"); //Inizializzazione pulsante di richiesta degli utenti online
         onlineBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -236,7 +296,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
                 if (n == -1) showTextDialog("Errore");
             }
         });
-        JButton clearBtn = initThemedButton("Pulisci");
+        JButton clearBtn = initThemedButton("Pulisci"); //Inizializzazione pulsante di pulizia del log
         clearBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -257,20 +317,20 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         commPane.add(commCommandsPane);
         centerPane.add(commPane);
 
-        //SOUTH PANE
+        //Pannello inferiore con semplice footer
         JLabel footerLabel = new JLabel("Federico Matteoni - 530257", JLabel.RIGHT);
         footerLabel.setForeground(txtColor);
         footerLabel.setFont(stdFontSmall);
         southPane.add(Box.createHorizontalGlue());
         southPane.add(footerLabel);
 
-        //WINDOW
+        //Finalizzazione della finestra principale
         p.add(northPane, BorderLayout.PAGE_START);
         p.add(centerPane, BorderLayout.CENTER);
         p.add(southPane, BorderLayout.PAGE_END);
         w.setContentPane(p);
-        w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        w.getRootPane().setDefaultButton(sendBtn);
+        w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //Interrompe il processo quando quinde la finestra
+        w.getRootPane().setDefaultButton(sendBtn); //Enter sulla tastiera = pulsante invio sulla GUI, per praticità
         w.setVisible(true);
         w.pack();
         w.setMinimumSize(w.getSize());
@@ -278,12 +338,13 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     }
 
     public void showTextDialog(String text) {
+        //Inizializzazione della finestra di dialogo modale con titolo
         JDialog d = new JDialog(w, "Word Quizzle! Info", true);
         d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
         d.getContentPane().setBackground(primaryLight);
         JLabel textLbl = initThemedLabel(text, JLabel.CENTER);
         textLbl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JButton okBtn = initThemedButton("Ok");
+        JButton okBtn = initThemedButton("Ok"); //Pulsante di conferma che semplicemente chiude la finestra
         okBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -302,8 +363,11 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
 
     @Override
     public int showChallengeDialog(String nickSfidante) {
-        final int[] n = new int[1];
-        n[0] = JOptionPane.CANCEL_OPTION;
+        //Mostra la finestra di dialogo per la sfida
+        //Ho voluto renderla in tema con il resto del programma, motivo per cui non sono riuscito ad usare il
+        //JOptionPane in maniera soddisfacente e ho dovuto trovare una soluzione
+        final int[] n = new int[1]; //Per poter modificare la variabile da un metodo interno
+        n[0] = JOptionPane.CANCEL_OPTION; //Comportamento di default
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setBackground(primaryLight);
@@ -313,20 +377,20 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         JPanel buttonsPnl = new JPanel();
         buttonsPnl.setLayout(new BoxLayout(buttonsPnl, BoxLayout.LINE_AXIS));
         buttonsPnl.setBackground(primaryLight);
-        JButton okBtn = initThemedButton("Accetta");
+        JButton okBtn = initThemedButton("Accetta"); //Accetta la sfida
         JDialog d = new JDialog(w, "WordQuizzle! Richiesta di sfida", true);
         okBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                n[0] = JOptionPane.OK_OPTION;
+                n[0] = JOptionPane.OK_OPTION; //Valore di sfida accettata
                 d.setVisible(false);
             }
         });
-        JButton noBtn = initThemedButton("Rifiuta");
+        JButton noBtn = initThemedButton("Rifiuta"); //Rifiuta la sfida
         noBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                n[0] = JOptionPane.CANCEL_OPTION;
+                n[0] = JOptionPane.CANCEL_OPTION; //Valore di sfida rifiutata (superfluo)
                 d.setVisible(false);
             }
         });
@@ -341,7 +405,6 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.setResizable(false);
         d.setLocation(w.getX() + w.getWidth()/2 - d.getWidth()/2, w.getY() + w.getHeight()/2 - d.getHeight()/2);
 
-        //Bit of a hack, ma non riesco a trovare di meglio per avere la finestra in tema
         Timer timer = new Timer(10000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 d.setVisible(false);
@@ -351,12 +414,14 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         timer.setRepeats(false);
         timer.start();
         d.setVisible(true);
+        //Soluzione brutta, ma non riesco a trovare di meglio per avere la finestra in tema
         while(d.isVisible()) try{Thread.sleep(50);} catch(InterruptedException ignored){}
         timer.stop();
         return n[0];
     }
 
     private void showLoginDialog() {
+        //Mostra la finestra di dialogo per il login
         JDialog d = new JDialog(w, "Word Quizzle! Login", true);
         d.getContentPane().setLayout(new BoxLayout(d.getContentPane(), BoxLayout.PAGE_AXIS));
         d.getContentPane().setBackground(primaryLight);
@@ -382,13 +447,13 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         d.getContentPane().add(username);
         d.getContentPane().add(Box.createRigidArea(new Dimension(10, 10)));
         d.getContentPane().add(password);
-        dLoginBtn.addActionListener(new ActionListener() {
+        dLoginBtn.addActionListener(new ActionListener() { //Avvia la procedura di login
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (dUserFld.getText().length() > 0 && dPwdFld.getPassword().length > 0) {
+                if (dUserFld.getText().length() > 0 && dPwdFld.getPassword().length > 0) { //Se i campi sono riempiti
                     String name = dUserFld.getText();
                     String pwd = String.copyValueOf(dPwdFld.getPassword());
-                    int n = WQClientController.client.login(name, pwd);
+                    int n = WQClientController.client.login(name, pwd); //Procedura di login e codice di ritorno
                     d.setVisible(false);
                     if (n == -1) {
                         showTextDialog("Errore nella procedura di login: l'utente non esiste");
