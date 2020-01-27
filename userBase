@@ -1,1 +1,1 @@
-{"simon":{"username":"simon","password":"password","points":3,"friends":["fexed"]},"fexed":{"username":"fexed","password":"asd","points":26,"friends":["rodrik","simon"]},"rodrik":{"username":"rodrik","password":"alfa","points":12,"friends":["fexed"]}}
+{"simon":{"username":"simon","password":"password","points":3,"friends":["fexed"]},"fexed":{"username":"fexed","password":"asd","points":26,"friends":["rodrik","simon"]},"rodrik":{"username":"rodrik","password":"alfa","points":27,"friends":["fexed"]}}

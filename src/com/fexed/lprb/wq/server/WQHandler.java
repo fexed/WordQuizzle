@@ -1,6 +1,5 @@
 package com.fexed.lprb.wq.server;
 
-import com.fexed.lprb.wq.WQUtente;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -10,9 +9,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Handler della connessione con un singolo client
