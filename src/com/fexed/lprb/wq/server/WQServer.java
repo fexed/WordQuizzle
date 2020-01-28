@@ -68,16 +68,16 @@ public class WQServer extends RemoteServer implements WQInterface {
      */
     @Override
     public synchronized int registraUtente(String nickUtente, String password) throws RemoteException {
-        if (userBase.containsKey(nickUtente.toLowerCase())) {
+        if (userBase.containsKey(nickUtente.toLowerCase())) { //Verifica se l'utente non è già registrato
             return -1;
-        } else if (password.equals("")) {
+        } else if (password.equals("")) { //Verifica che la password non sia vuota
             WQServerController.gui.updateStatsText("Tentativo di registrare l'utente \"" + nickUtente + "\" con password vuota.");
             return -2;
-        } else {
+        } else { //Registra il nuovo utente
             WQUtente user = new WQUtente(nickUtente, password);
             userBase.put(nickUtente, user);
-            WQServerController.gui.addRegistered(user);
             saveServer();
+            WQServerController.gui.addRegistered(user);
             WQServerController.gui.updateStatsText("Utente \"" + nickUtente + "\" registrato con successo!");
             return 0;
         }
@@ -99,15 +99,15 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return 0 se il login va a buon fine, -1 se ci sono errori
      */
     public synchronized int login(String nickUtente, String password, WQHandler handler){
-        if (userBase.containsKey(nickUtente.toLowerCase())) { //utente esiste
-            if (userBase.get(nickUtente.toLowerCase()).password.equals(password)) { //password corretta
-                if (!loggedIn.containsKey(nickUtente.toLowerCase())) { //non è già collegato
+        if (userBase.containsKey(nickUtente.toLowerCase())) { //Se l'utente esiste
+            if (userBase.get(nickUtente.toLowerCase()).password.equals(password)) { //Se la password corretta
+                if (!loggedIn.containsKey(nickUtente.toLowerCase())) { //Se non è già collegato
                     loggedIn.put(nickUtente, handler);
                     WQServerController.gui.addOnline(nickUtente);
                     WQUtente loggedUser = userBase.get(nickUtente);
-                    for (String friend : loggedUser.friends) {
+                    for (String friend : loggedUser.friends) { //Segnala alla lista amici che l'utente si è collegato
                         try { loggedIn.get(friend).send("answer:" + nickUtente + " si è appena collegato."); }
-                        catch (NullPointerException ignored) {}
+                        catch (NullPointerException ignored) {} //Solo agli amici attualmente connessi
                     }
                     return 0;
                 } else return -3;
@@ -121,12 +121,12 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @param nickUtente Il nickname dell'utente che si vuole scollegare
      */
     public void logout(String nickUtente){
-        loggedIn.remove(nickUtente);
+        loggedIn.remove(nickUtente); //Rimuove l'utente dalla lista degli utenti connessi
         WQServerController.gui.removeOnline(nickUtente);
         WQUtente loggedUser = userBase.get(nickUtente);
-        for (String friend : loggedUser.friends) {
+        for (String friend : loggedUser.friends) { //Segnala agli amici che l'utente è andato offline
             try { loggedIn.get(friend).send("answer:" + nickUtente + " è andato offline."); }
-            catch (NullPointerException ignored) {}
+            catch (NullPointerException ignored) {} //Anche qua solo agli amici attualmente connessi
         }
     }
 
@@ -140,8 +140,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             online.add(userBase.get(username));
         }
         Gson gson = new Gson();
-        String json = gson.toJson(online);
-        return json;
+        return gson.toJson(online);
     }
 
     /**
@@ -151,31 +150,32 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return 0 se l'operazione va a buon fine, -1 se {@code nickAmico} non esiste, -2 se l'amicizia è già esistente, -3 se {@code nickUtente} non esiste
      */
     public synchronized int aggiungiAmico(String nickUtente, String nickAmico){
-        if (userBase.containsKey(nickUtente)) {
-            if (userBase.containsKey(nickAmico)) {
+        if (userBase.containsKey(nickUtente)) { //Se l'utente esiste
+            if (userBase.containsKey(nickAmico)) { //Se l'amico esiste
                 if (!userBase.get(nickUtente).friends.contains(userBase.get(nickAmico).username)) {
-                    userBase.get(nickUtente).friends.add(nickAmico);
-                    userBase.get(nickAmico).friends.add(nickUtente);
-                    if (loggedIn.get(nickAmico) != null) {
+                    //Se non sono già amici
+                    userBase.get(nickUtente).friends.add(nickAmico); //Aggiunge l'utente alla lista amici dell'amico
+                    userBase.get(nickAmico).friends.add(nickUtente); //Aggiunge l'amico alla lista amici dell'utente
+                    if (loggedIn.get(nickAmico) != null) { //Manda la nuova lista amici all'amico se questo è online
                         String json = listaAmici(nickAmico);
                         String str = "friendlist:".concat(json);
                         loggedIn.get(nickAmico).send(str);
                     }
-                    saveServer();
+                    saveServer(); //Salva i dati del server
                     return 0;
-                } else return -2;
-            } else return -1;
-        } else return -3;
+                } else return -2; //Gli utenti sono già amici
+            } else return -1; //L'amico non esiste
+        } else return -3; //L'utente non esiste, non dovrebbe mai accadere
     }
 
     /**
      * Usata per visualizzare la propria lista amici
      * @param nickUtente L'utente che vuole visualizzare la propria lista amici
-     * @return JSON rappresentante la lista amici ({@code ArraList<WQUtente>})
+     * @return JSON rappresentante la lista amici ({@code WQUtente[]})
      */
     public String listaAmici(String nickUtente) {
         ArrayList<WQUtente> friendList = new ArrayList<>();
-        for (String name : userBase.get(nickUtente).friends) {
+        for (String name : userBase.get(nickUtente).friends) { //Costruisce la lista e ne manda l'array in formato JSON
             friendList.add(userBase.get(name));
         }
         Gson gson = new Gson();
@@ -189,29 +189,35 @@ public class WQServer extends RemoteServer implements WQInterface {
      */
     public void sfida(String nickUtente, String nickAmico){
         WQServerController.gui.updateStatsText("Sfida da " + nickUtente + " a " + nickAmico + "!");
-        if (userBase.containsKey(nickAmico)) { //se esiste
-            if (userBase.get(nickUtente).friends.contains(nickAmico)) { //se è amico
-                if (loggedIn.containsKey(nickAmico)) { //se è online
+        if (userBase.containsKey(nickAmico)) { //Se l'utente richiesto esiste
+            if (userBase.get(nickUtente).friends.contains(nickAmico)) { //Se sono amici
+                if (loggedIn.containsKey(nickAmico)) { //Se l'amico è online
                     WQServerController.gui.updateStatsText("Richiesta mandata a " + nickAmico);
+                    //Manda la richiesta di sfida via UDP
                     DatagramSocket dtgSkt = loggedIn.get(nickAmico).challenge(nickUtente, this.port);
-                    if (dtgSkt != null) {
+                    if (dtgSkt != null) { //Se la richiesta è stata accettata
                         WQServerController.gui.updateStatsText("Che abbia inizio la sfida tra " + nickUtente + " e " + nickAmico + "!");
                         WQHandler sfidanteUtente = loggedIn.get(nickUtente);
-                        sfidanteUtente.send("challengeRound:1");
+                        sfidanteUtente.send("challengeRound:1"); //Segnala l'inizio della sfida all'utente
                         WQHandler sfidanteAmico = loggedIn.get(nickAmico);
-                        sfidanteAmico.send("challengeRound:1");
-
+                        sfidanteAmico.send("challengeRound:1"); //Segnala l'inizio della sfida all'amico
+                        //Utente e amico avranno tempo di prepararsi mentre il server scarica le traduzioni delle parole
                         try {
+                            //Lettura del dizionario dal file
                             BufferedReader bufferedReader = new BufferedReader(new FileReader(new File("dizionario")));
                             ArrayList<String> dizionario = new ArrayList<>();
                             String line;
                             while ( (line = bufferedReader.readLine()) != null ) { dizionario.add(line); }
                             bufferedReader.close();
+
+                            //Scelta delle K parole casuali dal dizionario e download delle traduzioni
                             int K = 6; //parole scelte a caso dal dizionario
                             HashMap<String, String> randomWords = new HashMap<>();
                             Collections.shuffle(dizionario);
                             for (int i = 0; i < K; i ++) {
-                                String word = dizionario.get(i);
+                                String word = dizionario.get(i); //Parola casuale i dal dizionario
+
+                                //Richiesta GET al server per la traduzione
                                 URL url = new URL("https://api.mymemory.translated.net/get?q=" + word + "!&langpair=it|en");
                                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                                 connection.setRequestMethod("GET");
@@ -222,44 +228,56 @@ public class WQServer extends RemoteServer implements WQInterface {
                                     content.append(inputLine);
                                 }
                                 in.close();
+
+                                //Parsing del JSON ricevuto
                                 JsonElement json = new JsonParser().parse(content.toString());
+                                //TODO scegliere le traduzioni migliori
                                 String translation = json.getAsJsonObject().get("matches").getAsJsonArray().get(0).getAsJsonObject().get("translation").getAsString(); //JSON parsing
-                                randomWords.put(word, translation.toLowerCase());
+                                randomWords.put(word, translation.toLowerCase()); //Coppia parola-traduzione
+                                //La traduzione viene memorizzata in lowercase e verrà controllata a meno di caratteri
+                                //non alfabetici presenti (ad esempio, "virus" ritorna come traduzione "VIRUS!")
                             }
                             new Thread(new WQServerChallenge(sfidanteUtente, sfidanteAmico, randomWords, this)).start();
-                        } catch (FileNotFoundException ignored) {
+                        } catch (FileNotFoundException ignored) { //Se il server è installato correttamente non accade
                         } catch (IOException ex) {WQServerController.gui.updateStatsText(ex.getMessage());}
 
-                    } else {
+                    } else { //La sfida viene rifiutata o scade il timeout
                         WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
                         WQHandler sfidanteUtente = loggedIn.get(nickUtente);
                         sfidanteUtente.send("challengeRound:-2");
                     }
-                } else {
+                } else { //L'amico non è online
                     WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
                     WQHandler sfidanteUtente = loggedIn.get(nickUtente);
                     sfidanteUtente.send("challengeRound:-2");
                 }
-            } else {
+            } else { //Gli utenti non sono amici
                 WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
                 WQHandler sfidanteUtente = loggedIn.get(nickUtente);
                 sfidanteUtente.send("challengeRound:-2");
             }
-        } else {
+        } else { //Lo sfidante richiesto non esiste
             WQServerController.gui.updateStatsText("Sfida tra " + nickUtente + " e " + nickAmico + " rifiutata!");
             WQHandler sfidanteUtente = loggedIn.get(nickUtente);
             sfidanteUtente.send("challengeRound:-2");
         }
     }
 
+    /**
+     * Conclude la sfida fra gli utenti, calcolando i punteggi finali e mandando agli sfidanti il risultato della sfida
+     * @param sfidanteUtente L'utente sfidante
+     * @param pointsUtente Il punteggio dell'utente
+     * @param sfidanteAmico L'amico sfidato
+     * @param pointsAmico Il punteggio dell'amico
+     */
     public void fineSfida(WQHandler sfidanteUtente, int pointsUtente, WQHandler sfidanteAmico, int pointsAmico) {
-        WQUtente utente = userBase.get(sfidanteUtente.username);
+        WQUtente utente = userBase.get(sfidanteUtente.username); //Riferimenti dell'handler
         WQUtente amico = userBase.get(sfidanteAmico.username);
-        utente.points += pointsUtente;
+        utente.points += pointsUtente; //Aggiorna subito i punteggi totali degli utenti con i punti totalizzati
         amico.points += pointsAmico;
-        if (pointsUtente > pointsAmico) {
+        if (pointsUtente > pointsAmico) { //L'utente vincitore guadagna Z = 5 punti bonus
             utente.points += 5;
-            sfidanteAmico.send("answer:challengeLose " + amico.points);
+            sfidanteAmico.send("answer:challengeLose " + amico.points); //Segnala il risultato agli utenti
             sfidanteUtente.send("answer:challengeWin " + utente.points);
         }
         else if (pointsAmico > pointsUtente) {
@@ -270,7 +288,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             sfidanteUtente.send("answer:challenge " + utente.points);
             sfidanteAmico.send("answer:challenge " + amico.points);
         }
-        saveServer();
+        saveServer(); //Salva i dati del server
     }
 
     /**
@@ -292,8 +310,8 @@ public class WQServer extends RemoteServer implements WQInterface {
         for (String name : userBase.get(nickUtente).friends) {
             listaOrdinata.add(userBase.get(name));
         }
-        listaOrdinata.add(userBase.get(nickUtente));
-        listaOrdinata.sort(new Comparator<WQUtente>() {
+        listaOrdinata.add(userBase.get(nickUtente)); //Aggiunge alla lista tutti gli amici e l'utente stesso
+        listaOrdinata.sort(new Comparator<WQUtente>() { //Riordina la lista in base al punteggio
             @Override
             public int compare(WQUtente o1, WQUtente o2) {
                 return Integer.compare(o2.points, o1.points);
@@ -304,13 +322,13 @@ public class WQServer extends RemoteServer implements WQInterface {
     }
 
     /**
-     * Salva {@code fileData} su {@code fileName}
+     * Salva {@code fileData} sul file {@code fileName}
      * @param filename Il nome del file su cui salvare
      * @param fileData I dati da salvare
      * @return 0 se il salvataggio è andato a buon fine, -1 se il file non può essere creato o è una directory, -2 se c'è IOException
      */
     private int saveToFile(String filename, String fileData) {
-        System.out.println("Saving " + fileData + " to " + filename);
+        WQServerController.gui.updateStatsText("Salvataggio dati su " + filename);
         try {
             FileOutputStream fileout = new FileOutputStream(new File(filename));
             fileout.write(fileData.getBytes(StandardCharsets.UTF_8));
@@ -323,11 +341,11 @@ public class WQServer extends RemoteServer implements WQInterface {
     }
 
     /**
-     * Inizializza il WQServer
+     * Inizializza il WQServer da file
      * @throws RemoteException
      */
     private void loadServer() throws RemoteException {
-        //RMI
+        //Inizializzazione RMI
         WQInterface stub = (WQInterface) UnicastRemoteObject.exportObject(this, port+1);
         LocateRegistry.createRegistry(port+1);
         Registry r = LocateRegistry.getRegistry(port+1);
@@ -335,6 +353,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         WQServerController.gui.updateStatsText("Registrazioni aperte su porta " + (port+1));
 
         try {
+            //Lettura della lista degli utenti da file
             FileInputStream userBaseFile = new FileInputStream(new File("userBase"));
             String userBaseJson = "";
             byte[] buff = new byte[512];
@@ -345,12 +364,15 @@ public class WQServer extends RemoteServer implements WQInterface {
                 bBuff = ByteBuffer.wrap(buff);
                 userBaseJson = userBaseJson.concat(StandardCharsets.UTF_8.decode(bBuff).toString());
             } while (n > -1);
+            userBaseFile.close();
+
+            //Parsing del json
             Gson gson = new Gson();
             JsonReader reader = new JsonReader(new StringReader(userBaseJson));
             reader.setLenient(true);
             Type type = new TypeToken<HashMap<String, WQUtente>>(){}.getType();
             userBase = gson.fromJson(reader, type);
-            WQServerController.gui.addAllRegistered(userBase.values());
+            WQServerController.gui.addAllRegistered(userBase.values()); //aggiornamento GUI
         } catch (IOException e) {
             userBase = new HashMap<>();
         }
@@ -358,15 +380,17 @@ public class WQServer extends RemoteServer implements WQInterface {
     }
 
     /**
-     * Salva su file i dati degli utenti del server
+     * Salva su file i dati del server
      */
     public void saveServer() {
         Gson gson = new Gson();
         int n = saveToFile("userBase", gson.toJson(userBase));
+        if (n == -1) WQServerController.gui.updateStatsText("Impossibile creare il file \"userBase\"");
+        if (n == -2) WQServerController.gui.updateStatsText("IOException durante la scrittura sul file \"userBase\"");
     }
 
     /**
-     * Restituisce una stringa con varie info sullo stato attuale del server
+     * Restituisce un paragrafo di testo con varie info sullo stato attuale del server
      * @return Le info
      */
     public String getInfos() {
@@ -377,7 +401,7 @@ public class WQServer extends RemoteServer implements WQInterface {
         int hours = (int) (onlineMillis / (1000*60*60)) % 60;
         str = str.concat("Online da " + (hours > 0 ? hours + "h " : "") + (minutes > 0 ? minutes + "m " : "") + seconds + "s\n");
         str = str.concat("Con " + loggedIn.size() + " utenti connessi su " + userBase.size() + " registrati.\n");
-        str = str.concat("Online sulla porta " + this.port + " e " + (this.port+1) + "\n");
+        str = str.concat("Online sulle porte " + this.port + " e " + (this.port+1) + "\n");
         str = str.concat("\nUtenti registrati:\n");
         for(WQUtente usr : userBase.values()) {
             str = str.concat("-  " + usr.toString() + "\n");
@@ -393,17 +417,23 @@ public class WQServer extends RemoteServer implements WQInterface {
         this.running = false;
     }
 
+    /**
+     * Costruttore del server, inizializza e avvia
+     * @param porta La porta sulla quale ascoltare le comunicazioni in entrata
+     */
     public WQServer(int porta) {
-        ServerSocketChannel srvSkt = null;
-        SocketChannel skt = null;
-        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(25);
+        ServerSocketChannel srvSkt = null; //Socket di ascolto delle connessioni in entrata
+        SocketChannel skt = null; //Socket da smistare all'handler per la gestione del singolo client
+        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(25); //Vari handler
         this.port = porta;
         this.running = true;
-        WQServerController.server = this;
+        WQServerController.server = this; //Si "registra" alla classe di comunicazione con la GUI
 
         try {
             WQServerController.gui.updateStatsText(Time.from(Calendar.getInstance().toInstant()).toString());
             loadServer();
+
+            //Apertura alle connessioni
             srvSkt = ServerSocketChannel.open();
             srvSkt.socket().bind(new InetSocketAddress(porta));
             srvSkt.configureBlocking(false);
@@ -411,7 +441,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             onlineSince = System.currentTimeMillis();
             WQServerController.gui.serverIsOnline(port);
 
-            WQServerController.gui.updateStatsText("In ascolto su " + this.port);
+            //Loop principale di ascolto e smistamento
             do {
                 skt = srvSkt.accept();
                 if (skt != null) {
@@ -421,7 +451,8 @@ public class WQServer extends RemoteServer implements WQInterface {
                 else Thread.sleep(500);
             } while (running);
 
-            WQServerController.gui.updateStatsText("Spegnimento...");
+            //Procedura di spegnimento
+            WQServerController.gui.updateStatsText("Spegnimento del server");
             threadPool.shutdown();
             try { threadPool.awaitTermination(1, TimeUnit.SECONDS); }
             catch (InterruptedException ignored) {}
