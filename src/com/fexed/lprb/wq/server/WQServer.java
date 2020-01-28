@@ -158,7 +158,7 @@ public class WQServer extends RemoteServer implements WQInterface {
                     userBase.get(nickAmico).friends.add(nickUtente);
                     if (loggedIn.get(nickAmico) != null) {
                         String json = listaAmici(nickAmico);
-                        String str = "answer:FRIENDS ".concat(json);
+                        String str = "friendlist:".concat(json);
                         loggedIn.get(nickAmico).send(str);
                     }
                     saveServer();
