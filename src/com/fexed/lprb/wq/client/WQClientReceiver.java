@@ -12,7 +12,15 @@ import java.nio.charset.StandardCharsets;
  * @author Federico Matteoni
  */
 public class WQClientReceiver implements Runnable {
+
+    /**
+     * Il socket su cui ascoltare
+     */
     private SocketChannel skt;
+
+    /**
+     * Chiave del selector
+     */
     private SelectionKey key;
 
     public WQClientReceiver(SocketChannel skt, SelectionKey key) {
