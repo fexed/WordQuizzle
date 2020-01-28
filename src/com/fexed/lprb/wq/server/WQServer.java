@@ -299,12 +299,8 @@ public class WQServer extends RemoteServer implements WQInterface {
                 return Integer.compare(o2.points, o1.points);
             }
         });
-        ArrayList<WQUtente> lista = new ArrayList<>();
-        for (WQUtente usr : listaOrdinata) {
-            lista.add(userBase.get(usr.username));
-        }
         Gson gson = new Gson();
-        return gson.toJson(lista);
+        return gson.toJson(listaOrdinata);
     }
 
     /**
