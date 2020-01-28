@@ -96,7 +96,8 @@ public class WQServer extends RemoteServer implements WQInterface {
      * Procedura di login per un utente già registrato
      * @param nickUtente Il nickname dell'utente
      * @param password La password dell'utente
-     * @return 0 se il login va a buon fine, -1 se ci sono errori
+     * @return 0 se il login va a buon fine, -1 se l'utente non esiste, -2 se la password è sbagliata o -3 se
+     * l'utente risulta già collegato
      */
     public synchronized int login(String nickUtente, String password, WQHandler handler){
         if (userBase.containsKey(nickUtente.toLowerCase())) { //Se l'utente esiste
@@ -111,8 +112,7 @@ public class WQServer extends RemoteServer implements WQInterface {
                     }
                     return 0;
                 } else return -3;
-            }
-            else return -2;
+            } else return -2;
         } else return -1;
     }
 

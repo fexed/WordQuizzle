@@ -154,7 +154,7 @@ public class WQClient {
                     if (response.contains("OKFREN")) { //Risposta all'aggiunta di un amico "addfriend:nickAmico"
                         WQClientController.gui.updateCommText("Amico aggiunto con successso!");
                         //Richiedo automaticamente la lista amici, per aggiornala nella GUI
-                        send("friendlist");
+                        send("showfriendlist");
                     } else if (response.contains("challenge")) { //Messaggi riguardanti inizio/fine della sfida di traduzione
                         int points = Integer.parseInt(response.split(" ")[1]);
                         if (response.split(" ")[0].equals("challengeWin")) { //Vincitore della sfida
