@@ -7,6 +7,8 @@
      * 1 se l'utente non esiste
      * 2 se la password è sbagliata
      * 3 se l'utente è gia collegato al server da un altro client
+ * Server: `<json>` dell'`WQUtente` dell'utente connesso
+ * Client: `challengePort:<n>`, dove `<n>` è il numero di porta per le richieste UDP o -1 in caso di errore.
 
 #### Aggiunta di un amico
  * Client `addfriend:<nickAmico>`
@@ -36,7 +38,7 @@ La richiesta di sfida deve essere accettata in T1 = 10 secondi e la sfida può d
 Ogni risposta giusta assegna X = 2 punti mentre ogni risposta sbagliata ne toglie Y = 1. Il vincitore si aggiudica Z = 5
 punti bonus. La comunicazione avviene nel seguente modo:
  * ClientA > Server: `challengeRequest:<nickAmico>`
- * Server > ClientB: richiesta su UDP
+ * Server > ClientB: `challengeRequest:<nickUtente>`
  * B > S: risposta
    * Se B risponde con `challengeResponse:NO` o se scatta il timeout
      * S > A: `challengeRound:-2`

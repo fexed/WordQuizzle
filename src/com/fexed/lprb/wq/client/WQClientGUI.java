@@ -13,13 +13,12 @@ import java.util.Collection;
  */
 public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     //Dati del client
-
     /**
      * L'username dell'utente connesso
      */
     private String username;
 
-    //Componenti del client
+    //Componenti della GUI
     /**
      * La finestra principale
      */
