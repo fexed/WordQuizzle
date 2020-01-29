@@ -27,6 +27,11 @@ public interface WQClientGUIInterface {
     void loggedIn(String username, int points);
 
     /**
+     * Segnala alla GUI che il client è offline
+     */
+    void loggedOut();
+
+    /**
      * Aggiunge un amico alla GUI
      * @param friend Il nickname dell'amico da aggiungere
      */

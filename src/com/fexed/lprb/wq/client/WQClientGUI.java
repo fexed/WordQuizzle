@@ -82,6 +82,17 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         loginBtn.setEnabled(false);
         loginBtn.setVisible(false);
         loginBtn.setText("    Loggato    ");
+        enableCommands();
+    }
+    public void loggedOut() {
+        this.username = null;
+        loginNameLbl.setText("<non eseguito>");
+        loginNameLbl.setForeground(red);
+        loginBtn.setEnabled(true);
+        loginBtn.setVisible(true);
+        loginBtn.setText("    Login    ");
+        friendListModel.removeAllElements();
+        disableCommands();
     }
     @Override
     public void updatePoints(int point) {
@@ -149,6 +160,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         });
         JLabel loginStatusLbl = initThemedLabel("Login: ", JLabel.LEFT);
         loginNameLbl = initThemedLabel("<non eseguito>", JLabel.LEFT);
+        loginNameLbl.setForeground(red);
         loginPane.add(loginStatusLbl);
         loginPane.add(loginNameLbl);
         loginPane.add(loginBtn);
@@ -328,11 +340,20 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         p.add(centerPane, BorderLayout.CENTER);
         p.add(southPane, BorderLayout.PAGE_END);
         w.setContentPane(p);
-        w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //Interrompe il processo quando quinde la finestra
+        w.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        w.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                WQClientController.client.logout();
+                w.dispose();
+                System.exit(0);
+            }
+        });
         w.getRootPane().setDefaultButton(sendBtn); //Enter sulla tastiera = pulsante invio sulla GUI, per praticità
         w.setVisible(true);
         w.pack();
         w.setMinimumSize(w.getSize());
+        disableCommands();
         showLoginDialog();
     }
 

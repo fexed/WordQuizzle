@@ -52,5 +52,6 @@ public class WQClientReceiver implements Runnable {
                 } catch (JsonParseException ex) { WQClientController.client.receive(ex.getMessage()); ex.printStackTrace();}
             } while (skt.isConnected());
         } catch (Exception ex) { WQClientController.client.receive(ex.getMessage()); ex.printStackTrace();}
+        WQClientController.client.logout();
     }
 }

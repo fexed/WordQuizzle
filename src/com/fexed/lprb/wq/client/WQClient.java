@@ -2,6 +2,7 @@ package com.fexed.lprb.wq.client;
 
 import com.fexed.lprb.wq.WQInterface;
 import com.fexed.lprb.wq.WQUtente;
+import com.fexed.lprb.wq.server.WQServer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
@@ -137,6 +138,16 @@ public class WQClient {
             } else return -4; //Errore generico
         } catch (IOException e) { WQClientController.gui.updateCommText(e.getMessage()); e.printStackTrace(); }
         return -4;
+    }
+
+    /**
+     * Avvia la disconnessione del client
+     */
+    public void logout() {
+        try { this.skt.close(); }
+        catch (IOException ignored) {}
+        this.skt = null;
+        WQClientController.gui.loggedOut();
     }
 
     /**
