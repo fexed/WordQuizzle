@@ -5,10 +5,7 @@ import com.fexed.lprb.wq.WQUtente;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Collection;
 
 /**
@@ -21,6 +18,8 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
      * Numero di thread in esecuzione
      */
     private int nThreads = 0;
+
+    private boolean shouldClose = false;
 
     //Componenti della GUI
     /**
@@ -86,6 +85,10 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         startBtn.setEnabled(true);
         startBtn.setText("    Avvia server    ");
         infoLabel.setText("Offline");
+        if (shouldClose) {
+            w.dispose();
+            System.exit(0);
+        }
     }
     public void addOnline(String user) {
         onlineListModel.addElement(user);
@@ -245,7 +248,14 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         p.add(centerPane, BorderLayout.CENTER);
         p.add(southPane, BorderLayout.PAGE_END);
         w.setContentPane(p);
-        w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        w.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        w.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                WQServerController.server.stopServer();
+                shouldClose = true;
+            }
+        });
         w.pack();
         w.setMinimumSize(w.getSize());
         w.setSize(500, 600);

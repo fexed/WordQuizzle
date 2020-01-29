@@ -414,6 +414,7 @@ public class WQServer extends RemoteServer implements WQInterface {
      * Ferma l'esecuzione del server
      */
     public void stopServer() {
+        saveServer();
         this.running = false;
     }
 
