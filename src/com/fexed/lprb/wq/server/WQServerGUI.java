@@ -19,6 +19,9 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
      */
     private int nThreads = 0;
 
+    /**
+     * Indica alla GUI se chiudere il processo o meno
+     */
     private boolean shouldClose = false;
 
     //Componenti della GUI
@@ -85,7 +88,7 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         startBtn.setEnabled(true);
         startBtn.setText("    Avvia server    ");
         infoLabel.setText("Offline");
-        if (shouldClose) {
+        if (shouldClose) { //In caso, chiude il processo
             w.dispose();
             System.exit(0);
         }
