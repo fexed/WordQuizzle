@@ -2,9 +2,7 @@ package com.fexed.lprb.wq.server;
 
 import com.fexed.lprb.wq.WQInterface;
 import com.fexed.lprb.wq.WQUtente;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
@@ -214,7 +212,7 @@ public class WQServer extends RemoteServer implements WQInterface {
 
                             //Scelta delle K parole casuali dal dizionario e download delle traduzioni
                             int K = 6; //parole scelte a caso dal dizionario
-                            HashMap<String, String> randomWords = new HashMap<>();
+                            HashMap<String, ArrayList<String>> randomWords = new HashMap<>();
                             Collections.shuffle(dizionario);
                             for (int i = 0; i < K; i ++) {
                                 String word = dizionario.get(i); //Parola casuale i dal dizionario
@@ -234,8 +232,20 @@ public class WQServer extends RemoteServer implements WQInterface {
                                 //Parsing del JSON ricevuto
                                 JsonElement json = new JsonParser().parse(content.toString());
                                 //TODO scegliere le traduzioni migliori
-                                String translation = json.getAsJsonObject().get("matches").getAsJsonArray().get(0).getAsJsonObject().get("translation").getAsString(); //JSON parsing
-                                randomWords.put(word, translation.toLowerCase()); //Coppia parola-traduzione
+                                JsonArray translationsArray = json.getAsJsonObject().get("matches").getAsJsonArray();
+                                ArrayList<String> translations = new ArrayList<>();
+                                for (JsonElement match : translationsArray) {
+                                    String translation = match.getAsJsonObject().get("translation").getAsString()
+                                            .toLowerCase()
+                                            .replaceAll("!", "")
+                                            .replaceAll("\\.", "")
+                                            .replaceAll("-", "");
+                                    translations.add(translation);
+                                }
+                                randomWords.put(word, translations); //Coppia parola-traduzioni
+                                System.out.print(word + ":");
+                                for (String tr : translations) System.out.print(" " + tr);
+                                System.out.println();
                                 //La traduzione viene memorizzata in lowercase e verrà controllata a meno di caratteri
                                 //non alfabetici presenti (ad esempio, "virus" ritorna come traduzione "VIRUS!")
                             }

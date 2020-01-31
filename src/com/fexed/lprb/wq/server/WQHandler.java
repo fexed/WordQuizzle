@@ -9,6 +9,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -25,7 +26,7 @@ public class WQHandler implements Runnable {
     /**
      * Lista delle parole da tradurre per la sfida, null finché non inizia la sfida
      */
-    public HashMap<String, String> randomWords;
+    public HashMap<String, ArrayList<String>> randomWords;
 
     /**
      * Indica se l'utente è nel corso di una sfida
@@ -114,13 +115,21 @@ public class WQHandler implements Runnable {
                 String received = StandardCharsets.UTF_8.decode(bBuff).toString();
                 String command = received.split(":")[0]; //Per verifica che il client risponda correttamente
                 String translatedWord = received.split(":")[1]; //Ricevo "challengeAnswer:<qualcosa>"
-                String wordToGet = randomWords.get(word).toLowerCase().replaceAll("!", "");
-                WQServerController.gui.updateStatsText("(" + this.username + ", " + word + "): " + translatedWord + " - " + wordToGet);
+                ArrayList<String> wordsToGet = randomWords.get(word);
 
                 if (command.equals("challengeAnswer")) {
-                    if (translatedWord.equals("-1")) pointsMade += 0; //Timeout, non ho risposto, 0 punti
-                    else if (translatedWord.toLowerCase().contains(wordToGet)) pointsMade += 2; //Ho risposto bene, +X
-                    else pointsMade -= 1; //Ho risposto sbagliando, -Y punti
+                    if (translatedWord.equals("-1")) {
+                        pointsMade += 0; //Timeout, non ho risposto, 0 punti
+                        WQServerController.gui.updateStatsText("(" + this.username + " +0): \"" + word + "\" - \"...\"");
+                    }
+                    else if (wordsToGet.contains(translatedWord.toLowerCase())) {
+                        pointsMade += 2; //Ho risposto bene, +X
+                        WQServerController.gui.updateStatsText("(" + this.username + " +2): \"" + word + "\" - \"" + translatedWord + "\"");
+                    }
+                    else {
+                        pointsMade -= 1; //Ho risposto sbagliando, -Y punti
+                        WQServerController.gui.updateStatsText("(" + this.username + " -1): \"" + word + "\" - \"" + translatedWord + "\"");
+                    }
                 }
             }
         } catch (IOException ex) { send("ERR: " + ex.getMessage()); }
