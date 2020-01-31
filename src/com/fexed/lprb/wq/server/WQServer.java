@@ -231,7 +231,6 @@ public class WQServer extends RemoteServer implements WQInterface {
 
                                 //Parsing del JSON ricevuto
                                 JsonElement json = new JsonParser().parse(content.toString());
-                                //TODO scegliere le traduzioni migliori
                                 JsonArray translationsArray = json.getAsJsonObject().get("matches").getAsJsonArray();
                                 ArrayList<String> translations = new ArrayList<>();
                                 for (JsonElement match : translationsArray) {
@@ -240,14 +239,15 @@ public class WQServer extends RemoteServer implements WQInterface {
                                             .replaceAll("!", "")
                                             .replaceAll("\\.", "")
                                             .replaceAll("-", "");
+                                    //Rimozione di caratteri non alfabetici trovati durante i test
                                     translations.add(translation);
                                 }
                                 randomWords.put(word, translations); //Coppia parola-traduzioni
-                                System.out.print(word + ":");
+                                /*System.out.print(word + ":");
                                 for (String tr : translations) System.out.print(" " + tr);
-                                System.out.println();
-                                //La traduzione viene memorizzata in lowercase e verrà controllata a meno di caratteri
-                                //non alfabetici presenti (ad esempio, "virus" ritorna come traduzione "VIRUS!")
+                                System.out.println();*/
+                                //Le traduzioni vengono memorizzate in lowercase e verranno controllate a meno di
+                                //caratteri non alfabetici presenti (ad esempio, una traduzione di "virus" è "VIRUS!")
                             }
                             new Thread(new WQServerChallenge(sfidanteUtente, sfidanteAmico, randomWords, this)).start();
                         } catch (FileNotFoundException ignored) { //Se il server è installato correttamente non accade
