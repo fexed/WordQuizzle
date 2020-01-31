@@ -295,6 +295,7 @@ public class WQHandler implements Runnable {
                                         else if (n == -2) str = str.concat("Sei già amico con " + name);
                                         else if (n == -3)
                                             str = str.concat(this.username + " non esistente."); //non dovrebbe mai succedere
+                                        else if (n == -4) str = str.concat("Non puoi aggiungere te stesso come amico");
                                         ByteBuffer buff = ByteBuffer.wrap(str.getBytes(StandardCharsets.UTF_8));
                                         do {
                                             n = ((SocketChannel) key.channel()).write(buff);

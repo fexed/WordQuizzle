@@ -150,22 +150,24 @@ public class WQServer extends RemoteServer implements WQInterface {
      * @return 0 se l'operazione va a buon fine, -1 se {@code nickAmico} non esiste, -2 se l'amicizia è già esistente, -3 se {@code nickUtente} non esiste
      */
     public synchronized int aggiungiAmico(String nickUtente, String nickAmico){
-        if (userBase.containsKey(nickUtente)) { //Se l'utente esiste
-            if (userBase.containsKey(nickAmico)) { //Se l'amico esiste
-                if (!userBase.get(nickUtente).friends.contains(userBase.get(nickAmico).username)) {
-                    //Se non sono già amici
-                    userBase.get(nickUtente).friends.add(nickAmico); //Aggiunge l'utente alla lista amici dell'amico
-                    userBase.get(nickAmico).friends.add(nickUtente); //Aggiunge l'amico alla lista amici dell'utente
-                    if (loggedIn.get(nickAmico) != null) { //Manda la nuova lista amici all'amico se questo è online
-                        String json = listaAmici(nickAmico);
-                        String str = "friendlist:".concat(json);
-                        loggedIn.get(nickAmico).send(str);
-                    }
-                    saveServer(); //Salva i dati del server
-                    return 0;
-                } else return -2; //Gli utenti sono già amici
-            } else return -1; //L'amico non esiste
-        } else return -3; //L'utente non esiste, non dovrebbe mai accadere
+        if (!nickUtente.toLowerCase().equals(nickAmico.toLowerCase())) {
+            if (userBase.containsKey(nickUtente)) { //Se l'utente esiste
+                if (userBase.containsKey(nickAmico)) { //Se l'amico esiste
+                    if (!userBase.get(nickUtente).friends.contains(userBase.get(nickAmico).username)) {
+                        //Se non sono già amici
+                        userBase.get(nickUtente).friends.add(nickAmico); //Aggiunge l'utente alla lista amici dell'amico
+                        userBase.get(nickAmico).friends.add(nickUtente); //Aggiunge l'amico alla lista amici dell'utente
+                        if (loggedIn.get(nickAmico) != null) { //Manda la nuova lista amici all'amico se questo è online
+                            String json = listaAmici(nickAmico);
+                            String str = "friendlist:".concat(json);
+                            loggedIn.get(nickAmico).send(str);
+                        }
+                        saveServer(); //Salva i dati del server
+                        return 0;
+                    } else return -2; //Gli utenti sono già amici
+                } else return -1; //L'amico non esiste
+            } else return -3; //L'utente non esiste, non dovrebbe mai accadere
+        } else return -4; //Tentativo di aggiungere sé stesso come amico
     }
 
     /**
