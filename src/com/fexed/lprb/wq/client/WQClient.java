@@ -145,7 +145,7 @@ public class WQClient {
      */
     public void logout() {
         try { this.skt.close(); }
-        catch (IOException ignored) {}
+        catch (IOException | NullPointerException ignored) {}
         this.skt = null;
         WQClientController.gui.loggedOut();
     }
