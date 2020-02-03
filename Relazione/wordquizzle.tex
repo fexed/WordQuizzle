@@ -11,8 +11,8 @@
 
 \begin{document}
 {\fontfamily{lmss}\selectfont
-\title{World Quizzle -- Relazione del progetto}
-\author{Federico Matteoni -- Mat. 530257}
+\title{Università di Pisa\\Reti di Calcolatori e Laboratorio\\Word Quizzle -- Relazione}
+\author{Federico Matteoni\\Matricola 530257}
 \date{ }
 \renewcommand*\contentsname{Indice}
 
@@ -26,8 +26,10 @@ L'interazione con l'utente poteva avvenire tramite una \texttt{CLI} oppure, opzi
 Il sistema è suddiviso in due parti principali: \textbf{client} e \textbf{server}. Tramite il client è possibile interagire col servizio WordQuizzle, che viene offerto dal server.\\
 L'\textbf{interfaccia del server} offre varie \textbf{informazioni sullo stato attuale del servizio}, dagli utenti alla porta usata. Può essere usata per verificare il corretto funzionamento del sistema e monitorare le sfide in corso.\\
 L'\textbf{interfaccia del client} è usata per l'\textbf{interazione vera e propria} col servizio: da essa si possono lanciare le sfide, richiedere le informazioni al server e consultare la propria lista amici e lo stato del proprio profilo utente.
+\subsection{Istruzioni per la compilazione}
+Il progetto è stato sviluppato mediante l'IDE IntelliJ IDEA, utilizzando come libreria esterne la libreria \textbf{GSON}\\(\texttt{com.google.code.gson}) in versione 2.8.5. Sarà necessario specificare tale libreria nel build path per poter compilare il progetto.
 \subsection{Istruzioni per l'installazione e l'avvio}
-\paragraph{Server} Il server, eseguito dall'archivio \texttt{WordQuizzleServer.jar}, \textbf{deve trovarsi in una directory contenente il dizionario} da cui selezionare le parole per la sfida. Il dizionario contiene \texttt{N} parole italiane, una per riga. Un dizionario di esempio con 100 parole è incluso.\\
+\paragraph{Server} Il server, eseguito dall'archivio \texttt{WordQuizzleServer.jar}, \textbf{deve essere eseguito in una directory contenente un file chiamato "dizionario"}, contenente il dizionario da cui selezionare le parole per la sfida. Il dizionario contiene \texttt{N} parole italiane, una per riga. Un dizionario di esempio con 100 parole è incluso.\\
 Per avviare il server, è sufficiente eseguirlo con il comando \texttt{java -jar WordQuizzleServer.jar <porta>}, passando il numero di porta su cui stabilire le connessioni con il parametro \texttt{<porta>}.
 \paragraph{Client} Il client viene eseguito a partire dall'archivio \texttt{WordQuizzleClient.jar} tramite il comando\\\texttt{java -jar WordQuizzleClient.jar <porta>}, specificando la porta del server a cui collegarsi tramite il parametro \texttt{<porta>}.
 \pagebreak
@@ -68,7 +70,7 @@ La richiesta di sfida\\
 \end{multicols}
 \pagebreak
 \section{Funzionalità}
-Dettaglio delle varie funzionalità del servizio che sono state richieste e delle scelte in sede di implementazione. Per i dettagli dei messaggi scambiati si veda la sezione apposita.
+Dettaglio delle varie funzionalità del servizio che sono state richieste e delle scelte in sede di implementazione.
 \subsection{Registrazione}
 La fase di \textbf{registrazione} è stata implementata sfruttando la tecnologia \textbf{RMI} come richiesto.\\Il \textbf{server} pubblica, sulla porta successiva a quella indicata come parametro, il riferimento alla propria interfaccia di registrazione con chiave "\texttt{WordQuizzle\_530257}" per evitare possibili conflitti.\\
 Il \textbf{client} esegue la procedura di registrazione in fase di login: se l'utente non esiste allora verrà registrato con il nome utente e la password appena inseriti. La fase di registrazione darà quindi errore in caso di nome utente già registrato oppure in caso di password vuota, oltre al caso in cui si verificano eventuali errori di comunicazione.
@@ -115,7 +117,8 @@ Il thread gestore verifica le traduzioni, assegnando (\textbf{X}) 2 punti per tr
 L'arbitro comunica il risultato agli sfidanti, mandando un messaggio del tipo \texttt{answer:challengeWin punti} al vincitore e \texttt{answer:challengeLose punti} al perdente, indicando anche il nuovo punteggio utente a ciascuno. In caso di pareggio, entrambi gli sfidanti riceveranno \texttt{anser:challenge punti}.\\
 Dopodiché, vengono salvati i dati del server e la sfida è conclusa.
 \pagebreak
-\section{Classi}
+\section{Struttura del codice}
+Dettaglio delle classi, della loro organizzazione e delle loro funzionalità in generale.
 \begin{list}{}{Classi comuni ai due componenti}
 	\item \textbf{WQGUI}: include colori, tema e codice di inizializzazione dei componenti comuni alle \texttt{GUI}.
 	\item \textbf{WQInterface}: interfaccia per la registrazione tramite \texttt{RMI}.
@@ -142,5 +145,38 @@ Dopodiché, vengono salvati i dati del server e la sfida è conclusa.
 	\item \textbf{WQClientGUIInterface}: interfaccia della \texttt{GUI} del client, per poter aggiornare i vari componenti all'accadere dei vari eventi.
 	\item \textbf{WQClientGUI}: codice di creazione, comportamento e visualizzazione della \texttt{GUI} del client. Inoltre è la classe principale contenente il \textbf{main} del client.
 \end{list}
+\section{Librerie utilizzate}
+Per la serializzazione e la trasformazione dei dati di WordQuizzle in e da \texttt{JSON} è stata utilizzata la libreria \textbf{GSON}, che permette facilmente di trasformare oggetti Java in \texttt{JSON} e oggetti \texttt{JSON} in oggetti Java conoscendone il tipo originale.\\
+Per il parsing dei dati \texttt{JSON} ricevuti dal servizio esterno è stata usata la stessa libreria.\\
+Tale libreria è inclusa negli archivi \texttt{JAR} forniti.
+\pagebreak
+\section{Thread e Strutture dati}
+\subsection{Client}
+Il client lavora su 3 \textbf{thread} distinti:
+\begin{list}{-}{}
+	\item Il \textbf{thread GUI}, che aggiorna e smista gli eventi dell'interfaccia grafica.
+	\item Il \textbf{thread principale}, che riceve i messaggi \texttt{TCP} dal server e li elabora, gestendo login, richieste al server e lo scambio di messaggi durante la sfida
+	\item Il \textbf{thread UDP}, che riceve i messaggi \texttt{UDP} dal server e li elabora. Permette di accettare solamente una sfida alla volta, rifiutando automaticamente se il client è già nel mezzo di una sfida.
+\end{list}
+Come \textbf{strutture dati}, il client mantiene i dati sulla comunicazione (socket e porta) e i dati dell'utente, come nome utente, punteggio e amici.
+\subsection{Server}
+Il server è così strutturato:
+\begin{list}{-}{}
+	\item \textbf{Thread principale}, che ascolta le connessioni dei nuovi client e smista le connessioni in entrata assegnandole ad un thread gestore
+	\item \textbf{Thread gestori}, uno per client. Gestiscono la comunicazione con quel client e lo scambio di messaggi. Si occupa anche di mandare le richieste di sfida via UDP.\\
+	L'aggiornamento e la consultazione delle strutture dati degli utenti collegati e registrati è eseguito da un metodo \texttt{synchronized} per garantire la sincronizzazione tra i vari gestori.
+	\item \textbf{Thread arbitri}, uno per sfida. Gestiscono la sfida, attendendo la conclusione di ogni utente e decretando l'esito, comunicandolo.
+\end{list}
+Le \textbf{strutture dati} più importanti del server sono le seguenti:
+\begin{list}{-}{}
+	\item \textbf{\texttt{userBase}}: mappa ad ogni nome utente la struttura dati relativa a quell'utente, cioè password, punteggio e lista amici.
+	\item \textbf{\texttt{loggedIn}}: mappa ad ogni nome utente il thread gestore che lo sta gestendo. Grazie a questa lista è possibile verificare se un utente è connesso, quanti utenti connessi ci sono e spedire un messaggio ad un utente specifico.
+	\item Ogni server mantiene lo username dell'utente che sta gestendo e i dati della comunicazione (porte e socket)
+\end{list}
+\section{Possibili estensioni}
+Il sistema è potenzialmente estendibile sotto qualche aspetto. Ad esempio la comunicazione implementata è facilmente estendibile a sistema di chat interno alla rete sociale di un dato utente: questo è possibili apportando alcune modifiche all'elaborazione che il server fa di ogni messaggio, in modo che smisti tale messaggio al gestore di ogni utente amico attualmente online.\\
+Il dizionario mantenuto dal server può essere aggiornato o esteso da qualche servizio esterno, mediante un meccanismo simile a come si ottengono le traduzioni.\\
+Inoltre, nell'implementazione è stata volutamente tralasciata la crittografia delle password degli utenti, poiché ritenuta non interessante ai fini delle richieste e potenzialmente di difficile implementazione.\\
+Queste e altri possibili estensioni sono state tralasciate in favore di un codice più contenuto e più concentrato sulle funzionalità richieste.
 }
 \end{document}

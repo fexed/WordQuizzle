@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.9.16)  3 FEB 2020 17:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.9.16)  3 FEB 2020 18:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -370,31 +370,31 @@ File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 <./img/server.png, id=14, 365.86688pt x 446.41782pt>
 File: ./img/server.png Graphic file (type png)
 <use ./img/server.png>
-Package pdftex.def Info: ./img/server.png  used on input line 36.
+Package pdftex.def Info: ./img/server.png  used on input line 38.
 (pdftex.def)             Requested size: 274.39948pt x 334.81253pt.
 <./img/infouser.png, id=15, 106.89937pt x 117.43875pt>
 File: ./img/infouser.png Graphic file (type png)
 <use ./img/infouser.png>
-Package pdftex.def Info: ./img/infouser.png  used on input line 45.
+Package pdftex.def Info: ./img/infouser.png  used on input line 47.
 (pdftex.def)             Requested size: 106.8991pt x 117.43845pt.
  [2 <./img/server.png> <./img/infouser.png>]
 <./img/client.png, id=20, 599.99156pt x 367.3725pt>
 File: ./img/client.png Graphic file (type png)
 <use ./img/client.png>
-Package pdftex.def Info: ./img/client.png  used on input line 50.
+Package pdftex.def Info: ./img/client.png  used on input line 52.
 (pdftex.def)             Requested size: 449.99257pt x 275.52869pt.
 <./img/login.png, id=21, 140.02313pt x 145.29282pt>
 File: ./img/login.png Graphic file (type png)
 <use ./img/login.png>
-Package pdftex.def Info: ./img/login.png  used on input line 62.
+Package pdftex.def Info: ./img/login.png  used on input line 64.
 (pdftex.def)             Requested size: 140.02278pt x 145.29245pt.
 <./img/sfida.png, id=22, 238.64156pt x 88.83188pt>
 File: ./img/sfida.png Graphic file (type png)
 <use ./img/sfida.png>
-Package pdftex.def Info: ./img/sfida.png  used on input line 66.
+Package pdftex.def Info: ./img/sfida.png  used on input line 68.
 (pdftex.def)             Requested size: 238.64096pt x 88.83165pt.
  [3 <./img/client.png> <./img/login.png> <./img/sfida.png>]
-Overfull \hbox (20.40723pt too wide) in paragraph at lines 98--99
+Overfull \hbox (20.40723pt too wide) in paragraph at lines 100--101
 \T1/lmss/m/n/10 Analogamente, al-la pres-sio-ne del pul-san-te re-la-ti-vo il c
 lient in-via \T1/lmtt/m/n/10 showonlinelist \T1/lmss/m/n/10 al ser-ver, che ri-
 spon-de-rà con \T1/lmtt/m/n/10 onlinelist:JSON\T1/lmss/m/n/10 .
@@ -402,33 +402,37 @@ spon-de-rà con \T1/lmtt/m/n/10 onlinelist:JSON\T1/lmss/m/n/10 .
 
 [4]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 112.
+(Font)              <10> on input line 114.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 112.
+(Font)              <7> on input line 114.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 112.
- [5] [6] (./wordquizzle.aux) ) 
+(Font)              <5> on input line 114.
+ [5] [6]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 172.
+ [7] (./wordquizzle.aux) ) 
 Here is how much of TeX's memory you used:
- 3507 strings out of 492609
- 48820 string characters out of 6132818
- 133073 words of memory out of 5000000
- 7329 multiletter control sequences out of 15000+600000
- 58103 words of font info for 57 fonts, out of 8000000 for 9000
+ 3510 strings out of 492609
+ 48858 string characters out of 6132818
+ 134073 words of memory out of 5000000
+ 7331 multiletter control sequences out of 15000+600000
+ 58421 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,6n,31p,797b,308s stack positions out of 5000i,500n,10000p,200000b,80000s
-{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm
--mathsy.enc}{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/texliv
-e/2019/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/texlive/2019/texmf-dist/
-fonts/type1/public/lm/lmbx12.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public
-/lm/lmr10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmss10.pfb><c:/
-texlive/2019/texmf-dist/fonts/type1/public/lm/lmss12.pfb><c:/texlive/2019/texmf
--dist/fonts/type1/public/lm/lmss17.pfb><c:/texlive/2019/texmf-dist/fonts/type1/
-public/lm/lmssbx10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmsy10
-.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on wordquizzle.pdf (6 pages, 247256 bytes).
+{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ec.
+enc}{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}<c:/texlive/20
+19/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/texlive/2019/texmf-dist/font
+s/type1/public/lm/lmbx12.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/
+lmr10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmss10.pfb><c:/texl
+ive/2019/texmf-dist/fonts/type1/public/lm/lmss12.pfb><c:/texlive/2019/texmf-dis
+t/fonts/type1/public/lm/lmss17.pfb><c:/texlive/2019/texmf-dist/fonts/type1/publ
+ic/lm/lmssbx10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmsy10.pfb
+><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/texlive/2019/
+texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on wordquizzle.pdf (7 pages, 275691 bytes).
 PDF statistics:
- 69 PDF objects out of 1000 (max. 8388607)
- 43 compressed objects within 1 object stream
+ 78 PDF objects out of 1000 (max. 8388607)
+ 50 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 
