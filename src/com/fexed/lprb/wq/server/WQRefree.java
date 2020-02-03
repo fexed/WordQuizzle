@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * Arbitro della sfida tra due utenti
  * @author Federico Matteoni
  */
 public class WQRefree implements Runnable {
