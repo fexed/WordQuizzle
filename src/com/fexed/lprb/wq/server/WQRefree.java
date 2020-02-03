@@ -6,7 +6,7 @@ import java.util.HashMap;
 /**
  * @author Federico Matteoni
  */
-public class WQServerChallenge implements Runnable {
+public class WQRefree implements Runnable {
 
     /**
      * Il primo sfidante
@@ -35,7 +35,7 @@ public class WQServerChallenge implements Runnable {
      * @param words La lista delle parole
      * @param server Riferimento al server
      */
-    public WQServerChallenge(WQHandler s1, WQHandler s2, HashMap<String, ArrayList<String>> words, WQServer server) {
+    public WQRefree(WQHandler s1, WQHandler s2, HashMap<String, ArrayList<String>> words, WQServer server) {
         this.sfidante1 = s1;
         this.sfidante2 = s2;
         this.randomWords = words;

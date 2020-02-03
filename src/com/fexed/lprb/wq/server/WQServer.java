@@ -246,7 +246,7 @@ public class WQServer extends RemoteServer implements WQInterface {
                                 //Le traduzioni vengono memorizzate in lowercase e verranno controllate a meno di
                                 //caratteri non alfabetici presenti (ad esempio, una traduzione di "virus" è "VIRUS!")
                             }
-                            new Thread(new WQServerChallenge(sfidanteUtente, sfidanteAmico, randomWords, this)).start();
+                            new Thread(new WQRefree(sfidanteUtente, sfidanteAmico, randomWords, this)).start();
                         } catch (FileNotFoundException ignored) { //Se il server è installato correttamente non accade
                         } catch (IOException ex) {WQServerController.gui.updateStatsText(ex.getMessage());}
 

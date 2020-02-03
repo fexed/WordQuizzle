@@ -6,8 +6,6 @@ import com.fexed.lprb.wq.WQUtente;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.BindException;
-import java.rmi.server.ExportException;
 import java.util.Collection;
 
 /**
