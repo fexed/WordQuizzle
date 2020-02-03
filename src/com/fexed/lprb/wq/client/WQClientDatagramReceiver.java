@@ -46,6 +46,7 @@ public class WQClientDatagramReceiver implements Runnable {
                         datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
                         datagramSocket.send(datagramPacket);
                     } else { //Altrimenti chiede all'utente
+                        isChallenging = true;
                         WQClientController.gui.updateCommText("Sfida ricevuta...");
                         int n = WQClientController.gui.showChallengeDialog(received.split(":")[1]);
                         buff = new byte[128];
@@ -56,6 +57,7 @@ public class WQClientDatagramReceiver implements Runnable {
                             datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
                             datagramSocket.send(datagramPacket);
                         } else {
+                            isChallenging = false;
                             WQClientController.gui.updateCommText("Sfida rifiutata.");
                             buff = "challengeResponse:NO".getBytes(StandardCharsets.UTF_8);
                             datagramPacket = new DatagramPacket(buff, buff.length, datagramPacket.getAddress(), datagramPacket.getPort());
