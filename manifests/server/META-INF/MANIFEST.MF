@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: com.fexed.lprb.wq.client.WQServerGUI
+Main-Class: com.fexed.lprb.wq.server.WQServerGUI
