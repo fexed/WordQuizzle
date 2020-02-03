@@ -503,7 +503,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     }
 
     public static void main(String[] args) {
-        if (args.length != 1) System.err.println("Usage: server <porta>");
+        if (args.length != 1) System.err.println("Usage: client <porta>");
         else {
             try {
                 int port = Integer.parseInt(args[0]);
