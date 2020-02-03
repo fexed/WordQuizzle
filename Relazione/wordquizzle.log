@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.9.16)  3 FEB 2020 16:54
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.9.16)  3 FEB 2020 17:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -407,7 +407,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 112.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 112.
- [5] (./wordquizzle.aux) ) 
+ [5] [6] (./wordquizzle.aux) ) 
 Here is how much of TeX's memory you used:
  3507 strings out of 492609
  48820 string characters out of 6132818
@@ -416,19 +416,19 @@ Here is how much of TeX's memory you used:
  58103 words of font info for 57 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,6n,31p,797b,308s stack positions out of 5000i,500n,10000p,200000b,80000s
-{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-mat
-hsy.enc}{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/texlive/20
-19/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/texlive/2019/texmf-dist/font
-s/type1/public/lm/lmbx12.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/
-lmr10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmss10.pfb><c:/texl
-ive/2019/texmf-dist/fonts/type1/public/lm/lmss12.pfb><c:/texlive/2019/texmf-dis
-t/fonts/type1/public/lm/lmss17.pfb><c:/texlive/2019/texmf-dist/fonts/type1/publ
-ic/lm/lmssbx10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmsy10.pfb
-><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on wordquizzle.pdf (5 pages, 242990 bytes).
+{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm
+-mathsy.enc}{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/texliv
+e/2019/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/texlive/2019/texmf-dist/
+fonts/type1/public/lm/lmbx12.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public
+/lm/lmr10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmss10.pfb><c:/
+texlive/2019/texmf-dist/fonts/type1/public/lm/lmss12.pfb><c:/texlive/2019/texmf
+-dist/fonts/type1/public/lm/lmss17.pfb><c:/texlive/2019/texmf-dist/fonts/type1/
+public/lm/lmssbx10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmsy10
+.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on wordquizzle.pdf (6 pages, 247256 bytes).
 PDF statistics:
- 66 PDF objects out of 1000 (max. 8388607)
- 41 compressed objects within 1 object stream
+ 69 PDF objects out of 1000 (max. 8388607)
+ 43 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -77,12 +77,12 @@ Il \textbf{client} esegue la procedura di registrazione in fase di login: se l'u
 La fase di \textbf{login} è eseguita quando l'utente ha inserito nome utente e password nella finestra di dialogo apposita e confermato l'inserimento. Il \textbf{client} spedisce via TCP un messaggio del tipo \texttt{login:nomeutente password}.\\
 Il \textbf{server} verifica la correttezza dei dati e restituisce il risultato, con un messaggio del tipo \texttt{answer:esito}.
 \paragraph{Errore} In caso di errore, come password vuota o sbagliata o utente già collegato, il server ritorna un codice di errore apposito e il client mostrerà l'errore in una finestra di dialogo, per poi richiedere nuovamente i dati di login.
-\paragraph{Successo} In caso di login eseguito con successo, il server lancerà un \textbf{thread handler} dedicato al client e alla sua connessione. Il server mantiene in memoria un riferimento all'handler legato al nome utente che gestisce: questo è utile per mantenere la lista degli utenti connessi e poter spedire le richieste di sfida.\\
+\paragraph{Successo} In caso di login eseguito con successo, il server lancerà un \textbf{thread gestore} dedicato al client e alla sua connessione. Il server mantiene in memoria un riferimento al gestore legato al nome utente che gestisce: questo è utile per mantenere la lista degli utenti connessi e poter spedire le richieste di sfida.\\
 Subito dopo il server spedisce al client un \texttt{JSON} con le informazioni dell'utente connesso: punteggio e lista amici. Questo per consentire al client di aggiornare la propria interfaccia di conseguenza.\\
 Il client comunicherà al server la propria porta UDP per ricevere le richieste di sfida con un messaggio del tipo\\\texttt{challengePort:porta}.
 
 \subsection{Logout}
-Il logout viene eseguito alla chiusura della finestra del client. Il client chiuderà il socket di comunicazione, terminando il thread handler associato sul server, il quale si preoccuperà di aggiornare il conteggio dei thread attivi e la lista degli utenti connessi.
+Il logout viene eseguito alla chiusura della finestra del client. Il client chiuderà il socket di comunicazione, terminando il thread gestore associato sul server, il quale si preoccuperà di aggiornare il conteggio dei thread attivi e la lista degli utenti connessi.
 
 \subsection{Aggiunta di un amico}
 La fase di aggiunta di un utente alla propria lista amici si avvia cliccando sul relativo pulsante nell'interfaccia del client. Esso aprirà una finestra di dialogo richiedente il nome dell'utente da aggiungere.\\
@@ -107,12 +107,40 @@ La classifica è richiesta con un messaggio del tipo \texttt{showonlinelist}. Il
 La sfida è implementata, come richiesto, spedendo la richiesta (\texttt{challengeRequest:sfidante}) tramite UDP allo sfidante. La porta UDP su cui spedire la richiesta è comunicata dal client a seguito del login.\\
 La sfida deve essere accettata entro (\textbf{T1}) 10 secondi. Se la sfida viene rifiutata (\texttt{challengeResponse:NO}, sia per timeout che per rifiuto esplicito), il server lo comunicherà al client che l'ha richiesta, il quale visualizzerà sul log il messaggio "\texttt{La sfida è stata rifiutata.}".
 \paragraph{Sfida accettata} Se la sfida viene accettata (\texttt{challengeResponse:OK}), il server comunica ad entrambi i client di prepararsi con un messaggio del tipo \texttt{challengeRound:1}.
-\subparagraph{Parole} Il server, quindi, seleziona (\textbf{K}) 6 parole casuali dal dizionario e richiede le traduzioni al servizio esterno \texttt{mymemory.translated.net} tramite una serie di richieste \texttt{HTTP GET}. Per ogni parola italiana viene memorizzata la lista delle traduzioni fornite dal servizio. Le parole vengono ottenute eseguendo un parsing del \texttt{JSON} restituito, con tutte lettere minuscole e ripulendole da caratteri non alfabetici.
-\subparagraph{Sfida} Non appena sono state ottenute tutte le traduzioni, il server lancia un \textbf{thread arbitro} che gestisce la sfida. Il thread si occupa di fornire ai thread handler dei due utenti le parole da tradurre e le traduzioni, e attende che entrambi gli sfidanti abbiano finito la sfida.\\
-Ogni thread handler spedirà la parola da tradurre in un messaggio \texttt{challengeRound:parola} e attende un messaggio di risposta del tipo \texttt{challengeAnswer:parola}. Il client concede all'utente 5s per rispondere: la sfida può durare quindi al massimo K$\cdot$5s cioè (\textbf{T2}) 30 secondi. Se il timer scade, il client risponde automaticamente con \texttt{challengeAnswer:-1}, altrimenti risponde con la parola inserita dall'utente.\\
+\subparagraph{Parole} Il server, quindi, seleziona (\textbf{K}) 6 parole casuali dal dizionario, che contiene (\textbf{N}) 100 parole, e richiede le traduzioni al servizio esterno \texttt{mymemory.translated.net} tramite una serie di richieste \texttt{HTTP GET}. Per ogni parola italiana viene memorizzata la lista delle traduzioni fornite dal servizio. Le parole vengono ottenute eseguendo un parsing del \texttt{JSON} restituito, con tutte lettere minuscole e ripulendole da caratteri non alfabetici.
+\subparagraph{Sfida} Non appena sono state ottenute tutte le traduzioni, il server lancia un \textbf{thread arbitro} che gestisce la sfida. Il thread si occupa di fornire ai thread gestori dei due utenti le parole da tradurre e le traduzioni, e attende che entrambi gli sfidanti abbiano finito la sfida.\\
+Ogni thread gestore spedirà la parola da tradurre in un messaggio \texttt{challengeRound:parola} e attende un messaggio di risposta del tipo \texttt{challengeAnswer:parola}. Il client concede all'utente 5s per rispondere: la sfida può durare quindi al massimo K$\cdot$5s cioè (\textbf{T2}) 30 secondi. Se il timer scade, il client risponde automaticamente con \texttt{challengeAnswer:-1}, altrimenti risponde con la parola inserita dall'utente.\\
 Il thread gestore verifica le traduzioni, assegnando (\textbf{X}) 2 punti per traduzione corretta e togliendo (\textbf{Y}) 1 punto per ogni risposta sbagliata. In caso di risposta non data, non si assegnano punti.
 \subparagraph{Fine} Non appena entrambi gli utenti hanno concluso la sfida, il thread arbitro si occupa di verificare il vincitore comparando i punteggi ottenuti. L'utente vincitore ottiene (\textbf{Z}) 5 punti bonus.\\
 L'arbitro comunica il risultato agli sfidanti, mandando un messaggio del tipo \texttt{answer:challengeWin punti} al vincitore e \texttt{answer:challengeLose punti} al perdente, indicando anche il nuovo punteggio utente a ciascuno. In caso di pareggio, entrambi gli sfidanti riceveranno \texttt{anser:challenge punti}.\\
 Dopodiché, vengono salvati i dati del server e la sfida è conclusa.
+\pagebreak
+\section{Classi}
+\begin{list}{}{Classi comuni ai due componenti}
+	\item \textbf{WQGUI}: include colori, tema e codice di inizializzazione dei componenti comuni alle \texttt{GUI}.
+	\item \textbf{WQInterface}: interfaccia per la registrazione tramite \texttt{RMI}.
+	\item \textbf{WQUtente}: dati del singolo utente, come nome utente, password, punteggio e lista amici.
+\end{list}
+\begin{list}{}{\textbf{Server}}
+	\item \textbf{Logica}
+	\item \textbf{WQServer}: codice principale del server, che implementa tutte le funzionalità richieste, tra cui la registrazione, login, sfida e strutture dati principali.
+	\item \textbf{WQHandler}: \textbf{thread gestore} della connessione con il singolo client, che si occupa di spedire e ricevere i messaggi sia su \texttt{TCP} che le richieste e risposte di sfida su \texttt{UDP}. Si occupa anche della parte centrale della sfida, cioè invio delle parole e ricezione delle risposte con calcolo del punteggio.
+	\item \textbf{WQRefree}: \textbf{thread arbitro} della sfida. Si occupa di lanciare la parte centrale della sfida e attendere la fine di entrambi gli sfidanti, dopodiché decreta il vincitore e assegna il punteggio definitivo.
+	\item \textbf{Interfaccia}
+	\item \textbf{WQServerController}: permette la comunicazione tra server e \texttt{GUI}.
+	\item \textbf{WQServerGUIInterface}: interfaccia della \texttt{GUI} del server, per poter aggiornare i vari componenti all'accadere dei vari eventi.
+	\item \textbf{WQServerGUI}: codice di creazione, comportamento e visualizzazione della \texttt{GUI} del server. Inoltre è la classe principale contenente il \textbf{main} del server.
+\end{list}
+\begin{list}{}{\textbf{Client}}
+	\item \textbf{Logica}
+	\item \textbf{WQClient}: codice principale del client, che implementa le funzionalità di login, registrazione e comunicazione principale del client.
+	\item \textbf{WQClientReceiver}: \textbf{thread} di ascolto del client per ricevere i messaggi \texttt{TCP} del socket provenienti dal server.
+	\item \textbf{WQClientDatagramReceiver}: \textbf{thread} di ascolto del client per ricevere i messaggi \texttt{UDP} provenienti dal server. Gestisce tutte le richieste di sfida ricevute, ma consente di rispondere ad esse solamente se non si è già in una sfida.
+	\item \textbf{WQClientTimerTask}: \texttt{TimerTask} del client per il tempo di risposta durante la sfida. Viene eseguito allo scadere del timer di 10 secondi, che parte alla ricezione di una parola da tradurre.
+	\item \textbf{Interfaccia}
+	\item \textbf{WQClientController}: permette la comunicazione tra client e \texttt{GUI}.
+	\item \textbf{WQClientGUIInterface}: interfaccia della \texttt{GUI} del client, per poter aggiornare i vari componenti all'accadere dei vari eventi.
+	\item \textbf{WQClientGUI}: codice di creazione, comportamento e visualizzazione della \texttt{GUI} del client. Inoltre è la classe principale contenente il \textbf{main} del client.
+\end{list}
 }
 \end{document}
