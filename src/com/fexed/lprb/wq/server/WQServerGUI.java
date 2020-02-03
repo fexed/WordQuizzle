@@ -6,6 +6,8 @@ import com.fexed.lprb.wq.WQUtente;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.BindException;
+import java.rmi.server.ExportException;
 import java.util.Collection;
 
 /**
@@ -18,6 +20,11 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
      * Numero di thread in esecuzione
      */
     private int nThreads = 0;
+
+    /**
+     * Numero di porta su cui (ri)avviare il server
+     */
+    private int port;
 
     /**
      * Indica alla GUI se chiudere il processo o meno
@@ -77,6 +84,7 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
     public void updateStatsText(String txt){ statsTxt.setText(statsTxt.getText() + "\n" + txt); }
     public void clearStatsText(String txt){ statsTxt.setText(txt); }
     public void serverIsOnline(int port) {
+        shouldClose = false;
         titleLabel.setForeground(green);
         startBtn.setEnabled(false);
         startBtn.setText("    Server online    ");
@@ -114,7 +122,7 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         threadsLabel.setText(nThreads + " thread" + (nThreads == 1 ? "" : "s" ));
     }
 
-    public WQServerGUI() {
+    public WQServerGUI(int port) {
         WQServerController.gui = this;
 
         //Inizializzazione della finestra principale
@@ -171,7 +179,13 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         startBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new WQServer(1337);
+                try { new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new WQServer(port);
+                    }
+                }).start(); }
+                catch (Exception ex) {updateStatsText(ex.getMessage());}
             }
         });
         JButton dumpBtn = initThemedButton("Informazioni");
@@ -255,8 +269,8 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
         w.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                WQServerController.server.stopServer();
                 shouldClose = true;
+                WQServerController.server.stopServer();
             }
         });
         w.pack();
@@ -296,9 +310,10 @@ public class WQServerGUI extends WQGUI implements WQServerGUIInterface {
             try {
                 int port = Integer.parseInt(args[0]);
                 if (port < 1024) throw new NumberFormatException();
-                WQServerGUI gui = new WQServerGUI();
+                WQServerGUI gui = new WQServerGUI(port);
                 WQServer server = new WQServer(port);
-            } catch (NumberFormatException ex) { System.err.println("Il parametro inserito non è una porta valida"); }
+            } catch (NumberFormatException ex) { System.err.println("Il parametro inserito non è una porta valida");
+            } catch (Exception ex) {System.err.println(ex.getMessage()); System.exit(-1); }
         }
     }
 }

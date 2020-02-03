@@ -8,10 +8,7 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.net.DatagramSocket;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -395,10 +392,12 @@ public class WQServer extends RemoteServer implements WQInterface {
      * Salva su file i dati del server
      */
     public void saveServer() {
-        Gson gson = new Gson();
-        int n = saveToFile("userBase", gson.toJson(userBase));
-        if (n == -1) WQServerController.gui.updateStatsText("Impossibile creare il file \"userBase\"");
-        if (n == -2) WQServerController.gui.updateStatsText("IOException durante la scrittura sul file \"userBase\"");
+        if (userBase != null) {
+            Gson gson = new Gson();
+            int n = saveToFile("userBase", gson.toJson(userBase));
+            if (n == -1) WQServerController.gui.updateStatsText("Impossibile creare il file \"userBase\"");
+            if (n == -2) WQServerController.gui.updateStatsText("IOException durante la scrittura sul file \"userBase\"");
+        }
     }
 
     /**
@@ -427,7 +426,8 @@ public class WQServer extends RemoteServer implements WQInterface {
      */
     public void stopServer() {
         saveServer();
-        this.running = false;
+        if (running) this.running = false;
+        else WQServerController.gui.serverIsOffline();
     }
 
     /**
@@ -470,7 +470,7 @@ public class WQServer extends RemoteServer implements WQInterface {
             try { threadPool.awaitTermination(1, TimeUnit.SECONDS); }
             catch (InterruptedException ignored) {}
             srvSkt.close();
-            WQServerController.gui.serverIsOffline();
-        } catch (Exception e) {WQServerController.gui.updateStatsText(e.getMessage()); WQServerController.gui.serverIsOffline(); e.printStackTrace();}
+        } catch (Exception e) {WQServerController.gui.updateStatsText(e.getMessage()); System.err.println(e.getMessage()); WQServerController.gui.serverIsOffline(); e.printStackTrace();}
+        finally { running = false; WQServerController.gui.serverIsOffline(); }
     }
 }
