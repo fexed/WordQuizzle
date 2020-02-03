@@ -30,9 +30,14 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     private JTextArea commText;
 
     /**
-     * Etichetta con le info dell'utente connesso (username e punti)
+     * Etichetta con l'username dell'utente connesso
      */
     private JLabel loginNameLbl;
+
+    /**
+     * Etichetta con i punti dell'utente connesso
+     */
+    private JLabel loginPointsLbl;
 
     /**
      * Pulsante di login
@@ -77,8 +82,9 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     public void clearCommText(String txt) { commText.setText(txt); }
     public void loggedIn(String username, int points) {
         this.username = username;
-        loginNameLbl.setText(username + " (" + points + " punti)");
+        loginNameLbl.setText(username);
         loginNameLbl.setForeground(green);
+        loginPointsLbl.setText(points + " pt.");
         loginBtn.setEnabled(false);
         loginBtn.setVisible(false);
         loginBtn.setText("    Loggato    ");
@@ -88,6 +94,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
         this.username = null;
         loginNameLbl.setText("<non eseguito>");
         loginNameLbl.setForeground(red);
+        loginPointsLbl.setText("- pt.");
         loginBtn.setEnabled(true);
         loginBtn.setVisible(true);
         loginBtn.setText("    Login    ");
@@ -96,7 +103,7 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
     }
     @Override
     public void updatePoints(int point) {
-        loginNameLbl.setText(username + " (" + point + " punti)");
+        loginPointsLbl.setText(point + " pt.");
     }
     public void addFriend(String friend) {
         friendListModel.addElement(friend);
@@ -159,10 +166,14 @@ public class WQClientGUI extends WQGUI implements WQClientGUIInterface {
             }
         });
         JLabel loginStatusLbl = initThemedLabel("Login: ", JLabel.LEFT);
-        loginNameLbl = initThemedLabel("<non eseguito>", JLabel.LEFT);
+        loginNameLbl = initThemedLabelBig("<non eseguito>", JLabel.LEFT);
+        loginPointsLbl = initThemedLabelBig("- pt.", JLabel.LEFT);
         loginNameLbl.setForeground(red);
         loginPane.add(loginStatusLbl);
         loginPane.add(loginNameLbl);
+        loginPane.add(Box.createRigidArea(new Dimension(25, 0)));
+        loginPane.add(loginPointsLbl);
+        loginPane.add(Box.createRigidArea(new Dimension(50, 0)));
         loginPane.add(loginBtn);
         northPane.add(loginPane);
 
